@@ -3,9 +3,8 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import Link from "next/link";
-import { FaPlus, FaTrash, FaEdit, FaLock, FaArrowLeft, FaSave, FaEye } from "react-icons/fa";
-import dotenv from "dotenv";
-dotenv.config();
+import { FaPlus, FaTrash, FaEdit, FaLock, FaSave, FaEye } from "react-icons/fa";
+
 interface BlogPost {
     id: string;
     title: string;
@@ -25,7 +24,6 @@ export default function AdminPage() {
     const [loading, setLoading] = useState(true);
     const [notification, setNotification] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
-    // Form states
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
     const [formTitle, setFormTitle] = useState("");
@@ -35,15 +33,14 @@ export default function AdminPage() {
     const [formReadTime, setFormReadTime] = useState("3 min read");
     const [formDate, setFormDate] = useState("");
 
-    // Lock screen check on load
     useEffect(() => {
         const adminAuth = sessionStorage.getItem("adminAuth");
+
         if (adminAuth === "true") {
             setIsUnlocked(true);
         }
     }, []);
 
-    // Load blogs when unlocked
     useEffect(() => {
         if (!isUnlocked) return;
         fetchBlogs();
@@ -51,6 +48,7 @@ export default function AdminPage() {
 
     const fetchBlogs = () => {
         setLoading(true);
+
         fetch("/api/blogs")
             .then((res) => res.json())
             .then((data) => {
@@ -63,19 +61,34 @@ export default function AdminPage() {
             });
     };
 
-    const handleUnlock = (e: React.FormEvent) => {
+    const handleUnlock = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (passcode.toLowerCase() === process.env.ADMIN_PASSCODE?.toLowerCase()) {
+
+        try {
+            const res = await fetch("/api/admin/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ passcode }),
+            });
+
+            if (!res.ok) {
+                setPasscodeError("Incorrect passcode. Try again!");
+                return;
+            }
+
             setIsUnlocked(true);
             setPasscodeError("");
             sessionStorage.setItem("adminAuth", "true");
-        } else {
-            setPasscodeError("Incorrect passcode. Try again!");
+        } catch {
+            setPasscodeError("Something went wrong. Try again.");
         }
     };
 
     const showNotification = (message: string, type: "success" | "error") => {
         setNotification({ message, type });
+
         setTimeout(() => {
             setNotification(null);
         }, 4000);
@@ -88,7 +101,13 @@ export default function AdminPage() {
         setFormContent("");
         setFormCategory("General");
         setFormReadTime("3 min read");
-        setFormDate(new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }));
+        setFormDate(
+            new Date().toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+            })
+        );
         setIsFormOpen(true);
     };
 
@@ -110,16 +129,19 @@ export default function AdminPage() {
             const res = await fetch(`/api/blogs/${id}`, {
                 method: "DELETE",
             });
+
             if (!res.ok) throw new Error();
+
             showNotification("Blog post deleted successfully!", "success");
             fetchBlogs();
-        } catch (error) {
+        } catch {
             showNotification("Failed to delete blog post.", "error");
         }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
         if (!formTitle || !formContent) {
             showNotification("Title and content are required fields.", "error");
             return;
@@ -131,36 +153,48 @@ export default function AdminPage() {
             content: formContent,
             category: formCategory,
             readTime: formReadTime,
-            date: formDate
+            date: formDate,
         };
 
         try {
             if (editingPost) {
-                // Update (PUT)
                 const res = await fetch(`/api/blogs/${editingPost.id}`, {
                     method: "PUT",
-                    headers: { "Content-Type": "application/json" },
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
                     body: JSON.stringify(postData),
                 });
+
                 if (!res.ok) throw new Error();
+
                 showNotification("Blog post updated successfully!", "success");
             } else {
-                // Create (POST)
                 const res = await fetch("/api/blogs", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
                     body: JSON.stringify(postData),
                 });
+
                 if (!res.ok) {
                     const data = await res.json();
                     throw new Error(data.error || "Failed to create post.");
                 }
+
                 showNotification("Blog post created successfully!", "success");
             }
+
             setIsFormOpen(false);
             fetchBlogs();
-        } catch (error: any) {
-            showNotification(error.message || "Failed to save blog post.", "error");
+        } catch (error: unknown) {
+            const message =
+                error instanceof Error
+                    ? error.message
+                    : "Failed to save blog post.";
+
+            showNotification(message, "error");
         }
     };
 
@@ -173,7 +207,6 @@ export default function AdminPage() {
     return (
         <main className="min-h-screen relative overflow-hidden bg-[#f5efe6] py-32 px-6" style={{ color: "#955623" }}>
             <div className="max-w-4xl mx-auto w-full relative z-10">
-                {/* Notification toast */}
                 <AnimatePresence>
                     {notification && (
                         <motion.div
@@ -188,7 +221,6 @@ export default function AdminPage() {
                     )}
                 </AnimatePresence>
 
-                {/* Password Screen */}
                 <AnimatePresence mode="wait">
                     {!isUnlocked ? (
                         <motion.div
@@ -216,9 +248,11 @@ export default function AdminPage() {
                                     className="w-full px-5 py-3 rounded-2xl bg-[#955623]/5 border-2 border-[#955623]/20 focus:border-[#955623]/50 focus:outline-none text-[#7a451b] text-center font-mono text-lg tracking-widest placeholder:font-sans placeholder:tracking-normal"
                                     autoFocus
                                 />
+
                                 {passcodeError && (
                                     <p className="text-xs font-semibold text-[#ea4335]">{passcodeError}</p>
                                 )}
+
                                 <p className="text-[10px] text-[#7a451b]/40 italic font-mono">Hint: mustacho</p>
 
                                 <button
@@ -230,7 +264,6 @@ export default function AdminPage() {
                             </form>
                         </motion.div>
                     ) : (
-                        /* Main Dashboard Screen */
                         <motion.div
                             key="dashboard"
                             initial={{ opacity: 0 }}
@@ -238,12 +271,16 @@ export default function AdminPage() {
                             exit={{ opacity: 0 }}
                             className="flex flex-col gap-8 w-full"
                         >
-                            {/* Dashboard Header */}
                             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#955623]/15 pb-6">
                                 <div>
-                                    <h1 className="font-heading text-4xl text-[#955623] tracking-tight">Mustacho Blogs Admin</h1>
-                                    <p className="text-sm text-[#7a451b] mt-1">Add, update, or remove blog posts directly.</p>
+                                    <h1 className="font-heading text-4xl text-[#955623] tracking-tight">
+                                        Mustacho Blogs Admin
+                                    </h1>
+                                    <p className="text-sm text-[#7a451b] mt-1">
+                                        Add, update, or remove blog posts directly.
+                                    </p>
                                 </div>
+
                                 <div className="flex items-center gap-3">
                                     <Link
                                         href="/blogs"
@@ -251,6 +288,7 @@ export default function AdminPage() {
                                     >
                                         <FaEye size={12} /> View Page
                                     </Link>
+
                                     <button
                                         onClick={handleLogout}
                                         className="inline-flex items-center gap-2 text-xs font-bold bg-[#ea4335]/8 text-[#ea4335] border border-[#ea4335]/15 px-4 py-2.5 rounded-full hover:bg-[#ea4335]/15 transition-all cursor-pointer select-none"
@@ -260,11 +298,12 @@ export default function AdminPage() {
                                 </div>
                             </div>
 
-                            {/* Control Bar */}
                             <div className="flex justify-between items-center bg-[#955623]/5 p-4 rounded-2xl border border-[#955623]/10">
                                 <span className="text-sm font-semibold text-[#7a451b]">
-                                    Total Posts: <strong className="text-[#955623] font-mono text-base">{posts.length}</strong>
+                                    Total Posts:{" "}
+                                    <strong className="text-[#955623] font-mono text-base">{posts.length}</strong>
                                 </span>
+
                                 <button
                                     onClick={openCreateForm}
                                     className="inline-flex items-center gap-2 bg-[#955623] hover:bg-[#7a451b] text-[#f5efe6] px-4 py-2.5 rounded-full text-xs font-bold transition-all shadow-sm cursor-pointer select-none"
@@ -273,7 +312,6 @@ export default function AdminPage() {
                                 </button>
                             </div>
 
-                            {/* Dynamic Form Drawer (Create/Edit) */}
                             <AnimatePresence>
                                 {isFormOpen && (
                                     <motion.div
@@ -286,6 +324,7 @@ export default function AdminPage() {
                                             <h2 className="font-heading text-xl text-[#955623]">
                                                 {editingPost ? "Edit Blog Post" : "Create New Blog Post"}
                                             </h2>
+
                                             <button
                                                 onClick={() => setIsFormOpen(false)}
                                                 className="text-xs font-semibold text-[#7a451b]/70 hover:text-[#955623] cursor-pointer"
@@ -296,9 +335,10 @@ export default function AdminPage() {
 
                                         <form onSubmit={handleSubmit} className="flex flex-col gap-4 text-left">
                                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                                {/* Title */}
                                                 <div className="flex flex-col gap-1 md:col-span-2">
-                                                    <label className="text-xs font-bold uppercase text-[#955623]/80">Title</label>
+                                                    <label className="text-xs font-bold uppercase text-[#955623]/80">
+                                                        Title
+                                                    </label>
                                                     <input
                                                         type="text"
                                                         value={formTitle}
@@ -309,9 +349,10 @@ export default function AdminPage() {
                                                     />
                                                 </div>
 
-                                                {/* Category */}
                                                 <div className="flex flex-col gap-1">
-                                                    <label className="text-xs font-bold uppercase text-[#955623]/80">Category</label>
+                                                    <label className="text-xs font-bold uppercase text-[#955623]/80">
+                                                        Category
+                                                    </label>
                                                     <select
                                                         value={formCategory}
                                                         onChange={(e) => setFormCategory(e.target.value)}
@@ -327,9 +368,10 @@ export default function AdminPage() {
                                             </div>
 
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                {/* Read Time */}
                                                 <div className="flex flex-col gap-1">
-                                                    <label className="text-xs font-bold uppercase text-[#955623]/80">Read Time</label>
+                                                    <label className="text-xs font-bold uppercase text-[#955623]/80">
+                                                        Read Time
+                                                    </label>
                                                     <input
                                                         type="text"
                                                         value={formReadTime}
@@ -339,9 +381,10 @@ export default function AdminPage() {
                                                     />
                                                 </div>
 
-                                                {/* Date */}
                                                 <div className="flex flex-col gap-1">
-                                                    <label className="text-xs font-bold uppercase text-[#955623]/80">Date</label>
+                                                    <label className="text-xs font-bold uppercase text-[#955623]/80">
+                                                        Date
+                                                    </label>
                                                     <input
                                                         type="text"
                                                         value={formDate}
@@ -352,9 +395,10 @@ export default function AdminPage() {
                                                 </div>
                                             </div>
 
-                                            {/* Excerpt */}
                                             <div className="flex flex-col gap-1">
-                                                <label className="text-xs font-bold uppercase text-[#955623]/80">Excerpt / Short Summary</label>
+                                                <label className="text-xs font-bold uppercase text-[#955623]/80">
+                                                    Excerpt / Short Summary
+                                                </label>
                                                 <input
                                                     type="text"
                                                     value={formExcerpt}
@@ -364,9 +408,10 @@ export default function AdminPage() {
                                                 />
                                             </div>
 
-                                            {/* Content */}
                                             <div className="flex flex-col gap-1">
-                                                <label className="text-xs font-bold uppercase text-[#955623]/80">Content Body</label>
+                                                <label className="text-xs font-bold uppercase text-[#955623]/80">
+                                                    Content Body
+                                                </label>
                                                 <textarea
                                                     rows={8}
                                                     value={formContent}
@@ -388,7 +433,6 @@ export default function AdminPage() {
                                 )}
                             </AnimatePresence>
 
-                            {/* Posts Table */}
                             {loading ? (
                                 <div className="text-center py-20 font-heading text-xl text-[#955623]">
                                     Fetching blog database...
@@ -417,9 +461,11 @@ export default function AdminPage() {
                                                     </span>
                                                     <span className="text-[#7a451b]/60 font-mono">{post.date}</span>
                                                 </div>
+
                                                 <h3 className="font-heading text-xl text-[#955623] leading-tight">
                                                     {post.title}
                                                 </h3>
+
                                                 <p className="text-xs text-[#7a451b]/80 line-clamp-1 max-w-xl">
                                                     {post.excerpt}
                                                 </p>
@@ -433,6 +479,7 @@ export default function AdminPage() {
                                                 >
                                                     <FaEdit size={14} />
                                                 </button>
+
                                                 <button
                                                     onClick={() => handleDelete(post.id)}
                                                     className="p-3 text-xs font-bold text-[#ea4335] hover:bg-[#ea4335]/8 border border-[#ea4335]/15 rounded-xl cursor-pointer transition-colors"
