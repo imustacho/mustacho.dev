@@ -64,7 +64,7 @@ export default function AdminPage() {
 
     const handleUnlock = (e: React.FormEvent) => {
         e.preventDefault();
-        if (passcode.toLowerCase() === "mustacho") {
+        if (passcode.toLowerCase() === process.env.ADMIN_PASSCODE?.toLowerCase()) {
             setIsUnlocked(true);
             setPasscodeError("");
             sessionStorage.setItem("adminAuth", "true");
