@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import Link from "next/link";
 import { FaPlus, FaTrash, FaEdit, FaLock, FaArrowLeft, FaSave, FaEye } from "react-icons/fa";
-
+import dotenv from "dotenv";
+dotenv.config();
 interface BlogPost {
     id: string;
     title: string;
