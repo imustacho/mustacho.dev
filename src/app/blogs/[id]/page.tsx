@@ -76,7 +76,7 @@ export default function SingleBlogPage() {
                     >
                         <div>
                             {/* Meta Tags */}
-                            <div className="flex items-center gap-3 text-xs font-semibold text-[#955623] mb-4">
+                            <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs font-semibold text-[#955623] mb-4">
                                 <span className="px-2.5 py-0.5 bg-[#955623]/10 border border-[#955623]/15 rounded-full">
                                     {post.category}
                                 </span>

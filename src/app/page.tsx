@@ -52,7 +52,7 @@ export default function Home() {
           className="mx-auto flex flex-col items-center justify-center px-6 max-w-6xl w-full text-center"
         >
           <div className="flex flex-col items-center text-center">
-            <h1 className="font-heading text-7xl tracking-tight text-[#955623] drop-shadow-sm md:text-9xl">
+            <h1 className="font-heading text-5xl sm:text-7xl tracking-tight text-[#955623] drop-shadow-sm md:text-9xl">
               Mustacho
             </h1>
 
@@ -63,7 +63,7 @@ export default function Home() {
             <Mustache />
 
             {/* Social Icons */}
-            <div className="mt-10 flex items-center justify-center gap-5">
+            <div className="mt-10 grid grid-cols-3 sm:grid-cols-5 gap-3 sm:gap-5 place-items-center">
               {socials.map((social) => {
                 const Icon = social.icon;
 
@@ -75,16 +75,16 @@ export default function Home() {
                     rel="noreferrer"
                     aria-label={social.name}
                     className={`
-                      group flex h-20 w-20 items-center justify-center rounded-full
+                      group flex h-14 w-14 sm:h-16 sm:w-16 md:h-20 md:w-20 items-center justify-center rounded-full
                       border border-[#955623]/15 bg-[#955623]/10 text-[#955623]
                       shadow-[0_10px_30px_rgba(149,86,35,0.14)] backdrop-blur-sm
                       transition-all duration-300 ease-out
-                      hover:-translate-y-2 hover:scale-125 hover:border-transparent hover:text-white
+                      hover:-translate-y-2 hover:scale-110 md:hover:scale-125 hover:border-transparent hover:text-white
                       hover:shadow-[0_18px_40px_rgba(149,86,35,0.28)]
                       ${social.hover}
                     `}
                   >
-                    <Icon className="text-3xl transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110" />
+                    <Icon className="text-xl sm:text-2xl md:text-3xl transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110" />
                   </a>
                 );
               })}

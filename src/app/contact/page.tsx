@@ -110,11 +110,11 @@ export default function ContactPage() {
                         <motion.h2 
                             initial={{ scale: 0.9, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
-                            className="font-heading text-5xl text-[#955623] tracking-tight"
+                            className="font-heading text-3xl sm:text-4xl md:text-5xl text-[#955623] tracking-tight"
                         >
                             Get in Touch
                         </motion.h2>
-                        <p className="text-lg text-[#7a451b]">
+                        <p className="text-base sm:text-lg text-[#7a451b]">
                             Use the terminal CLI below to communicate with me.
                         </p>
                     </div>
@@ -125,7 +125,7 @@ export default function ContactPage() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ type: "spring", stiffness: 100, damping: 15 }}
                         onClick={handleContainerClick}
-                        className="w-full bg-[#1e0f08] border-4 border-[#955623]/50 rounded-2xl shadow-[0_20px_50px_rgba(149,86,35,0.22)] overflow-hidden cursor-text flex flex-col h-96"
+                        className="w-full bg-[#1e0f08] border-2 sm:border-4 border-[#955623]/50 rounded-2xl shadow-[0_20px_50px_rgba(149,86,35,0.22)] overflow-hidden cursor-text flex flex-col h-72 sm:h-96"
                     >
                         {/* Terminal Title Bar */}
                         <div className="bg-[#140a04] px-4 py-3 flex items-center justify-between border-b border-[#955623]/20 select-none">
@@ -134,14 +134,14 @@ export default function ContactPage() {
                                 <div className="w-3 h-3 rounded-full bg-[#fbbc05]" />
                                 <div className="w-3 h-3 rounded-full bg-[#34a853]" />
                             </div>
-                            <span className="text-xs font-mono font-bold text-[#f5efe6]/40 uppercase tracking-widest">
+                            <span className="text-[10px] sm:text-xs font-mono font-bold text-[#f5efe6]/40 uppercase tracking-widest">
                                 Mustacho CLI v1.0.0
                             </span>
                             <div className="w-14" />
                         </div>
 
                         {/* Terminal Output Area */}
-                        <div className="p-4 overflow-y-auto flex-1 font-mono text-sm leading-relaxed text-[#f5efe6] flex flex-col gap-2 no-scrollbar">
+                        <div className="p-3 sm:p-4 overflow-y-auto flex-1 font-mono text-xs sm:text-sm leading-relaxed text-[#f5efe6] flex flex-col gap-2 no-scrollbar">
                             {history.map((item, idx) => (
                                 <div 
                                     key={idx} 
@@ -156,7 +156,8 @@ export default function ContactPage() {
                             
                             {/* Prompt Line */}
                             <div className="flex items-center gap-2 text-[#fdbc84] relative">
-                                <span className="shrink-0 select-none">visitor@mustacho:~$</span>
+                                <span className="shrink-0 select-none hidden sm:inline">visitor@mustacho:~$</span>
+                                <span className="shrink-0 select-none sm:hidden">~$</span>
                                 
                                 {/* Visible Text and Cursor Container */}
                                 <div className="flex flex-wrap items-center flex-1 font-mono text-[#f5efe6]">

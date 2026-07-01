@@ -78,8 +78,7 @@ export default function Navbar() {
                                     <motion.span
                                         layoutId="navHover"
                                         className="absolute inset-0 bg-[#955623]/8 rounded-full -z-10"
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
+                                        style={{ opacity: 1 }}
                                         transition={{ type: "spring", stiffness: 350, damping: 25 }}
                                     />
                                 )}
@@ -89,8 +88,7 @@ export default function Navbar() {
                                     <motion.span
                                         layoutId="activeDot"
                                         className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-[#955623]"
-                                        initial={{ opacity: 0, scale: 0 }}
-                                        animate={{ opacity: 1, scale: 1 }}
+                                        style={{ opacity: 1 }}
                                         transition={{ type: "spring", stiffness: 300, damping: 20 }}
                                     />
                                 )}
