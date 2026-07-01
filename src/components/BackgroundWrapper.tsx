@@ -36,8 +36,8 @@ export default function BackgroundWrapper({ children }: { children: React.ReactN
             style={{
                 backgroundColor: "#f5efe6",
                 backgroundImage: `
-                  radial-gradient(circle, rgba(149,86,35,0.18) 1.6px, transparent 1.6px),
-                  radial-gradient(circle, rgba(149,86,35,0.18) 1.6px, transparent 1.6px)
+                  radial-gradient(circle, rgba(149,86,35,0.18) 0.8px, transparent 2.5px),
+                  radial-gradient(circle, rgba(149,86,35,0.18) 0.8px, transparent 2.5px)
                 `,
                 backgroundSize: "35px 35px",
                 backgroundPosition: backgroundPosition,
