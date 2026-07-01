@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import { FaDiscord, FaGithub, FaSpotify } from "react-icons/fa6";
 import { MdEmail } from "react-icons/md";
 import Mustache from "./mustache";
+import { FaYoutube } from "react-icons/fa";
 
 const ACCENT = "#955623";
 
@@ -19,6 +20,12 @@ const socials = [
     href: "https://discord.gg/eJkymXBAXU",
     icon: FaDiscord,
     hover: "hover:bg-[#5865F2]",
+  },
+  {
+    name: "Youtube",
+    href: "https://www.youtube.com/@imustachoo",
+    icon: FaYoutube,
+    hover: "hover:bg-[#FF0000]",
   },
   {
     name: "Spotify",
