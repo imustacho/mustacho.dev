@@ -57,19 +57,20 @@ export default function Mustache() {
             const rdy = -ryVal * 10;
 
             const warpPoint = (x: number, y: number) => {
+                const MID_X = 7695; // Mathematical midpoint between 4400 (left tip) and 10990 (right tip)
                 let wL = 0;
                 if (x <= 4400) {
                     wL = 1;
-                } else if (x < 6720) {
-                    wL = (6720 - x) / (6720 - 4400);
+                } else if (x < MID_X) {
+                    wL = (MID_X - x) / (MID_X - 4400);
                     wL = Math.pow(wL, 1.8);
                 }
 
                 let wR = 0;
                 if (x >= 10990) {
                     wR = 1;
-                } else if (x > 6720) {
-                    wR = (x - 6720) / (10990 - 6720);
+                } else if (x > MID_X) {
+                    wR = (x - MID_X) / (10990 - MID_X);
                     wR = Math.pow(wR, 1.8);
                 }
 
