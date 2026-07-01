@@ -7,6 +7,10 @@
     --color-accent: #955623;
 }
 
+html {
+    scrollbar-gutter: stable;
+}
+
 body {
     font-family: var(--font-body);
     user-select: none;
