@@ -27,6 +27,13 @@ export default function Projects() {
             tags: ["Discord", "AI", "Memory", "Training"],
             codeUrl: "https://github.com/imustacho",
             icon: "🐡"
+        },
+        {
+            title: "Hungerfall",
+            description: "A text-based adventure game with AI.",
+            tags: ["Game", "AI", "Text-based"],
+            codeUrl: "https://github.com/imustacho/hungerfall",
+            icon: "🥪"
         }
     ];
 
