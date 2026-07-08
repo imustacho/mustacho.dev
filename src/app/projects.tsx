@@ -30,7 +30,7 @@ export default function Projects() {
         },
         {
             title: "Hungerfall",
-            description: "A text-based adventure game with AI.",
+            description: "A text-based adventure game with AI-Narrator support.",
             tags: ["Game", "AI", "Text-based"],
             codeUrl: "https://github.com/imustacho/hungerfall",
             icon: "🥪"
