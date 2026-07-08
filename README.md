@@ -1,34 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Mustacho.dev
+
+An interactive developer portfolio and blog built with **Next.js 16 (App Router)** and **React 19**. It features spring-physics UI animations, a custom interactive terminal CLI emulator, and a passcode-secured blog CMS.
+
+## Tech Stack
+
+*   **Framework:** Next.js 16.2 (App Router) & React 19.2
+*   **Styling:** Tailwind CSS v4 & PostCSS
+*   **Animations:** Motion (Framer Motion)
+*   **Database:** Local JSON File (`src/data/blogs.json`)
+*   **Markdown Parsing:** React Markdown
+
+## Environment Variables
+
+Create a `.env.local` file in the root directory:
+
+```env
+ADMIN_PASSCODE=your_secret_passcode_here
+```
+
+*   `ADMIN_PASSCODE`: Used to authenticate access to the `/admin` CMS dashboard.
 
 ## Getting Started
 
-First, run the development server:
+### 1. Install Dependencies
+
+```bash
+npm install
+```
+
+### 2. Start the Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The application will be available at [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Build & Run Production
 
-## Learn More
+```bash
+npm run build
+npm start
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Local APIs
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+*   `GET /api/blogs` — Retrieve all blog posts.
+*   `POST /api/blogs` — Create a new blog post.
+*   `GET | PUT | DELETE /api/blogs/[id]` — Fetch, update, or delete a single post.
+*   `POST /api/admin/login` — Verify admin passcode.
