@@ -7,16 +7,55 @@
     --color-accent: #955623;
 }
 
+/* ─── Light Theme (default) ─────────────────────────────────── */
+:root {
+    --bg: #f5efe6;
+    --bg-surface: #ede4d8;
+    --bg-elevated: #ffffff;
+    --text-primary: #955623;
+    --text-muted: #7a451b;
+    --text-faint: rgba(122, 69, 27, 0.55);
+    --accent: #955623;
+    --accent-hover: #7a451b;
+    --border: rgba(149, 86, 35, 0.15);
+    --border-strong: rgba(149, 86, 35, 0.25);
+    --dot-color: rgba(149, 86, 35, 0.18);
+    --shadow: rgba(149, 86, 35, 0.12);
+    --shadow-strong: rgba(149, 86, 35, 0.22);
+}
+
+/* ─── Dark Theme ─────────────────────────────────────────────── */
+[data-theme="dark"] {
+    --bg: #1a0f08;
+    --bg-surface: #261508;
+    --bg-elevated: #2f1c0d;
+    --text-primary: #e8b88a;
+    --text-muted: #c49065;
+    --text-faint: rgba(196, 144, 101, 0.55);
+    --accent: #c4783a;
+    --accent-hover: #e8b88a;
+    --border: rgba(196, 120, 58, 0.18);
+    --border-strong: rgba(196, 120, 58, 0.32);
+    --dot-color: rgba(196, 120, 58, 0.22);
+    --shadow: rgba(0, 0, 0, 0.35);
+    --shadow-strong: rgba(0, 0, 0, 0.55);
+}
+
+/* ─── Base ───────────────────────────────────────────────────── */
 html {
     scrollbar-gutter: stable;
 }
 
 body {
     font-family: var(--font-body);
+    background-color: var(--bg);
+    color: var(--text-primary);
     user-select: none;
     -webkit-user-select: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* ─── Animations ─────────────────────────────────────────────── */
 @keyframes cursor-blink {
     0%, 100% { opacity: 1; }
     50% { opacity: 0; }
@@ -26,12 +65,11 @@ body {
     animation: cursor-blink 1.2s step-end infinite;
 }
 
-/* Hide scrollbar for Chrome, Safari and Opera */
+/* ─── Scrollbar Utilities ────────────────────────────────────── */
 .no-scrollbar::-webkit-scrollbar {
     display: none;
 }
-/* Hide scrollbar for IE, Edge and Firefox */
 .no-scrollbar {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
