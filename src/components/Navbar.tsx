@@ -6,7 +6,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import MustacheSvg from "@/components/mustachesvg";
 import { useTheme } from "@/context/ThemeContext";
-import { HiSun, HiMoon } from "react-icons/hi2";
+import type { ThemeMode } from "@/context/ThemeContext";
+import { HiSun, HiMoon, HiComputerDesktop } from "react-icons/hi2";
 
 const NAV_ITEMS = [
     { label: "About", href: "/about", view: "about" },
@@ -20,7 +21,15 @@ export default function Navbar() {
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const pathname = usePathname() || "";
-    const { theme, toggleTheme } = useTheme();
+    const { theme, mode, setMode } = useTheme();
+
+    const CYCLE: ThemeMode[] = ["system", "dark", "light"];
+    const cycleMode = () => {
+        const idx = CYCLE.indexOf(mode);
+        setMode(CYCLE[(idx + 1) % CYCLE.length]);
+    };
+    const ModeIcon = mode === "dark" ? HiMoon : mode === "light" ? HiSun : HiComputerDesktop;
+    const modeLabel = mode === "dark" ? "Dark" : mode === "light" ? "Light" : "System";
 
     const getActiveView = () => {
         if (pathname === "/about") return "about";
@@ -113,10 +122,10 @@ export default function Navbar() {
 
                 {/* Right controls: Dark Mode Toggle + Hamburger */}
                 <div className="flex items-center gap-2">
-                    {/* Dark mode toggle */}
+                    {/* Theme cycle button */}
                     <motion.button
-                        onClick={toggleTheme}
-                        className="flex items-center justify-center w-8 h-8 rounded-full transition-colors cursor-pointer border"
+                        onClick={cycleMode}
+                        className="flex items-center justify-center w-8 h-8 rounded-full cursor-pointer border"
                         style={{
                             color: "var(--accent)",
                             borderColor: "var(--border)",
@@ -124,19 +133,19 @@ export default function Navbar() {
                         }}
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
-                        aria-label="Toggle dark mode"
-                        title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+                        aria-label="Toggle theme"
+                        title={`Current: ${modeLabel} — click to cycle`}
                     >
                         <AnimatePresence mode="wait" initial={false}>
                             <motion.span
-                                key={theme}
+                                key={mode}
                                 initial={{ rotate: -90, opacity: 0, scale: 0.5 }}
                                 animate={{ rotate: 0, opacity: 1, scale: 1 }}
                                 exit={{ rotate: 90, opacity: 0, scale: 0.5 }}
                                 transition={{ duration: 0.18 }}
                                 className="flex items-center justify-center"
                             >
-                                {theme === "dark" ? <HiSun size={15} /> : <HiMoon size={15} />}
+                                <ModeIcon size={15} />
                             </motion.span>
                         </AnimatePresence>
                     </motion.button>

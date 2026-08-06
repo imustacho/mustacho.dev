@@ -52,7 +52,16 @@ body {
     color: var(--text-primary);
     user-select: none;
     -webkit-user-select: none;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition:
+        background-color 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+        color 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─── Smooth global theme transition ─────────────────────────── */
+*, *::before, *::after {
+    transition-property: background-color, border-color, color, box-shadow, fill, stroke;
+    transition-duration: 0.8s;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ─── Animations ─────────────────────────────────────────────── */

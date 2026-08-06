@@ -2,40 +2,72 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 
-type Theme = "light" | "dark";
+export type ThemeMode = "light" | "dark" | "system";
+export type ResolvedTheme = "light" | "dark";
 
 interface ThemeContextValue {
-    theme: Theme;
-    toggleTheme: () => void;
+    mode: ThemeMode;           // what the user selected
+    theme: ResolvedTheme;      // what is actually applied
+    setMode: (m: ThemeMode) => void;
 }
 
 const ThemeContext = createContext<ThemeContextValue>({
+    mode: "system",
     theme: "light",
-    toggleTheme: () => {}
+    setMode: () => {},
 });
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
-    const [theme, setTheme] = useState<Theme>("light");
+function getSystemTheme(): ResolvedTheme {
+    if (typeof window === "undefined") return "light";
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
 
+function resolveTheme(mode: ThemeMode): ResolvedTheme {
+    if (mode === "system") return getSystemTheme();
+    return mode;
+}
+
+function applyTheme(resolved: ResolvedTheme) {
+    document.documentElement.setAttribute("data-theme", resolved);
+}
+
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
+    const [mode, setModeState] = useState<ThemeMode>("system");
+    const [theme, setTheme] = useState<ResolvedTheme>("light");
+
+    /* ── On mount: read saved preference ─────────────────────── */
     useEffect(() => {
-        const stored = localStorage.getItem("mustacho-theme") as Theme | null;
-        const preferred = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-        const initial = stored ?? preferred;
-        setTheme(initial);
-        document.documentElement.setAttribute("data-theme", initial);
+        const stored = (localStorage.getItem("mustacho-theme-mode") as ThemeMode) ?? "system";
+        const resolved = resolveTheme(stored);
+        setModeState(stored);
+        setTheme(resolved);
+        applyTheme(resolved);
     }, []);
 
-    const toggleTheme = () => {
-        setTheme((prev) => {
-            const next = prev === "light" ? "dark" : "light";
-            localStorage.setItem("mustacho-theme", next);
-            document.documentElement.setAttribute("data-theme", next);
-            return next;
-        });
+    /* ── Listen for OS preference changes when in system mode ── */
+    useEffect(() => {
+        const mq = window.matchMedia("(prefers-color-scheme: dark)");
+        const handler = () => {
+            if (mode === "system") {
+                const resolved = getSystemTheme();
+                setTheme(resolved);
+                applyTheme(resolved);
+            }
+        };
+        mq.addEventListener("change", handler);
+        return () => mq.removeEventListener("change", handler);
+    }, [mode]);
+
+    const setMode = (m: ThemeMode) => {
+        const resolved = resolveTheme(m);
+        setModeState(m);
+        setTheme(resolved);
+        applyTheme(resolved);
+        localStorage.setItem("mustacho-theme-mode", m);
     };
 
     return (
-        <ThemeContext.Provider value={{ theme, toggleTheme }}>
+        <ThemeContext.Provider value={{ mode, theme, setMode }}>
             {children}
         </ThemeContext.Provider>
     );
