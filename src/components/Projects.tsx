@@ -61,7 +61,7 @@ export default function Projects() {
                     Projects
                 </motion.h2>
                 <p className="text-lg max-w-lg" style={{ color: "var(--text-muted)" }}>
-                    Things I&apos;ve built with love, clean code, and micro-animations.
+                    Some things I&apos;ve worked on.
                 </p>
             </div>
 

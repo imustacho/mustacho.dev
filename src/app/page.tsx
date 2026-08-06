@@ -33,7 +33,7 @@ export default function Home() {
                         </h1>
 
                         <p className="mt-5 max-w-2xl text-base md:text-lg" style={{ color: "var(--text-muted)" }}>
-                            Turning ideas into reality, one commit at a time.
+                            Developer in progress. Building things on the internet.
                         </p>
 
                         <Mustache />

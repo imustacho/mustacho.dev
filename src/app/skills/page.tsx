@@ -33,7 +33,7 @@ export default function SkillsPage() {
                         Skills
                     </h1>
                     <p className="text-lg max-w-lg" style={{ color: "var(--text-muted)" }}>
-                        Tools and technologies I use to bring ideas to life.
+                        Things I&apos;ve picked up along the way.
                     </p>
                 </motion.div>
 

@@ -98,9 +98,9 @@ export default function AboutPage() {
                             className="text-base md:text-lg leading-relaxed max-w-lg"
                             style={{ color: "var(--text-muted)" }}
                         >
-                            Genç bir geliştirici adayıyım. Genellikle discord botları ve web siteleri
-                            yapıyorum; topluluklar yönetiyorum. İleride elektronik alanına
-                            yönelmek ve donanım projeler üretmek istiyorum.
+                            High school student from Istanbul. I build Discord bots and websites,
+                            and manage a couple of online communities. Eventually I want to
+                            get into electronics and hardware projects.
                         </motion.p>
 
                         {/* Social links */}
@@ -193,7 +193,7 @@ export default function AboutPage() {
                         style={{ color: "var(--accent)" }}
                     >
                         <span className="w-8 h-px" style={{ backgroundColor: "var(--border-strong)" }} />
-                        Hobiler
+                        Hobbies
                     </h2>
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -250,11 +250,11 @@ export default function AboutPage() {
                         <HiCpuChip size={20} />
                     </div>
                     <div className="flex flex-col gap-1">
-                        <h3 className="font-heading text-base" style={{ color: "var(--accent)" }}>Gelecek Hedefim</h3>
+                        <h3 className="font-heading text-base" style={{ color: "var(--accent)" }}>What&apos;s next</h3>
                         <p className="text-sm leading-relaxed" style={{ color: "var(--text-muted)" }}>
-                            Elektronik alanına yönelmek ve yazılımı donanımla birleştiren
-                            projeler geliştirmek istiyorum. Kod yazmaktan devre tasarlamaya
-                            geçiş, en büyük heyecanım.
+                            I want to move into electronics — combining code with hardware.
+                            Going from writing software to designing circuits is something
+                            I&apos;m genuinely excited about.
                         </p>
                     </div>
                 </motion.div>

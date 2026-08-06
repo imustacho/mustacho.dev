@@ -96,32 +96,20 @@ export default function ContactPage() {
         switch (command) {
             case "help":
                 out = [
-                    { type: "output", text: "╔─ Available Commands ──────────────────────────╗" },
-                    { type: "output", text: "│  whoami   →  Who is Mustacho?                 │" },
-                    { type: "output", text: "│  socials  →  List all social handles          │" },
-                    { type: "output", text: "│  github   →  Open GitHub profile              │" },
-                    { type: "output", text: "│  discord  →  Open Discord server              │" },
-                    { type: "output", text: "│  spotify  →  Open Spotify profile             │" },
-                    { type: "output", text: "│  mail     →  Open email client                │" },
-                    { type: "output", text: "│  clear    →  Clear the terminal               │" },
-                    { type: "output", text: "╚───────────────────────────────────────────────╝" },
+                    { type: "output", text: "Available Commands:\n  whoami   - A bit about me.\n  socials  - All my links.\n  github   - Open GitHub profile.\n  discord  - Open Discord server.\n  spotify  - Open Spotify profile.\n  mail     - Send me an email.\n  clear    - Clear the screen." }
                 ];
                 break;
 
             case "whoami":
                 out = [
-                    { type: "output", text: "┌─ Mustacho ────────────────────────────────────┐" },
-                    { type: "output", text: "│                                               │" },
-                    { type: "output", text: "│  Genç liseli bir geliştirici adayı.           │" },
-                    { type: "output", text: "│  Discord botları ve web siteleri yapıyorum.   │" },
-                    { type: "output", text: "│  Birçok topluluğu yönetiyorum.               │" },
-                    { type: "output", text: "│                                               │" },
-                    { type: "output", text: "│  📍 Istanbul, Türkiye                        │" },
-                    { type: "output", text: "│  🎓 Fen Lisesi öğrencisi                     │" },
-                    { type: "output", text: "│  📷 Fotoğrafçılık  🎵 Müzik                  │" },
-                    { type: "output", text: "│  🔌 Gelecekte: Elektronik & Donanım          │" },
-                    { type: "output", text: "│                                               │" },
-                    { type: "output", text: "└───────────────────────────────────────────────┘" },
+                    { type: "output", text: "  Mustacho — high school student from Istanbul." },
+                    { type: "output", text: "  I build Discord bots and websites." },
+                    { type: "output", text: "  I manage a couple of online communities." },
+                    { type: "output", text: "" },
+                    { type: "output", text: "  📍 Istanbul, Turkey" },
+                    { type: "output", text: "  🎓 Science high school student" },
+                    { type: "output", text: "  📷 Photography  🎵 Music" },
+                    { type: "output", text: "  🔌 Interested in electronics & hardware" },
                 ];
                 break;
 

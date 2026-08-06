@@ -5,8 +5,8 @@ import Navbar from "@/components/Navbar";
 import { ThemeProvider } from "@/context/ThemeContext";
 
 export const metadata: Metadata = {
-    title: "Mustacho — Creative Developer",
-    description: "Turning ideas into reality, one commit at a time. Creative frontend developer crafting smooth, playful browser interfaces.",
+    title: "Mustacho",
+    description: "High school student from Istanbul. I build Discord bots and websites.",
 };
 
 export default function RootLayout({
