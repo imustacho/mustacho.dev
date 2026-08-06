@@ -1,49 +1,96 @@
 [
     {
         "category": "Languages",
-        "icon": "💬",
+        "icon": "",
         "skills": [
-            { "name": "TypeScript", "repoUrl": "" },
-            { "name": "JavaScript", "repoUrl": "" },
-            { "name": "Python", "repoUrl": "" },
-            { "name": "HTML & CSS", "repoUrl": "" }
+            {
+                "name": "TypeScript",
+                "repoUrl": ""
+            },
+            {
+                "name": "JavaScript",
+                "repoUrl": ""
+            },
+            {
+                "name": "HTML & CSS",
+                "repoUrl": ""
+            }
         ]
     },
     {
         "category": "Frameworks & Libraries",
-        "icon": "🧩",
+        "icon": "",
         "skills": [
-            { "name": "Next.js", "repoUrl": "https://github.com/imustacho/mustacho.dev" },
-            { "name": "React", "repoUrl": "" },
-            { "name": "Motion (Framer)", "repoUrl": "" },
-            { "name": "Tailwind CSS", "repoUrl": "" }
+            {
+                "name": "Next.js",
+                "repoUrl": "https://github.com/imustacho/mustacho.dev"
+            },
+            {
+                "name": "React",
+                "repoUrl": "https://github.com/imustacho/mustacho.dev"
+            },
+            {
+                "name": "Motion (Framer)",
+                "repoUrl": "https://github.com/imustacho/mustacho.dev"
+            },
+            {
+                "name": "Tailwind CSS",
+                "repoUrl": "https://github.com/imustacho/mustacho.dev"
+            }
         ]
     },
     {
         "category": "Backend & APIs",
-        "icon": "⚙️",
+        "icon": "",
         "skills": [
-            { "name": "Node.js", "repoUrl": "" },
-            { "name": "REST APIs", "repoUrl": "" },
-            { "name": "Discord.js", "repoUrl": "" }
+            {
+                "name": "Node.js",
+                "repoUrl": ""
+            },
+            {
+                "name": "REST APIs",
+                "repoUrl": ""
+            },
+            {
+                "name": "Discord.js",
+                "repoUrl": "https://github.com/imustacho/hungerfall"
+            }
         ]
     },
     {
         "category": "AI & Machine Learning",
-        "icon": "🤖",
+        "icon": "",
         "skills": [
-            { "name": "LLM Integration", "repoUrl": "" },
-            { "name": "Prompt Engineering", "repoUrl": "" },
-            { "name": "Agent Systems", "repoUrl": "https://github.com/imustacho" }
+            {
+                "name": "LLM Integration",
+                "repoUrl": "https://github.com/imustacho/overseer"
+            },
+            {
+                "name": "Prompt Engineering",
+                "repoUrl": "https://github.com/imustacho/bubble"
+            },
+            {
+                "name": "Agent Systems",
+                "repoUrl": "https://github.com/imustacho/overseer"
+            }
         ]
     },
     {
         "category": "Tools & DevOps",
-        "icon": "🛠",
+        "icon": "",
         "skills": [
-            { "name": "Git & GitHub", "repoUrl": "https://github.com/imustacho" },
-            { "name": "Vercel", "repoUrl": "" },
-            { "name": "VS Code", "repoUrl": "" }
+            {
+                "name": "Git & GitHub",
+                "repoUrl": ""
+            },
+            {
+                "name": "Vercel",
+                "repoUrl": ""
+            },
+            {
+                "name": "VS Code",
+                "repoUrl": ""
+            }
         ]
     }
 ]
