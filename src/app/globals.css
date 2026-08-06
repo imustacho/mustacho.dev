@@ -29,11 +29,11 @@
     --bg: #0d0d0d;
     --bg-surface: #141414;
     --bg-elevated: #1a1a1a;
-    --text-primary: #d8d8d8;
-    --text-muted: #909090;
-    --text-faint: rgba(144, 144, 144, 0.45);
-    --accent: #d8d8d8;
-    --accent-hover: #f0f0f0;
+    --text-primary: #c0c0c0;
+    --text-muted: #787878;
+    --text-faint: rgba(120, 120, 120, 0.45);
+    --accent: #c0c0c0;
+    --accent-hover: #d8d8d8;
     --border: rgba(255, 255, 255, 0.08);
     --border-strong: rgba(255, 255, 255, 0.14);
     --dot-color: rgba(255, 255, 255, 0.05);
