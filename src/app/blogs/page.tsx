@@ -49,7 +49,7 @@ export default function BlogsPage() {
 
                 {loading ? (
                     <div className="flex items-center justify-center py-20 font-heading text-2xl text-[#955623]">
-                        Yükleniyor... / Loading...
+                        Loading...
                     </div>
                 ) : (
                     <div className="flex flex-col gap-6 w-full mt-4">
