@@ -1,0 +1,49 @@
+[
+    {
+        "category": "Languages",
+        "icon": "💬",
+        "skills": [
+            { "name": "TypeScript", "repoUrl": "" },
+            { "name": "JavaScript", "repoUrl": "" },
+            { "name": "Python", "repoUrl": "" },
+            { "name": "HTML & CSS", "repoUrl": "" }
+        ]
+    },
+    {
+        "category": "Frameworks & Libraries",
+        "icon": "🧩",
+        "skills": [
+            { "name": "Next.js", "repoUrl": "https://github.com/imustacho/mustacho.dev" },
+            { "name": "React", "repoUrl": "" },
+            { "name": "Motion (Framer)", "repoUrl": "" },
+            { "name": "Tailwind CSS", "repoUrl": "" }
+        ]
+    },
+    {
+        "category": "Backend & APIs",
+        "icon": "⚙️",
+        "skills": [
+            { "name": "Node.js", "repoUrl": "" },
+            { "name": "REST APIs", "repoUrl": "" },
+            { "name": "Discord.js", "repoUrl": "" }
+        ]
+    },
+    {
+        "category": "AI & Machine Learning",
+        "icon": "🤖",
+        "skills": [
+            { "name": "LLM Integration", "repoUrl": "" },
+            { "name": "Prompt Engineering", "repoUrl": "" },
+            { "name": "Agent Systems", "repoUrl": "https://github.com/imustacho" }
+        ]
+    },
+    {
+        "category": "Tools & DevOps",
+        "icon": "🛠",
+        "skills": [
+            { "name": "Git & GitHub", "repoUrl": "https://github.com/imustacho" },
+            { "name": "Vercel", "repoUrl": "" },
+            { "name": "VS Code", "repoUrl": "" }
+        ]
+    }
+]
