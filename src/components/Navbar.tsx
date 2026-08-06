@@ -65,12 +65,10 @@ export default function Navbar() {
                     style={{ color: "var(--accent)" }}
                 >
                     <motion.span
-                        className="flex items-center gap-1"
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                     >
-                        <MustacheSvg className="w-8 h-auto md:w-10 shrink-0 translate-y-[1px]" />
-                        <span className="hidden sm:inline">Mustacho</span>
+                        Mustacho
                     </motion.span>
                 </Link>
 
