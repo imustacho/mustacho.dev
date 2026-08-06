@@ -52,7 +52,7 @@ export default function Navbar() {
                 className="flex items-center justify-between gap-2 px-4 py-2 rounded-full border backdrop-blur-xl w-full relative"
                 style={{
                     backgroundColor: theme === "dark"
-                        ? "rgba(38, 21, 8, 0.88)"
+                        ? "rgba(13, 13, 13, 0.88)"
                         : "rgba(245, 239, 230, 0.88)",
                     borderColor: "var(--border)",
                     boxShadow: `0 12px 40px var(--shadow-strong)`,
@@ -192,7 +192,7 @@ export default function Navbar() {
                         className="absolute top-16 left-0 right-0 border rounded-3xl p-3 flex flex-col gap-1 backdrop-blur-xl sm:hidden origin-top z-40"
                         style={{
                             backgroundColor: theme === "dark"
-                                ? "rgba(38, 21, 8, 0.96)"
+                                ? "rgba(13, 13, 13, 0.97)"
                                 : "rgba(245, 239, 230, 0.97)",
                             borderColor: "var(--border)",
                             boxShadow: `0 12px 40px var(--shadow-strong)`,

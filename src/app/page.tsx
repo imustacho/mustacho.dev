@@ -51,13 +51,17 @@ export default function Home() {
                                         aria-label={social.name}
                                         className={`
                                             group flex h-14 w-14 sm:h-16 sm:w-16 md:h-20 md:w-20 items-center justify-center rounded-full
-                                            border border-[#955623]/15 bg-[#955623]/10 text-[#955623]
-                                            shadow-[0_10px_30px_rgba(149,86,35,0.14)] backdrop-blur-sm
+                                            shadow-[0_10px_30px_rgba(0,0,0,0.12)] backdrop-blur-sm
                                             transition-all duration-300 ease-out
                                             hover:-translate-y-2 hover:scale-110 md:hover:scale-125 hover:border-transparent hover:text-white
-                                            hover:shadow-[0_18px_40px_rgba(149,86,35,0.28)]
+                                            hover:shadow-[0_18px_40px_rgba(0,0,0,0.22)]
                                             ${social.hover}
                                         `}
+                                        style={{
+                                            border: "1px solid var(--border-strong)",
+                                            backgroundColor: "var(--border)",
+                                            color: "var(--accent)",
+                                        }}
                                     >
                                         <Icon className="text-xl sm:text-2xl md:text-3xl transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110" />
                                     </a>
