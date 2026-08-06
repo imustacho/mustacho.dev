@@ -1,0 +1,35 @@
+[
+    {
+        "id": "overseer",
+        "title": "Overseer",
+        "description": "Manage Discord servers with natural language. An AI agent that understands your commands and executes moderation, roles, and server management automatically.",
+        "tags": ["Discord", "AI", "Agent", "TypeScript"],
+        "codeUrl": "https://github.com/imustacho",
+        "demoUrl": "",
+        "icon": "🕶",
+        "status": "active",
+        "featured": true
+    },
+    {
+        "id": "bubble",
+        "title": "Bubble",
+        "description": "Discord-powered AI engine generator with persistent memory and custom training support. Build your own AI persona that lives in your Discord server.",
+        "tags": ["Discord", "AI", "Memory", "Training"],
+        "codeUrl": "https://github.com/imustacho",
+        "demoUrl": "",
+        "icon": "🐡",
+        "status": "active",
+        "featured": false
+    },
+    {
+        "id": "hungerfall",
+        "title": "Hungerfall",
+        "description": "A text-based adventure game with an AI-Narrator that adapts the story to your choices. Every playthrough is unique.",
+        "tags": ["Game", "AI", "Text-based", "Narrative"],
+        "codeUrl": "https://github.com/imustacho/hungerfall",
+        "demoUrl": "",
+        "icon": "🥪",
+        "status": "active",
+        "featured": false
+    }
+]
