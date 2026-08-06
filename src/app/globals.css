@@ -26,19 +26,19 @@
 
 /* ─── Dark Theme ─────────────────────────────────────────────── */
 [data-theme="dark"] {
-    --bg: #1a0f08;
-    --bg-surface: #261508;
-    --bg-elevated: #2f1c0d;
-    --text-primary: #e8b88a;
-    --text-muted: #c49065;
-    --text-faint: rgba(196, 144, 101, 0.55);
+    --bg: #0f1117;
+    --bg-surface: #181c25;
+    --bg-elevated: #1e2330;
+    --text-primary: #f0e8dc;
+    --text-muted: #c9bfb4;
+    --text-faint: rgba(240, 232, 220, 0.45);
     --accent: #c4783a;
-    --accent-hover: #e8b88a;
-    --border: rgba(196, 120, 58, 0.18);
-    --border-strong: rgba(196, 120, 58, 0.32);
-    --dot-color: rgba(196, 120, 58, 0.22);
-    --shadow: rgba(0, 0, 0, 0.35);
-    --shadow-strong: rgba(0, 0, 0, 0.55);
+    --accent-hover: #d98d4f;
+    --border: rgba(196, 120, 58, 0.2);
+    --border-strong: rgba(196, 120, 58, 0.35);
+    --dot-color: rgba(196, 120, 58, 0.15);
+    --shadow: rgba(0, 0, 0, 0.4);
+    --shadow-strong: rgba(0, 0, 0, 0.65);
 }
 
 /* ─── Base ───────────────────────────────────────────────────── */
