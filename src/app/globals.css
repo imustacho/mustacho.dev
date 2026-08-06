@@ -57,11 +57,13 @@ body {
         color 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ─── Smooth global theme transition ─────────────────────────── */
-*, *::before, *::after {
-    transition-property: background-color, border-color, color, box-shadow, fill, stroke;
-    transition-duration: 0.8s;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+/* ─── Smooth theme transition (only during toggle) ──────────── */
+[data-theme-transitioning] *,
+[data-theme-transitioning] *::before,
+[data-theme-transitioning] *::after {
+    transition-property: background-color, border-color, color, box-shadow, fill, stroke !important;
+    transition-duration: 0.8s !important;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
 /* ─── Animations ─────────────────────────────────────────────── */

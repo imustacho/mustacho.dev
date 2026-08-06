@@ -60,10 +60,19 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
     const setMode = (m: ThemeMode) => {
         const resolved = resolveTheme(m);
+
+        // Mark transitioning — CSS uses this to apply 0.8s color transitions
+        document.documentElement.setAttribute("data-theme-transitioning", "1");
+        document.documentElement.setAttribute("data-theme", resolved);
+
         setModeState(m);
         setTheme(resolved);
-        applyTheme(resolved);
         localStorage.setItem("mustacho-theme-mode", m);
+
+        // Remove after transition completes (slightly longer than 0.8s CSS duration)
+        setTimeout(() => {
+            document.documentElement.removeAttribute("data-theme-transitioning");
+        }, 900);
     };
 
     return (
