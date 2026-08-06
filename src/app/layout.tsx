@@ -9,6 +9,31 @@ export const metadata: Metadata = {
     description: "High school student from Istanbul. I build Discord bots and websites.",
 };
 
+// Runs synchronously before first paint — eliminates FOUC
+const themeScript = `
+(function() {
+    try {
+        var mode = localStorage.getItem('mustacho-theme-mode') || 'system';
+        var theme = mode;
+        if (mode === 'system') {
+            theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.setAttribute('data-theme', theme);
+
+        // Suppress CSS transitions during initial paint so the script-set
+        // theme doesn't fade in — only user-triggered toggles should animate.
+        var style = document.createElement('style');
+        style.id = '__theme-no-transition';
+        style.textContent = '*, *::before, *::after { transition: none !important; }';
+        document.head.appendChild(style);
+        window.addEventListener('load', function() {
+            var el = document.getElementById('__theme-no-transition');
+            if (el) el.remove();
+        });
+    } catch(e) {}
+})();
+`;
+
 export default function RootLayout({
     children,
 }: Readonly<{
@@ -16,6 +41,10 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en" suppressHydrationWarning>
+            <head>
+                {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+                <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+            </head>
             <body>
                 <ThemeProvider>
                     <BackgroundWrapper>
