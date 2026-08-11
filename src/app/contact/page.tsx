@@ -172,24 +172,30 @@ export default function ContactPage() {
         setInput("");
     };
 
-    /* ── Theme-aware terminal chrome ─────────────────────────── */
+    /* ── Theme-aware palette ────────────────────────────────── */
     const isDark = theme === "dark";
 
-    const termBg      = "#0d0d0d";
-    const termSurface = "#080808";
+    // Terminal always uses a tinted surface that blends with the site
+    const termBg      = isDark ? "#111111" : "#1c1210";
+    const termSurface = isDark ? "#0c0c0c" : "#150e0b";
     const termBorder  = isDark
-        ? "rgba(255,255,255,0.08)"
-        : "rgba(149,86,35,0.35)";
+        ? "rgba(255,255,255,0.06)"
+        : "rgba(149,86,35,0.25)";
     const termShadow  = isDark
-        ? "0 20px 60px rgba(0,0,0,0.7)"
-        : "0 20px 60px rgba(100,50,20,0.3)";
+        ? "0 24px 80px rgba(0,0,0,0.6)"
+        : "0 24px 80px rgba(100,50,20,0.25)";
 
+    // Warm-tinted terminal text palette
     const colorMap = {
-        output:  "#d0ccc8",
-        input:   "#c4783a",
-        error:   "#f07070",
-        info:    "#7eb8c9",
+        output:  isDark ? "#a09890" : "#c8bfb5",
+        input:   isDark ? "#b08860" : "#c4783a",
+        error:   "#e07060",
+        info:    isDark ? "#7090a0" : "#7eb8c9",
     };
+
+    const dotColors = isDark
+        ? ["#555", "#555", "#555"]
+        : ["#ff5f57", "#febc2e", "#28c840"];
 
     return (
         <main
@@ -215,8 +221,12 @@ export default function ContactPage() {
                         <p className="text-sm sm:text-base" style={{ color: "var(--text-muted)" }}>
                             Type a command and hit Enter. Try{" "}
                             <code
-                                className="px-1.5 py-0.5 rounded text-xs font-mono"
-                                style={{ backgroundColor: "var(--border)", color: "var(--accent)" }}
+                                className="px-1.5 py-0.5 rounded text-xs font-mono font-bold border"
+                                style={{
+                                    backgroundColor: "var(--border)",
+                                    borderColor: "var(--border-strong)",
+                                    color: "var(--accent)",
+                                }}
                             >
                                 help
                             </code>
@@ -230,31 +240,35 @@ export default function ContactPage() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ type: "spring", stiffness: 90, damping: 16, delay: 0.1 }}
                         onClick={handleContainerClick}
-                        className="w-full rounded-2xl overflow-hidden cursor-text flex flex-col"
+                        className="w-full rounded-3xl overflow-hidden cursor-text flex flex-col"
                         style={{
                             backgroundColor: termBg,
-                            border: `1.5px solid ${termBorder}`,
+                            border: `1px solid ${termBorder}`,
                             boxShadow: termShadow,
                             height: "clamp(320px, 55vh, 480px)",
                         }}
                     >
                         {/* Title Bar */}
                         <div
-                            className="flex items-center justify-between px-4 py-3 select-none border-b shrink-0"
+                            className="flex items-center justify-between px-5 py-3.5 select-none border-b shrink-0"
                             style={{
                                 backgroundColor: termSurface,
                                 borderColor: termBorder,
                             }}
                         >
-                            <div className="flex items-center gap-1.5">
-                                {(["#ff5f57", "#febc2e", "#28c840"] as const).map((c) => (
-                                    <div key={c} className="w-3 h-3 rounded-full" style={{ backgroundColor: c }} />
+                            <div className="flex items-center gap-2">
+                                {dotColors.map((c, i) => (
+                                    <div
+                                        key={i}
+                                        className="w-3 h-3 rounded-full transition-colors duration-300"
+                                        style={{ backgroundColor: c }}
+                                    />
                                 ))}
                             </div>
 
                             <span
-                                className="text-[11px] font-mono uppercase tracking-widest"
-                                style={{ color: "rgba(200,196,190,0.3)" }}
+                                className="text-[10px] font-mono uppercase tracking-[0.25em]"
+                                style={{ color: "rgba(200,196,190,0.25)" }}
                             >
                                 mustacho@dev — terminal
                             </span>
@@ -264,7 +278,7 @@ export default function ContactPage() {
 
                         {/* Output area */}
                         <div
-                            className="flex-1 overflow-y-auto p-4 font-mono text-[11px] sm:text-xs leading-relaxed flex flex-col gap-0.5 no-scrollbar"
+                            className="flex-1 overflow-y-auto px-5 py-4 font-mono text-[11px] sm:text-xs leading-relaxed flex flex-col gap-0.5 no-scrollbar"
                             style={{ color: colorMap.output }}
                         >
                             {history.map((item, idx) => (
@@ -288,7 +302,7 @@ export default function ContactPage() {
                                 <div className="flex flex-wrap items-center flex-1 font-mono" style={{ color: colorMap.output }}>
                                     <span className="whitespace-pre-wrap break-all">{input}</span>
                                     <span
-                                        className="w-[7px] h-[13px] ml-0.5 animate-blink shrink-0"
+                                        className="w-[7px] h-[14px] ml-0.5 animate-blink rounded-[1px] shrink-0"
                                         style={{ backgroundColor: colorMap.input }}
                                     />
                                 </div>
