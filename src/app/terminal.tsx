@@ -11,10 +11,10 @@ interface HistoryItem {
 export default function Terminal() {
     const [input, setInput] = useState("");
     const [history, setHistory] = useState<HistoryItem[]>([
-        { type: "output", text: "Mustacho Terminal OS [Version 1.0.0]" },
-        { type: "output", text: "(c) 2026 Mustacho Corp. All rights reserved." },
-        { type: "output", text: "Type a command to initiate contact. Write 'help' to get started." },
-        { type: "output", text: "" }
+        { type: "output", text: "Mustacho Terminal v2.0" },
+        { type: "output", text: "Istanbul, TR" },
+        { type: "output", text: "" },
+        { type: "output", text: "Type 'help' to see available commands." },
     ]);
 
     const inputRef = useRef<HTMLInputElement>(null);
@@ -31,7 +31,7 @@ export default function Terminal() {
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
             const command = input.trim().toLowerCase();
-            const newHistory = [...history, { type: "input" as const, text: `visitor@mustacho:~$ ${input}` }];
+            const newHistory = [...history, { type: "input" as const, text: `$ ${input}` }];
 
             if (command === "") {
                 setHistory(newHistory);
@@ -44,35 +44,38 @@ export default function Terminal() {
 
             switch (command) {
                 case "help":
-                    outputText = `Available Commands:
-  whoami   - Who is the developer and what do they do?
-  socials  - List all social media handles.
-  github   - Open GitHub profile in a new tab.
-  discord  - Open Discord server.
-  spotify  - Open Spotify profile.
-  mail     - Open email client.
-  clear    - Clear terminal screen.`;
+                    outputText = `  whoami    Who am I?
+  socials   Social media links
+  github    Open GitHub profile
+  discord   Join Discord server
+  spotify   Open Spotify
+  mail      Send an email
+  clear     Clear the screen`;
                     break;
                 case "whoami":
-                    outputText = "Mustacho - Creative Coder & Frontend Developer. I combine visual aesthetics with math and physics to deliver smooth, playful browser interfaces. My biggest hobby is stretching mustaches and creating micro-animations.";
+                    outputText = "  Mustacho — Creative coder & frontend dev from Istanbul.\n  I combine visual aesthetics with math and physics to\n  build smooth, playful browser experiences.";
                     break;
                 case "socials":
-                    outputText = `Social Links:
-  GitHub: github.com/imustacho
-  Discord: discord.gg/eJkymXBAXU
-  Email: mail@mustacho.dev
-(You can run commands like 'github' or 'discord' to open these links immediately.)`;
+                    outputText = `  GitHub    github.com/imustacho
+  Discord   discord.gg/eJkymXBAXU
+  Email     mail@mustacho.dev
+
+  Run a command directly to open it.`;
                     break;
                 case "github":
-                    outputText = "GitHub opening in a new tab...";
+                    outputText = "  Opening GitHub...";
                     window.open("https://github.com/imustacho", "_blank");
                     break;
                 case "discord":
-                    outputText = "Discord opening in a new tab...";
+                    outputText = "  Opening Discord...";
                     window.open("https://discord.gg/eJkymXBAXU", "_blank");
                     break;
+                case "spotify":
+                    outputText = "  Opening Spotify...";
+                    window.open("https://open.spotify.com/user/imustacho", "_blank");
+                    break;
                 case "mail":
-                    outputText = "Opening email client...";
+                    outputText = "  Opening mail client...";
                     window.open("mailto:mail@mustacho.dev", "_self");
                     break;
                 case "clear":
@@ -80,7 +83,7 @@ export default function Terminal() {
                     setInput("");
                     return;
                 default:
-                    outputText = `Command not found: '${command}'. Type 'help' for assistance.`;
+                    outputText = `  Unknown command: '${command}'\n  Type 'help' for a list of commands.`;
                     type = "error";
                     break;
             }
@@ -91,19 +94,31 @@ export default function Terminal() {
     };
 
     return (
-        <section className="py-20 px-6 max-w-3xl mx-auto flex flex-col items-center gap-8 min-h-screen justify-center">
+        <section className="py-20 px-6 max-w-2xl mx-auto flex flex-col items-center gap-8 min-h-screen justify-center">
             {/* Header */}
             <div className="text-center flex flex-col items-center gap-3">
                 <motion.h2
                     initial={{ scale: 0.9, opacity: 0 }}
                     whileInView={{ scale: 1, opacity: 1 }}
                     viewport={{ once: true }}
-                    className="font-heading text-5xl text-[#955623] tracking-tight"
+                    className="font-heading text-5xl tracking-tight"
+                    style={{ color: "var(--accent)" }}
                 >
                     Get in Touch
                 </motion.h2>
-                <p className="text-lg text-[#7a451b]">
-                    Use the terminal CLI below to communicate with me.
+                <p className="text-lg" style={{ color: "var(--text-muted)" }}>
+                    Type a command and hit Enter. Try{" "}
+                    <code
+                        className="px-1.5 py-0.5 rounded text-xs font-mono font-bold border"
+                        style={{
+                            backgroundColor: "var(--border)",
+                            borderColor: "var(--border-strong)",
+                            color: "var(--accent)",
+                        }}
+                    >
+                        help
+                    </code>{" "}
+                    to get started.
                 </p>
             </div>
 
@@ -114,50 +129,78 @@ export default function Terminal() {
                 viewport={{ once: true }}
                 transition={{ type: "spring", stiffness: 100, damping: 15 }}
                 onClick={handleContainerClick}
-                className="w-full bg-[#2c1a12] border-4 border-[#955623]/35 rounded-2xl shadow-[0_20px_50px_rgba(149,86,35,0.22)] overflow-hidden cursor-text flex flex-col h-96"
+                className="w-full rounded-2xl border overflow-hidden cursor-text flex flex-col"
+                style={{
+                    backgroundColor: "var(--bg-elevated)",
+                    borderColor: "var(--border-strong)",
+                    boxShadow: "0 20px 60px var(--shadow-strong)",
+                    height: "380px",
+                }}
             >
-                {/* Terminal Title Bar */}
-                <div className="bg-[#1f120c] px-4 py-3 flex items-center justify-between border-b border-[#955623]/20">
+                {/* Title Bar */}
+                <div
+                    className="px-4 py-3 flex items-center justify-between border-b"
+                    style={{
+                        backgroundColor: "var(--bg-surface)",
+                        borderColor: "var(--border)",
+                    }}
+                >
                     <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full bg-[#ea4335]" />
-                        <div className="w-3 h-3 rounded-full bg-[#fbbc05]" />
-                        <div className="w-3 h-3 rounded-full bg-[#34a853]" />
+                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: "rgba(234,67,53,0.7)" }} />
+                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: "rgba(251,188,5,0.7)" }} />
+                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: "rgba(52,168,83,0.7)" }} />
                     </div>
-                    <span className="text-xs font-mono font-bold text-[#f5efe6]/40 uppercase tracking-widest select-none">
-                        Mustacho CLI v1.0.0
+                    <span
+                        className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] select-none"
+                        style={{ color: "var(--text-faint)" }}
+                    >
+                        mustacho@dev — terminal
                     </span>
                     <div className="w-14" />
                 </div>
 
-                {/* Terminal Output Area */}
-                <div className="p-4 overflow-y-auto flex-1 font-mono text-sm leading-relaxed text-[#f5efe6] flex flex-col gap-2">
+                {/* Output Area */}
+                <div
+                    className="p-5 overflow-y-auto flex-1 font-mono text-sm leading-relaxed flex flex-col gap-1 no-scrollbar"
+                    style={{ color: "var(--text-muted)" }}
+                >
                     {history.map((item, idx) => (
                         <div
                             key={idx}
-                            className={`whitespace-pre-wrap ${item.type === "input" ? "text-[#fdbc84]" :
-                                item.type === "error" ? "text-[#ea4335]" : "text-[#f5efe6]/90"
-                                }`}
+                            className="whitespace-pre-wrap"
+                            style={{
+                                color: item.type === "input"
+                                    ? "var(--accent)"
+                                    : item.type === "error"
+                                        ? "rgba(234,67,53,0.85)"
+                                        : "var(--text-muted)",
+                                fontWeight: item.type === "input" ? 600 : 400,
+                            }}
                         >
                             {item.text}
                         </div>
                     ))}
 
                     {/* Prompt Line */}
-                    <div className="flex items-center gap-2 text-[#fdbc84]">
-                        <span className="shrink-0 select-none">visitor@mustacho:~$</span>
+                    <div className="flex items-center gap-2 mt-1" style={{ color: "var(--accent)" }}>
+                        <span className="shrink-0 select-none font-semibold">$</span>
                         <input
                             ref={inputRef}
                             type="text"
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
                             onKeyDown={handleKeyDown}
-                            className="bg-transparent border-none outline-none text-[#f5efe6] flex-1 p-0 m-0 font-mono caret-transparent focus:ring-0 focus:border-none"
+                            className="bg-transparent border-none outline-none flex-1 p-0 m-0 font-mono caret-transparent focus:ring-0 focus:border-none"
+                            style={{ color: "var(--text-primary)" }}
                             autoComplete="off"
                             autoCapitalize="off"
                             spellCheck="false"
                         />
-                        {/* Custom Blinking Cursor */}
-                        <span className="w-2.5 h-4 bg-[#fdbc84] -ml-2 animate-blink" />
+                        {/* Blinking Cursor */}
+                        <span
+                            className="w-2 h-4 -ml-2 animate-blink rounded-sm"
+                            style={{ backgroundColor: "var(--accent)" }}
+                        />
                     </div>
                     <div ref={terminalEndRef} />
                 </div>
