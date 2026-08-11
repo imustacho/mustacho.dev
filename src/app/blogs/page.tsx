@@ -19,7 +19,7 @@ const posts: BlogPost[] = blogsData;
 export default function BlogsPage() {
     return (
         <main className="min-h-screen relative overflow-hidden" style={{ color: "var(--text-primary)" }}>
-            <div className="pt-32 pb-20 px-6 max-w-4xl mx-auto flex flex-col items-center justify-center min-h-screen">
+            <div className="pt-32 pb-20 px-6 max-w-4xl mx-auto flex flex-col items-center min-h-screen">
                 {/* Header */}
                 <div className="text-center flex flex-col items-center gap-3 mb-10">
                     <motion.h1
