@@ -1,94 +1,110 @@
 [
     {
         "category": "Languages",
-        "icon": "",
+        "icon": "💻",
         "skills": [
             {
                 "name": "TypeScript",
+                "icon": "SiTypescript",
                 "repoUrl": ""
             },
             {
                 "name": "JavaScript",
+                "icon": "SiJavascript",
                 "repoUrl": ""
             },
             {
                 "name": "HTML & CSS",
+                "icon": "SiHtml5",
                 "repoUrl": ""
             }
         ]
     },
     {
         "category": "Frameworks & Libraries",
-        "icon": "",
+        "icon": "⚡",
         "skills": [
             {
                 "name": "Next.js",
+                "icon": "SiNextdotjs",
                 "repoUrl": "https://github.com/imustacho/mustacho.dev"
             },
             {
                 "name": "React",
+                "icon": "SiReact",
                 "repoUrl": "https://github.com/imustacho/mustacho.dev"
             },
             {
                 "name": "Motion (Framer)",
+                "icon": "SiFramer",
                 "repoUrl": "https://github.com/imustacho/mustacho.dev"
             },
             {
                 "name": "Tailwind CSS",
+                "icon": "SiTailwindcss",
                 "repoUrl": "https://github.com/imustacho/mustacho.dev"
             }
         ]
     },
     {
         "category": "Backend & APIs",
-        "icon": "",
+        "icon": "🔧",
         "skills": [
             {
                 "name": "Node.js",
+                "icon": "SiNodedotjs",
                 "repoUrl": ""
             },
             {
                 "name": "REST APIs",
+                "icon": "SiPostman",
                 "repoUrl": ""
             },
             {
                 "name": "Discord.js",
+                "icon": "SiDiscord",
                 "repoUrl": "https://github.com/imustacho/hungerfall"
             }
         ]
     },
     {
         "category": "AI & Machine Learning",
-        "icon": "",
+        "icon": "🧠",
         "skills": [
             {
                 "name": "LLM Integration",
+                "icon": "SiHuggingface",
                 "repoUrl": "https://github.com/imustacho/overseer"
             },
             {
                 "name": "Prompt Engineering",
+                "icon": "SiHuggingface",
                 "repoUrl": "https://github.com/imustacho/bubble"
             },
             {
                 "name": "Agent Systems",
+                "icon": "SiHuggingface",
                 "repoUrl": "https://github.com/imustacho/overseer"
             }
         ]
     },
     {
         "category": "Tools & DevOps",
-        "icon": "",
+        "icon": "🛠️",
         "skills": [
             {
                 "name": "Git & GitHub",
+                "icon": "SiGit",
                 "repoUrl": ""
             },
             {
                 "name": "Vercel",
+                "icon": "SiVercel",
                 "repoUrl": ""
             },
             {
                 "name": "VS Code",
+                "icon": "SiVscodium",
                 "repoUrl": ""
             }
         ]

@@ -76,6 +76,68 @@ body {
     animation: cursor-blink 1.2s step-end infinite;
 }
 
+/* ─── Skill Chip ─────────────────────────────────────────────── */
+.skill-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 16px;
+    border: 1px solid;
+    cursor: default;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.skill-chip:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px var(--shadow-strong) !important;
+}
+
+.skill-chip-icon {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.skill-chip-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.skill-chip-link {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    padding-left: 10px;
+    border-left: 1px solid;
+    margin-left: 4px;
+    max-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.skill-chip:hover .skill-chip-link {
+    max-width: 80px;
+    opacity: 1;
+    margin-left: 8px;
+    padding-left: 12px;
+}
+
+.skill-chip-link:hover {
+    text-decoration: underline;
+}
+
 /* ─── Scrollbar Utilities ────────────────────────────────────── */
 .no-scrollbar::-webkit-scrollbar {
     display: none;
