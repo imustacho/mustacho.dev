@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import Link from "next/link";
 import { FaCalendarAlt, FaClock } from "react-icons/fa";
+import blogsData from "@/data/blogs.json";
 
 interface BlogPost {
     id: string;
@@ -14,22 +14,9 @@ interface BlogPost {
     category: string;
 }
 
+const posts: BlogPost[] = blogsData;
+
 export default function BlogsPage() {
-    const [posts, setPosts] = useState<BlogPost[]>([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        fetch("/api/blogs")
-            .then((res) => res.json())
-            .then((data) => {
-                setPosts(data);
-                setLoading(false);
-            })
-            .catch(() => {
-                setLoading(false);
-            });
-    }, []);
-
     return (
         <main className="min-h-screen relative overflow-hidden" style={{ color: "var(--text-primary)" }}>
             <div className="pt-32 pb-20 px-6 max-w-4xl mx-auto flex flex-col items-center justify-center min-h-screen">
@@ -48,77 +35,67 @@ export default function BlogsPage() {
                     </p>
                 </div>
 
-                {loading ? (
-                    <div
-                        className="flex items-center justify-center py-20 font-heading text-2xl"
-                        style={{ color: "var(--text-muted)" }}
-                    >
-                        Loading...
-                    </div>
-                ) : (
-                    <div className="flex flex-col gap-0 w-full mt-4">
-                        {posts.map((post, idx) => (
-                            <Link key={post.id} href={`/blogs/${post.id}`} className="block">
-                                <motion.div
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ type: "spring", stiffness: 100, damping: 15, delay: idx * 0.08 }}
-                                    whileHover={{ x: 5 }}
-                                    className="py-6 border-b flex flex-col gap-3 cursor-pointer group transition-all duration-200"
-                                    style={{ borderColor: "var(--border-strong)" }}
-                                >
-                                    <div className="flex justify-between items-start gap-4">
-                                        {/* Meta */}
-                                        <div
-                                            className="flex items-center gap-3 text-xs font-semibold"
-                                            style={{ color: "var(--accent)" }}
-                                        >
-                                            <span
-                                                className="px-2.5 py-0.5 rounded-full border"
-                                                style={{
-                                                    backgroundColor: "var(--border)",
-                                                    borderColor: "var(--border-strong)",
-                                                }}
-                                            >
-                                                {post.category}
-                                            </span>
-                                            <span
-                                                className="flex items-center gap-1 font-mono"
-                                                style={{ color: "var(--text-muted)" }}
-                                            >
-                                                <FaCalendarAlt /> {post.date}
-                                            </span>
-                                        </div>
-
-                                        {/* Read time */}
-                                        <div
-                                            className="flex items-center gap-1.5 text-xs font-mono"
-                                            style={{ color: "var(--text-faint)" }}
-                                        >
-                                            <FaClock /> {post.readTime}
-                                        </div>
-                                    </div>
-
-                                    {/* Title */}
-                                    <h2
-                                        className="font-heading text-2xl leading-tight group-hover:underline decoration-2 transition-colors"
+                <div className="flex flex-col gap-0 w-full mt-4">
+                    {posts.map((post, idx) => (
+                        <Link key={post.id} href={`/blogs/${post.id}`} className="block">
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ type: "spring", stiffness: 100, damping: 15, delay: idx * 0.08 }}
+                                className="py-6 border-b flex flex-col gap-3 cursor-pointer group transition-all duration-200"
+                                style={{ borderColor: "var(--border-strong)" }}
+                            >
+                                <div className="flex justify-between items-start gap-4">
+                                    {/* Meta */}
+                                    <div
+                                        className="flex items-center gap-3 text-xs font-semibold"
                                         style={{ color: "var(--accent)" }}
                                     >
-                                        {post.title}
-                                    </h2>
+                                        <span
+                                            className="px-2.5 py-0.5 rounded-full border"
+                                            style={{
+                                                backgroundColor: "var(--border)",
+                                                borderColor: "var(--border-strong)",
+                                            }}
+                                        >
+                                            {post.category}
+                                        </span>
+                                        <span
+                                            className="flex items-center gap-1 font-mono"
+                                            style={{ color: "var(--text-muted)" }}
+                                        >
+                                            <FaCalendarAlt /> {post.date}
+                                        </span>
+                                    </div>
 
-                                    {/* Excerpt */}
-                                    <p
-                                        className="text-sm leading-relaxed"
-                                        style={{ color: "var(--text-muted)" }}
+                                    {/* Read time */}
+                                    <div
+                                        className="flex items-center gap-1.5 text-xs font-mono"
+                                        style={{ color: "var(--text-faint)" }}
                                     >
-                                        {post.excerpt}
-                                    </p>
-                                </motion.div>
-                            </Link>
-                        ))}
-                    </div>
-                )}
+                                        <FaClock /> {post.readTime}
+                                    </div>
+                                </div>
+
+                                {/* Title */}
+                                <h2
+                                    className="font-heading text-2xl leading-tight group-hover:underline decoration-2 transition-colors"
+                                    style={{ color: "var(--accent)" }}
+                                >
+                                    {post.title}
+                                </h2>
+
+                                {/* Excerpt */}
+                                <p
+                                    className="text-sm leading-relaxed"
+                                    style={{ color: "var(--text-muted)" }}
+                                >
+                                    {post.excerpt}
+                                </p>
+                            </motion.div>
+                        </Link>
+                    ))}
+                </div>
             </div>
         </main>
     );

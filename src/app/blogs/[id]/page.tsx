@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { motion } from "motion/react";
 import Link from "next/link";
 import { FaCalendarAlt, FaClock, FaArrowLeft } from "react-icons/fa";
 import ReactMarkdown from "react-markdown";
+import blogsData from "@/data/blogs.json";
 
 interface BlogPost {
     id: string;
@@ -16,28 +16,12 @@ interface BlogPost {
     category: string;
 }
 
+const allPosts: BlogPost[] = blogsData;
+
 export default function SingleBlogPage() {
     const params = useParams();
     const id = params?.id as string;
-
-    const [post, setPost] = useState<BlogPost | null>(null);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        if (!id) return;
-        fetch(`/api/blogs/${id}`)
-            .then((res) => {
-                if (!res.ok) throw new Error("Blog not found");
-                return res.json();
-            })
-            .then((data) => {
-                setPost(data);
-                setLoading(false);
-            })
-            .catch(() => {
-                setLoading(false);
-            });
-    }, [id]);
+    const post = allPosts.find((p) => p.id === id) || null;
 
     return (
         <main className="min-h-screen relative overflow-hidden" style={{ color: "var(--text-primary)" }}>
@@ -59,14 +43,7 @@ export default function SingleBlogPage() {
                     </Link>
                 </div>
 
-                {loading ? (
-                    <div
-                        className="flex items-center justify-center py-20 font-heading text-2xl"
-                        style={{ color: "var(--text-muted)" }}
-                    >
-                        Loading...
-                    </div>
-                ) : !post ? (
+                {!post ? (
                     <div className="flex flex-col items-center justify-center py-20 gap-4 text-center">
                         <div className="text-6xl">⚠️</div>
                         <h2

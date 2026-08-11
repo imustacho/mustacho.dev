@@ -1,9 +1,9 @@
 "use client";
 
 import { motion } from "motion/react";
-import { useEffect, useState } from "react";
 import { FaGithub, FaExternalLinkAlt } from "react-icons/fa";
 import { HiSparkles } from "react-icons/hi2";
+import projectsData from "@/data/projects.json";
 
 interface Project {
     id: string;
@@ -17,6 +17,8 @@ interface Project {
     featured?: boolean;
 }
 
+const projects = projectsData as Project[];
+
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
     active: { label: "Active", color: "rgba(52,168,83,0.85)" },
     archived: { label: "Archived", color: "rgba(149,86,35,0.5)" },
@@ -24,29 +26,6 @@ const STATUS_LABELS: Record<string, { label: string; color: string }> = {
 };
 
 export default function Projects() {
-    const [projects, setProjects] = useState<Project[]>([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        fetch("/api/projects")
-            .then((r) => r.json())
-            .then((data) => {
-                setProjects(data);
-                setLoading(false);
-            })
-            .catch(() => setLoading(false));
-    }, []);
-
-    if (loading) {
-        return (
-            <section className="py-20 px-6 max-w-5xl mx-auto flex flex-col items-center gap-12">
-                <div className="font-heading text-2xl" style={{ color: "var(--accent)" }}>
-                    Loading projects...
-                </div>
-            </section>
-        );
-    }
-
     return (
         <section className="py-20 px-6 max-w-5xl mx-auto flex flex-col items-center gap-12">
             {/* Header */}
