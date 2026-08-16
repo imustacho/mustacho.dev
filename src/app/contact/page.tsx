@@ -175,20 +175,20 @@ export default function ContactPage() {
     /* ── Theme-aware palette ────────────────────────────────── */
     const isDark = theme === "dark";
 
-    // Terminal always uses a tinted surface that blends with the site
-    const termBg      = isDark ? "#111111" : "#1c1210";
-    const termSurface = isDark ? "#0c0c0c" : "#150e0b";
+    // Terminal always uses a dark surface regardless of light/dark mode
+    const termBg      = isDark ? "rgba(0,0,0,0.4)" : "rgba(0,0,0,0.88)";
+    const termSurface = isDark ? "rgba(0,0,0,0.5)" : "rgba(0,0,0,0.92)";
     const termBorder  = isDark
         ? "rgba(255,255,255,0.06)"
-        : "rgba(149,86,35,0.25)";
+        : "var(--border-strong)";
     const termShadow  = isDark
         ? "0 24px 80px rgba(0,0,0,0.6)"
-        : "0 24px 80px rgba(100,50,20,0.25)";
+        : "0 24px 80px var(--shadow-strong)";
 
     // Warm-tinted terminal text palette
     const colorMap = {
-        output:  isDark ? "#a09890" : "#c8bfb5",
-        input:   isDark ? "#b08860" : "#c4783a",
+        output:  "#a09890",
+        input:   "var(--accent)",
         error:   "#e07060",
         info:    isDark ? "#7090a0" : "#7eb8c9",
     };

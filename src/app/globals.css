@@ -4,11 +4,58 @@
 @theme {
     --font-heading: "DynaPuff", cursive;
     --font-body: "Fredoka", sans-serif;
-    --color-accent: #955623;
+    --color-accent: #1a1a1a;
 }
 
-/* ─── Light Theme (default) ─────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════
+   DEFAULT THEME  (Siyah / Beyaz)
+   ─ no data-color-theme or data-color-theme="default"
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── Default · Light ──────────────────────────────────────────── */
 :root {
+    --bg: #fafafa;
+    --bg-surface: #eeeeee;
+    --bg-elevated: #ffffff;
+    --text-primary: #111111;
+    --text-muted: #4a4a4a;
+    --text-faint: rgba(74, 74, 74, 0.55);
+    --accent: #111111;
+    --accent-hover: #2a2a2a;
+    --border: rgba(0, 0, 0, 0.1);
+    --border-strong: rgba(0, 0, 0, 0.18);
+    --dot-color: rgba(0, 0, 0, 0.07);
+    --shadow: rgba(0, 0, 0, 0.06);
+    --shadow-strong: rgba(0, 0, 0, 0.12);
+    --navbar-bg: rgba(250, 250, 250, 0.88);
+    --navbar-bg-solid: rgba(250, 250, 250, 0.97);
+}
+
+/* ─── Default · Dark ───────────────────────────────────────────── */
+[data-theme="dark"] {
+    --bg: #0a0a0a;
+    --bg-surface: #111111;
+    --bg-elevated: #181818;
+    --text-primary: #d0d0d0;
+    --text-muted: #808080;
+    --text-faint: rgba(128, 128, 128, 0.45);
+    --accent: #d0d0d0;
+    --accent-hover: #e8e8e8;
+    --border: rgba(255, 255, 255, 0.08);
+    --border-strong: rgba(255, 255, 255, 0.14);
+    --dot-color: rgba(255, 255, 255, 0.05);
+    --shadow: rgba(0, 0, 0, 0.5);
+    --shadow-strong: rgba(0, 0, 0, 0.75);
+    --navbar-bg: rgba(10, 10, 10, 0.88);
+    --navbar-bg-solid: rgba(10, 10, 10, 0.97);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CREAM THEME  (Krem / Kahve)
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── Cream · Light ────────────────────────────────────────────── */
+[data-color-theme="cream"] {
     --bg: #f5efe6;
     --bg-surface: #ede4d8;
     --bg-elevated: #ffffff;
@@ -22,23 +69,111 @@
     --dot-color: rgba(149, 86, 35, 0.18);
     --shadow: rgba(149, 86, 35, 0.12);
     --shadow-strong: rgba(149, 86, 35, 0.22);
+    --navbar-bg: rgba(245, 239, 230, 0.88);
+    --navbar-bg-solid: rgba(245, 239, 230, 0.97);
 }
 
-/* ─── Dark Theme ─────────────────────────────────────────────── */
-[data-theme="dark"] {
-    --bg: #0d0d0d;
-    --bg-surface: #141414;
-    --bg-elevated: #1a1a1a;
-    --text-primary: #c0c0c0;
-    --text-muted: #787878;
-    --text-faint: rgba(120, 120, 120, 0.45);
-    --accent: #c0c0c0;
-    --accent-hover: #d8d8d8;
-    --border: rgba(255, 255, 255, 0.08);
-    --border-strong: rgba(255, 255, 255, 0.14);
-    --dot-color: rgba(255, 255, 255, 0.05);
+/* ─── Cream · Dark ─────────────────────────────────────────────── */
+[data-color-theme="cream"][data-theme="dark"] {
+    --bg: #1a1510;
+    --bg-surface: #211b14;
+    --bg-elevated: #2a221a;
+    --text-primary: #d4a574;
+    --text-muted: #a07850;
+    --text-faint: rgba(160, 120, 80, 0.45);
+    --accent: #d4a574;
+    --accent-hover: #e0b88a;
+    --border: rgba(212, 165, 116, 0.12);
+    --border-strong: rgba(212, 165, 116, 0.2);
+    --dot-color: rgba(212, 165, 116, 0.08);
     --shadow: rgba(0, 0, 0, 0.5);
     --shadow-strong: rgba(0, 0, 0, 0.75);
+    --navbar-bg: rgba(26, 21, 16, 0.88);
+    --navbar-bg-solid: rgba(26, 21, 16, 0.97);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RED THEME  (Kırmızı)
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── Red · Light ──────────────────────────────────────────────── */
+[data-color-theme="red"] {
+    --bg: #fdf5f5;
+    --bg-surface: #f5eaea;
+    --bg-elevated: #ffffff;
+    --text-primary: #d44040;
+    --text-muted: #b85555;
+    --text-faint: rgba(184, 85, 85, 0.5);
+    --accent: #d44040;
+    --accent-hover: #c03535;
+    --border: rgba(212, 64, 64, 0.1);
+    --border-strong: rgba(212, 64, 64, 0.18);
+    --dot-color: rgba(212, 64, 64, 0.1);
+    --shadow: rgba(212, 64, 64, 0.08);
+    --shadow-strong: rgba(212, 64, 64, 0.15);
+    --navbar-bg: rgba(253, 245, 245, 0.88);
+    --navbar-bg-solid: rgba(253, 245, 245, 0.97);
+}
+
+/* ─── Red · Dark ───────────────────────────────────────────────── */
+[data-color-theme="red"][data-theme="dark"] {
+    --bg: #110808;
+    --bg-surface: #1a0e0e;
+    --bg-elevated: #241515;
+    --text-primary: #f06060;
+    --text-muted: #c05050;
+    --text-faint: rgba(192, 80, 80, 0.45);
+    --accent: #f06060;
+    --accent-hover: #ff7878;
+    --border: rgba(240, 96, 96, 0.1);
+    --border-strong: rgba(240, 96, 96, 0.16);
+    --dot-color: rgba(240, 96, 96, 0.06);
+    --shadow: rgba(0, 0, 0, 0.5);
+    --shadow-strong: rgba(0, 0, 0, 0.75);
+    --navbar-bg: rgba(17, 8, 8, 0.88);
+    --navbar-bg-solid: rgba(17, 8, 8, 0.97);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BLUE THEME  (Mavi)
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── Blue · Light ─────────────────────────────────────────────── */
+[data-color-theme="blue"] {
+    --bg: #f3f6fb;
+    --bg-surface: #e6ecf5;
+    --bg-elevated: #ffffff;
+    --text-primary: #2e6bc4;
+    --text-muted: #4a78b0;
+    --text-faint: rgba(74, 120, 176, 0.5);
+    --accent: #2e6bc4;
+    --accent-hover: #245aaa;
+    --border: rgba(46, 107, 196, 0.12);
+    --border-strong: rgba(46, 107, 196, 0.2);
+    --dot-color: rgba(46, 107, 196, 0.1);
+    --shadow: rgba(46, 107, 196, 0.08);
+    --shadow-strong: rgba(46, 107, 196, 0.16);
+    --navbar-bg: rgba(243, 246, 251, 0.88);
+    --navbar-bg-solid: rgba(243, 246, 251, 0.97);
+}
+
+/* ─── Blue · Dark ──────────────────────────────────────────────── */
+[data-color-theme="blue"][data-theme="dark"] {
+    --bg: #090c12;
+    --bg-surface: #0f1420;
+    --bg-elevated: #151c2c;
+    --text-primary: #5a9cf0;
+    --text-muted: #4878b8;
+    --text-faint: rgba(72, 120, 184, 0.45);
+    --accent: #5a9cf0;
+    --accent-hover: #78b4ff;
+    --border: rgba(90, 156, 240, 0.1);
+    --border-strong: rgba(90, 156, 240, 0.16);
+    --dot-color: rgba(90, 156, 240, 0.06);
+    --shadow: rgba(0, 0, 0, 0.5);
+    --shadow-strong: rgba(0, 0, 0, 0.75);
+    --navbar-bg: rgba(9, 12, 18, 0.88);
+    --navbar-bg-solid: rgba(9, 12, 18, 0.97);
 }
 
 /* ─── Base ───────────────────────────────────────────────────── */

@@ -20,6 +20,12 @@ const themeScript = `
         }
         document.documentElement.setAttribute('data-theme', theme);
 
+        var colorTheme = localStorage.getItem('mustacho-color-theme');
+        if (!colorTheme) {
+            colorTheme = (theme === 'dark') ? 'default' : 'cream';
+        }
+        document.documentElement.setAttribute('data-color-theme', colorTheme);
+
         // Suppress CSS transitions during initial paint so the script-set
         // theme doesn't fade in — only user-triggered toggles should animate.
         var style = document.createElement('style');

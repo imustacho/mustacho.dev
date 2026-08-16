@@ -6,7 +6,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import MustacheSvg from "@/components/mustachesvg";
 import { useTheme } from "@/context/ThemeContext";
-import type { ThemeMode } from "@/context/ThemeContext";
+import type { ThemeMode, ColorTheme } from "@/context/ThemeContext";
 import { HiSun, HiMoon, HiComputerDesktop } from "react-icons/hi2";
 
 const NAV_ITEMS = [
@@ -17,11 +17,19 @@ const NAV_ITEMS = [
     { label: "Contact", href: "/contact", view: "contact" },
 ];
 
+/* Color theme display config */
+const COLOR_THEME_CONFIG: Record<ColorTheme, { label: string; dot: string }> = {
+    default: { label: "Default", dot: "#111111" },
+    cream:   { label: "Cream",   dot: "#955623" },
+    red:     { label: "Red",     dot: "#d44040" },
+    blue:    { label: "Blue",    dot: "#2e6bc4" },
+};
+
 export default function Navbar() {
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const pathname = usePathname() || "";
-    const { theme, mode, setMode } = useTheme();
+    const { theme, mode, setMode, colorTheme, setColorTheme } = useTheme();
 
     const CYCLE: ThemeMode[] = ["system", "dark", "light"];
     const cycleMode = () => {
@@ -30,6 +38,14 @@ export default function Navbar() {
     };
     const ModeIcon = mode === "dark" ? HiMoon : mode === "light" ? HiSun : HiComputerDesktop;
     const modeLabel = mode === "dark" ? "Dark" : mode === "light" ? "Light" : "System";
+
+    /* Color theme cycle */
+    const COLOR_CYCLE: ColorTheme[] = ["default", "cream", "red", "blue"];
+    const cycleColorTheme = () => {
+        const idx = COLOR_CYCLE.indexOf(colorTheme);
+        setColorTheme(COLOR_CYCLE[(idx + 1) % COLOR_CYCLE.length]);
+    };
+    const colorConfig = COLOR_THEME_CONFIG[colorTheme];
 
     const getActiveView = () => {
         if (pathname === "/about") return "about";
@@ -60,9 +76,7 @@ export default function Navbar() {
                 transition={{ type: "spring", stiffness: 120, damping: 18, delay: 0.15 }}
                 className="flex items-center justify-between gap-2 px-4 py-2 rounded-full border backdrop-blur-xl w-full relative"
                 style={{
-                    backgroundColor: theme === "dark"
-                        ? "rgba(13, 13, 13, 0.88)"
-                        : "rgba(245, 239, 230, 0.88)",
+                    backgroundColor: "var(--navbar-bg)",
                     borderColor: "var(--border)",
                     boxShadow: `0 12px 40px var(--shadow-strong)`,
                 }}
@@ -120,9 +134,42 @@ export default function Navbar() {
                     })}
                 </div>
 
-                {/* Right controls: Dark Mode Toggle + Hamburger */}
+                {/* Right controls: Color Theme + Dark Mode Toggle + Hamburger */}
                 <div className="flex items-center gap-2">
-                    {/* Theme cycle button */}
+                    {/* Color theme cycle button */}
+                    <motion.button
+                        onClick={cycleColorTheme}
+                        className="flex items-center justify-center w-8 h-8 rounded-full cursor-pointer border"
+                        style={{
+                            borderColor: "var(--border)",
+                            backgroundColor: "var(--border)",
+                        }}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        aria-label="Switch color theme"
+                        title={`Theme: ${colorConfig.label} — click to cycle`}
+                    >
+                        <AnimatePresence mode="wait" initial={false}>
+                            <motion.span
+                                key={colorTheme}
+                                initial={{ rotate: -90, opacity: 0, scale: 0.5 }}
+                                animate={{ rotate: 0, opacity: 1, scale: 1 }}
+                                exit={{ rotate: 90, opacity: 0, scale: 0.5 }}
+                                transition={{ duration: 0.18 }}
+                                className="flex items-center justify-center"
+                            >
+                                <span
+                                    className="w-3.5 h-3.5 rounded-full border-2"
+                                    style={{
+                                        backgroundColor: colorConfig.dot,
+                                        borderColor: theme === "dark" ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.15)",
+                                    }}
+                                />
+                            </motion.span>
+                        </AnimatePresence>
+                    </motion.button>
+
+                    {/* Theme mode cycle button */}
                     <motion.button
                         onClick={cycleMode}
                         className="flex items-center justify-center w-8 h-8 rounded-full cursor-pointer border"
@@ -198,9 +245,7 @@ export default function Navbar() {
                         transition={{ duration: 0.16, ease: "easeOut" }}
                         className="absolute top-16 left-0 right-0 border rounded-3xl p-3 flex flex-col gap-1 backdrop-blur-xl sm:hidden origin-top z-40"
                         style={{
-                            backgroundColor: theme === "dark"
-                                ? "rgba(13, 13, 13, 0.97)"
-                                : "rgba(245, 239, 230, 0.97)",
+                            backgroundColor: "var(--navbar-bg-solid)",
                             borderColor: "var(--border)",
                             boxShadow: `0 12px 40px var(--shadow-strong)`,
                         }}
