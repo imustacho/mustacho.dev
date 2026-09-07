@@ -2,6 +2,7 @@
     {
         "id": "overseer",
         "title": "Overseer",
+        "category": "Discord Bots",
         "description": "Manage Discord servers with natural language. An AI agent that understands your commands and executes moderation, roles, and server management automatically.",
         "tags": ["Discord", "AI", "Agent", "TypeScript"],
         "codeUrl": "https://github.com/imustacho",
@@ -13,6 +14,7 @@
     {
         "id": "bubble",
         "title": "Bubble",
+        "category": "Discord Bots",
         "description": "Discord-powered AI engine generator with persistent memory and custom training support. Build your own AI persona that lives in your Discord server.",
         "tags": ["Discord", "AI", "Memory", "Training"],
         "codeUrl": "https://github.com/imustacho",
@@ -24,11 +26,36 @@
     {
         "id": "hungerfall",
         "title": "Hungerfall",
+        "category": "Discord Bots",
         "description": "A text-based adventure game with an AI-Narrator that adapts the story to your choices. Every playthrough is unique.",
         "tags": ["Game", "AI", "Text-based", "Narrative"],
         "codeUrl": "https://github.com/imustacho/hungerfall",
         "demoUrl": "",
         "icon": "🥪",
+        "status": "active",
+        "featured": false
+    },
+    {
+        "id": "recast",
+        "title": "Recast",
+        "category": "Desktop Applications",
+        "description": "An offline, privacy-first file converter desktop application built with Tauri. Convert images and WebP files seamlessly without uploading online.",
+        "tags": ["Tauri", "Rust", "Desktop", "React"],
+        "codeUrl": "https://github.com/imustacho",
+        "demoUrl": "",
+        "icon": "🔮",
+        "status": "active",
+        "featured": true
+    },
+    {
+        "id": "pearl",
+        "title": "Pearl",
+        "category": "Desktop Applications",
+        "description": "A lightweight, modern desktop productivity tool designed for speed, custom workflows, and offline-first performance.",
+        "tags": ["Tauri", "Desktop", "TypeScript", "Rust"],
+        "codeUrl": "https://github.com/imustacho",
+        "demoUrl": "",
+        "icon": "🦪",
         "status": "active",
         "featured": false
     }
