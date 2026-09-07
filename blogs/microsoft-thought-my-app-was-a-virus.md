@@ -127,6 +127,6 @@ This was one of the first applications I built, and I learned a lot throughout t
 
 If you're curious, you can check out the source code on GitHub:
 
-**[→ Check out the project on GitHub](YOUR_GITHUB_LINK)**
+**[→ Check out the project on GitHub](https://github.com/imustacho/recast)**
 
 Thanks for reading, and see you in the next project! 👋
