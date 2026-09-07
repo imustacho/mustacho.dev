@@ -19,12 +19,6 @@ interface Project {
 
 const projects = projectsData as Project[];
 
-const STATUS_LABELS: Record<string, { label: string; color: string }> = {
-    active: { label: "Active", color: "rgba(52,168,83,0.85)" },
-    archived: { label: "Archived", color: "rgba(149,86,35,0.5)" },
-    wip: { label: "WIP", color: "rgba(251,188,5,0.9)" },
-};
-
 export default function Projects() {
     return (
         <section className="py-20 px-6 max-w-5xl mx-auto flex flex-col items-center gap-12">
@@ -40,139 +34,158 @@ export default function Projects() {
                     Projects
                 </motion.h2>
                 <p className="text-lg max-w-lg" style={{ color: "var(--text-muted)" }}>
-                    Some things I&apos;ve worked on.
+                    Some things I&apos;ve built and worked on.
                 </p>
             </div>
 
             {/* Project Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
                 {projects.map((project, idx) => {
-                    const statusInfo = STATUS_LABELS[project.status ?? "active"];
+                    const status = project.status ?? "active";
+
                     return (
                         <motion.div
                             key={project.id}
                             initial={{ opacity: 0, y: 30 }}
                             whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true, margin: "-80px" }}
+                            viewport={{ once: true, margin: "-50px" }}
                             transition={{ type: "spring", stiffness: 100, damping: 15, delay: idx * 0.08 }}
-                            whileHover={{ y: -8, transition: { type: "spring", stiffness: 300, damping: 20 } }}
-                            className="group relative flex flex-col gap-5 p-6 md:p-7 rounded-3xl border overflow-hidden"
+                            whileHover={{ y: -6, transition: { duration: 0.2 } }}
+                            className="group relative flex flex-col justify-between p-6 md:p-7 rounded-3xl border transition-all duration-300"
                             style={{
-                                backgroundColor: "var(--bg-elevated)",
-                                borderColor: "var(--border)",
-                                boxShadow: `0 8px 32px var(--shadow)`,
+                                backgroundColor: "var(--bg-surface)",
+                                borderColor: "var(--border-strong)",
+                                boxShadow: "0 8px 24px var(--shadow)",
                             }}
                         >
-                            {/* Subtle gradient hover overlay */}
-                            <motion.div
-                                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-3xl"
-                                style={{
-                                    background: `radial-gradient(ellipse at top left, var(--border) 0%, transparent 70%)`,
-                                }}
-                            />
+                            <div className="flex flex-col gap-5">
+                                {/* Top Row: Badges on left, Links on right */}
+                                <div className="flex flex-wrap items-center justify-between gap-3 w-full">
+                                    {/* Badges Container */}
+                                    <div className="flex items-center flex-wrap gap-2">
+                                        {/* Featured Tag */}
+                                        {project.featured && (
+                                            <span
+                                                className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full shadow-xs"
+                                                style={{
+                                                    backgroundColor: "var(--accent)",
+                                                    color: "var(--bg)",
+                                                }}
+                                            >
+                                                <HiSparkles size={13} /> Featured
+                                            </span>
+                                        )}
 
-                            {/* Featured badge */}
-                            {project.featured && (
-                                <div
-                                    className="absolute top-4 right-4 flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full"
-                                    style={{
-                                        backgroundColor: "var(--border)",
-                                        color: "var(--accent)",
-                                    }}
-                                >
-                                    <HiSparkles size={10} /> Featured
-                                </div>
-                            )}
-
-                            {/* Top Row */}
-                            <div className="flex justify-between items-start">
-                                {/* Icon */}
-                                <div
-                                    className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl border"
-                                    style={{
-                                        backgroundColor: "var(--border)",
-                                        borderColor: "var(--border-strong)",
-                                    }}
-                                >
-                                    {project.icon}
-                                </div>
-
-                                {/* Status + Links */}
-                                <div className="flex items-center gap-2 mt-1">
-                                    {/* Status dot */}
-                                    <span
-                                        className="flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full text-white"
-                                        style={{ backgroundColor: statusInfo.color }}
-                                    >
+                                        {/* Status Tag */}
                                         <span
-                                            className="w-1.5 h-1.5 rounded-full bg-white inline-block"
-                                            style={{ opacity: 0.85 }}
-                                        />
-                                        {statusInfo.label}
-                                    </span>
-
-                                    {/* GitHub */}
-                                    {project.codeUrl && (
-                                        <motion.a
-                                            href={project.codeUrl}
-                                            target="_blank"
-                                            rel="noreferrer"
-                                            className="p-2 rounded-xl border transition-colors cursor-pointer"
+                                            className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full border"
                                             style={{
+                                                backgroundColor: "var(--border)",
+                                                borderColor: "var(--border-strong)",
                                                 color: "var(--accent)",
-                                                borderColor: "var(--border)",
-                                                backgroundColor: "transparent",
                                             }}
-                                            whileHover={{ scale: 1.15, backgroundColor: "var(--border)" }}
-                                            whileTap={{ scale: 0.9 }}
                                         >
-                                            <FaGithub size={16} />
-                                        </motion.a>
-                                    )}
+                                            {status === "active" && (
+                                                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                                            )}
+                                            {status === "wip" && (
+                                                <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+                                            )}
+                                            {status === "archived" && (
+                                                <span className="w-2 h-2 rounded-full bg-zinc-400" />
+                                            )}
+                                            <span className="capitalize">{status}</span>
+                                        </span>
+                                    </div>
 
-                                    {/* Demo */}
-                                    {project.demoUrl && (
-                                        <motion.a
-                                            href={project.demoUrl}
-                                            target="_blank"
-                                            rel="noreferrer"
-                                            className="p-2 rounded-xl border transition-colors cursor-pointer"
-                                            style={{
-                                                color: "var(--accent)",
-                                                borderColor: "var(--border)",
-                                            }}
-                                            whileHover={{ scale: 1.15, backgroundColor: "var(--border)" }}
-                                            whileTap={{ scale: 0.9 }}
-                                        >
-                                            <FaExternalLinkAlt size={14} />
-                                        </motion.a>
-                                    )}
+                                    {/* Action Links */}
+                                    <div className="flex items-center gap-2">
+                                        {project.codeUrl && (
+                                            <motion.a
+                                                href={project.codeUrl}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                                className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full border transition-all cursor-pointer"
+                                                style={{
+                                                    backgroundColor: "var(--border)",
+                                                    borderColor: "var(--border-strong)",
+                                                    color: "var(--accent)",
+                                                }}
+                                                whileHover={{ scale: 1.05, backgroundColor: "var(--border-strong)" }}
+                                                whileTap={{ scale: 0.95 }}
+                                                title="View Source Code"
+                                            >
+                                                <FaGithub size={14} />
+                                                <span>Code</span>
+                                            </motion.a>
+                                        )}
+
+                                        {project.demoUrl && (
+                                            <motion.a
+                                                href={project.demoUrl}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                                className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full border transition-all cursor-pointer"
+                                                style={{
+                                                    backgroundColor: "var(--border)",
+                                                    borderColor: "var(--border-strong)",
+                                                    color: "var(--accent)",
+                                                }}
+                                                whileHover={{ scale: 1.05, backgroundColor: "var(--border-strong)" }}
+                                                whileTap={{ scale: 0.95 }}
+                                                title="View Live Demo"
+                                            >
+                                                <FaExternalLinkAlt size={12} />
+                                                <span>Demo</span>
+                                            </motion.a>
+                                        )}
+                                    </div>
                                 </div>
-                            </div>
 
-                            {/* Content */}
-                            <div className="flex flex-col gap-2 flex-1">
-                                <h3 className="font-heading text-2xl" style={{ color: "var(--accent)" }}>
-                                    {project.title}
-                                </h3>
-                                <p className="text-sm leading-relaxed" style={{ color: "var(--text-muted)" }}>
+                                {/* Title & Emoji Header */}
+                                <div className="flex items-center gap-4 mt-1">
+                                    <div
+                                        className="w-13 h-13 rounded-2xl flex items-center justify-center text-2xl border shrink-0 shadow-xs"
+                                        style={{
+                                            backgroundColor: "var(--border)",
+                                            borderColor: "var(--border-strong)",
+                                        }}
+                                    >
+                                        {project.icon}
+                                    </div>
+                                    <h3
+                                        className="font-heading text-2xl tracking-tight leading-tight group-hover:underline decoration-2 transition-all"
+                                        style={{ color: "var(--accent)" }}
+                                    >
+                                        {project.title}
+                                    </h3>
+                                </div>
+
+                                {/* Description */}
+                                <p
+                                    className="text-sm leading-relaxed"
+                                    style={{ color: "var(--text-muted)" }}
+                                >
                                     {project.description}
                                 </p>
                             </div>
 
-                            {/* Tags */}
-                            <div className="flex flex-wrap gap-1.5">
+                            {/* Tech Stack Tags */}
+                            <div
+                                className="flex flex-wrap gap-2 mt-5 pt-4 border-t"
+                                style={{ borderColor: "var(--border)" }}
+                            >
                                 {project.tags.map((tag) => (
                                     <span
                                         key={tag}
-                                        className="px-2.5 py-0.5 text-xs font-semibold rounded-full border"
+                                        className="px-3 py-1 text-xs font-semibold rounded-full border transition-all"
                                         style={{
-                                            color: "var(--accent)",
-                                            borderColor: "var(--border-strong)",
                                             backgroundColor: "var(--border)",
+                                            borderColor: "var(--border-strong)",
+                                            color: "var(--accent)",
                                         }}
                                     >
-                                        {tag}
+                                        #{tag}
                                     </span>
                                 ))}
                             </div>
