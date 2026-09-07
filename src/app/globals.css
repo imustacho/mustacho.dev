@@ -24,7 +24,7 @@
     --accent-hover: #2a2a2a;
     --border: rgba(0, 0, 0, 0.1);
     --border-strong: rgba(0, 0, 0, 0.18);
-    --dot-color: rgba(0, 0, 0, 0.07);
+    --dot-color: rgba(0, 0, 0, 0.16);
     --shadow: rgba(0, 0, 0, 0.06);
     --shadow-strong: rgba(0, 0, 0, 0.12);
     --navbar-bg: rgba(250, 250, 250, 0.88);
@@ -43,7 +43,7 @@
     --accent-hover: #e8e8e8;
     --border: rgba(255, 255, 255, 0.08);
     --border-strong: rgba(255, 255, 255, 0.14);
-    --dot-color: rgba(255, 255, 255, 0.05);
+    --dot-color: rgba(255, 255, 255, 0.12);
     --shadow: rgba(0, 0, 0, 0.5);
     --shadow-strong: rgba(0, 0, 0, 0.75);
     --navbar-bg: rgba(10, 10, 10, 0.88);
@@ -85,7 +85,7 @@
     --accent-hover: #e0b88a;
     --border: rgba(212, 165, 116, 0.12);
     --border-strong: rgba(212, 165, 116, 0.2);
-    --dot-color: rgba(212, 165, 116, 0.08);
+    --dot-color: rgba(212, 165, 116, 0.14);
     --shadow: rgba(0, 0, 0, 0.5);
     --shadow-strong: rgba(0, 0, 0, 0.75);
     --navbar-bg: rgba(26, 21, 16, 0.88);
@@ -108,7 +108,7 @@
     --accent-hover: #c03535;
     --border: rgba(212, 64, 64, 0.1);
     --border-strong: rgba(212, 64, 64, 0.18);
-    --dot-color: rgba(212, 64, 64, 0.1);
+    --dot-color: rgba(212, 64, 64, 0.18);
     --shadow: rgba(212, 64, 64, 0.08);
     --shadow-strong: rgba(212, 64, 64, 0.15);
     --navbar-bg: rgba(253, 245, 245, 0.88);
@@ -127,7 +127,7 @@
     --accent-hover: #ff7878;
     --border: rgba(240, 96, 96, 0.1);
     --border-strong: rgba(240, 96, 96, 0.16);
-    --dot-color: rgba(240, 96, 96, 0.06);
+    --dot-color: rgba(240, 96, 96, 0.14);
     --shadow: rgba(0, 0, 0, 0.5);
     --shadow-strong: rgba(0, 0, 0, 0.75);
     --navbar-bg: rgba(17, 8, 8, 0.88);
@@ -150,7 +150,7 @@
     --accent-hover: #245aaa;
     --border: rgba(46, 107, 196, 0.12);
     --border-strong: rgba(46, 107, 196, 0.2);
-    --dot-color: rgba(46, 107, 196, 0.1);
+    --dot-color: rgba(46, 107, 196, 0.18);
     --shadow: rgba(46, 107, 196, 0.08);
     --shadow-strong: rgba(46, 107, 196, 0.16);
     --navbar-bg: rgba(243, 246, 251, 0.88);
@@ -169,7 +169,7 @@
     --accent-hover: #78b4ff;
     --border: rgba(90, 156, 240, 0.1);
     --border-strong: rgba(90, 156, 240, 0.16);
-    --dot-color: rgba(90, 156, 240, 0.06);
+    --dot-color: rgba(90, 156, 240, 0.14);
     --shadow: rgba(0, 0, 0, 0.5);
     --shadow-strong: rgba(0, 0, 0, 0.75);
     --navbar-bg: rgba(9, 12, 18, 0.88);
