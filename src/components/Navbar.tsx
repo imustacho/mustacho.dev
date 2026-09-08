@@ -13,7 +13,7 @@ const NAV_ITEMS = [
     { label: "About", href: "/about", view: "about" },
     { label: "Skills", href: "/skills", view: "skills" },
     { label: "Projects", href: "/projects", view: "projects" },
-    { label: "Blog", href: "/blogs", view: "blogs" },
+    { label: "Blog", href: "/blog", view: "blog" },
     { label: "Contact", href: "/contact", view: "contact" },
 ];
 
@@ -51,7 +51,7 @@ export default function Navbar() {
         if (pathname === "/about") return "about";
         if (pathname === "/skills") return "skills";
         if (pathname === "/projects") return "projects";
-        if (pathname.startsWith("/blogs")) return "blogs";
+        if (pathname.startsWith("/blog")) return "blog";
         if (pathname === "/contact") return "contact";
         return "home";
     };

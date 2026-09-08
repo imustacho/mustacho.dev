@@ -17,7 +17,7 @@ export default function BlogDetailClient({ post }: BlogDetailClientProps) {
                 {/* Back Button */}
                 <div className="mb-8">
                     <Link
-                        href="/blogs"
+                        href="/blog"
                         className="inline-flex items-center gap-2 text-sm font-semibold transition-opacity hover:opacity-70"
                         style={{ color: "var(--text-muted)" }}
                     >

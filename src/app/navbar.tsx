@@ -9,7 +9,7 @@ import MustacheSvg from "@/components/mustachesvg";
 const NAV_ITEMS = [
     { label: "About", href: "/about", view: "about" },
     { label: "Projects", href: "/projects", view: "projects" },
-    { label: "Blog", href: "/blogs", view: "blogs" },
+    { label: "Blog", href: "/blog", view: "blog" },
     { label: "Contact", href: "/contact", view: "contact" }
 ];
 
@@ -21,7 +21,7 @@ export default function Navbar() {
     const getActiveView = () => {
         if (pathname === "/about") return "about";
         if (pathname === "/projects") return "projects";
-        if (pathname.startsWith("/blogs")) return "blogs";
+        if (pathname.startsWith("/blog")) return "blog";
         if (pathname === "/contact") return "contact";
         return "home";
     };
