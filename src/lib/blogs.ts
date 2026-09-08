@@ -39,7 +39,7 @@ export function getBlogPosts(): BlogPost[] {
             } as BlogPost;
         });
 
-    return allPostsData;
+    return allPostsData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
 
 export function getBlogPostById(id: string): BlogPost | null {
