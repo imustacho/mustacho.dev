@@ -37,64 +37,69 @@ export default function BlogsListClient({ posts }: BlogsListClientProps) {
                         posts.map((post, idx) => (
                             <Link key={post.id} href={`/blog/${post.id}`} className="block">
                                 <div
-                                    className="py-6 border-b flex flex-col gap-3 cursor-pointer group transition-all duration-200"
+                                    className="group relative py-6 border-b flex flex-col gap-3 cursor-pointer"
                                     style={{ borderColor: "var(--border-strong)" }}
                                 >
-                                    <div className="flex justify-between items-start gap-4">
-                                        {/* Meta */}
-                                        <div
-                                            className="flex items-center gap-3 text-xs font-semibold"
-                                            style={{ color: "var(--accent)" }}
-                                        >
-                                            {post.category && (
-                                                <span
-                                                    className="px-2.5 py-0.5 rounded-full border"
-                                                    style={{
-                                                        backgroundColor: "var(--border)",
-                                                        borderColor: "var(--border-strong)",
-                                                    }}
+                                    {/* Background */}
+                                    <div className="absolute z-1 -inset-x-6 -inset-y-1 rounded-3xl bg-accent/60 backdrop-blur-sm scale-95 group-hover:scale-100 group-active:scale-95 group-active:opacity-100 opacity-0 group-hover:opacity-100 transition-[opacity,scale] ease-in-out duration-250 pointer-events-none" />
+                                    {/* Content */}
+                                    <div className="z-5">
+                                        <div className="flex justify-between items-start gap-4">
+                                            {/* Meta */}
+                                            <div
+                                                className="flex items-center gap-3 text-xs font-semibold"
+                                                style={{ color: "var(--accent)" }}
+                                            >
+                                                {post.category && (
+                                                    <span
+                                                        className="px-2.5 py-0.5 rounded-full border"
+                                                        style={{
+                                                            backgroundColor: "var(--border)",
+                                                            borderColor: "var(--border-strong)",
+                                                        }}
+                                                    >
+                                                        {post.category}
+                                                    </span>
+                                                )}
+                                                {post.date && (
+                                                    <span
+                                                        className="flex items-center gap-1 font-mono"
+                                                        style={{ color: "var(--text-muted)" }}
+                                                    >
+                                                        <FaCalendarAlt /> {post.date}
+                                                    </span>
+                                                )}
+                                            </div>
+
+                                            {/* Read time */}
+                                            {post.readTime && (
+                                                <div
+                                                    className="flex items-center gap-1.5 text-xs font-mono"
+                                                    style={{ color: "var(--text-faint)" }}
                                                 >
-                                                    {post.category}
-                                                </span>
-                                            )}
-                                            {post.date && (
-                                                <span
-                                                    className="flex items-center gap-1 font-mono"
-                                                    style={{ color: "var(--text-muted)" }}
-                                                >
-                                                    <FaCalendarAlt /> {post.date}
-                                                </span>
+                                                    <FaClock /> {post.readTime}
+                                                </div>
                                             )}
                                         </div>
 
-                                        {/* Read time */}
-                                        {post.readTime && (
-                                            <div
-                                                className="flex items-center gap-1.5 text-xs font-mono"
-                                                style={{ color: "var(--text-faint)" }}
+                                        {/* Title */}
+                                        <h2
+                                            className="font-heading text-2xl leading-tight group-hover:underline decoration-2 transition-colors"
+                                            style={{ color: "var(--accent)" }}
+                                        >
+                                            {post.title}
+                                        </h2>
+
+                                        {/* Excerpt */}
+                                        {post.excerpt && (
+                                            <p
+                                                className="text-sm leading-relaxed"
+                                                style={{ color: "var(--text-muted)" }}
                                             >
-                                                <FaClock /> {post.readTime}
-                                            </div>
+                                                {post.excerpt}
+                                            </p>
                                         )}
                                     </div>
-
-                                    {/* Title */}
-                                    <h2
-                                        className="font-heading text-2xl leading-tight group-hover:underline decoration-2 transition-colors"
-                                        style={{ color: "var(--accent)" }}
-                                    >
-                                        {post.title}
-                                    </h2>
-
-                                    {/* Excerpt */}
-                                    {post.excerpt && (
-                                        <p
-                                            className="text-sm leading-relaxed"
-                                            style={{ color: "var(--text-muted)" }}
-                                        >
-                                            {post.excerpt}
-                                        </p>
-                                    )}
                                 </div>
                             </Link>
                         ))
