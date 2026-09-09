@@ -10,7 +10,7 @@ interface HistoryItem {
 }
 
 const BOOT_MESSAGES: HistoryItem[] = [
-    { type: "info",   text: "mustacho@dev:~$ ./terminal --init" },
+    { type: "info",   text: "root@mustacho:~$ ./terminal" },
     { type: "output", text: "" },
     { type: "output", text: "  Mustacho Terminal v2.0" },
     { type: "output", text: "  Istanbul, TR" },
@@ -199,12 +199,11 @@ export default function ContactPage() {
 
     return (
         <main
-            className="min-h-screen relative overflow-hidden"
+            className="h-screen relative overflow-hidden"
             style={{ color: "var(--text-primary)" }}
         >
-            <div className="pt-24 pb-20 min-h-screen w-full flex flex-col justify-center">
+            <div className="pt-25 w-full flex flex-col justify-center">
                 <section className="py-16 px-5 md:px-8 max-w-3xl mx-auto flex flex-col items-center gap-8 w-full">
-
                     {/* Header */}
                     <motion.div
                         initial={{ opacity: 0, y: 14 }}
@@ -267,10 +266,10 @@ export default function ContactPage() {
                             </div>
 
                             <span
-                                className="text-[10px] font-mono uppercase tracking-[0.25em]"
-                                style={{ color: "rgba(200,196,190,0.25)" }}
+                                className="text-[11px] font-mono uppercase tracking-widest"
+                                style={{ color: "rgba(200,196,190,0.5)" }}
                             >
-                                mustacho@dev — terminal
+                                Terminal
                             </span>
 
                             <div className="w-14" />
@@ -302,7 +301,7 @@ export default function ContactPage() {
                                 <div className="flex flex-wrap items-center flex-1 font-mono" style={{ color: colorMap.output }}>
                                     <span className="whitespace-pre-wrap break-all">{input}</span>
                                     <span
-                                        className="w-[7px] h-[14px] ml-0.5 animate-blink rounded-[1px] shrink-0"
+                                        className="w-1.75 h-3.5 ml-0.5 animate-blink rounded-[1px] shrink-0"
                                         style={{ backgroundColor: colorMap.input }}
                                     />
                                 </div>
@@ -318,6 +317,7 @@ export default function ContactPage() {
                                     autoComplete="off"
                                     autoCapitalize="off"
                                     spellCheck={false}
+                                    autoFocus
                                 />
                             </div>
 
