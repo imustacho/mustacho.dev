@@ -20,9 +20,9 @@ const NAV_ITEMS = [
 /* Color theme display config */
 const COLOR_THEME_CONFIG: Record<ColorTheme, { label: string; dot: string }> = {
     default: { label: "Default", dot: "#111111" },
-    cream:   { label: "Cream",   dot: "#955623" },
-    red:     { label: "Red",     dot: "#d44040" },
-    blue:    { label: "Blue",    dot: "#2e6bc4" },
+    cream: { label: "Cream", dot: "#955623" },
+    red: { label: "Red", dot: "#d44040" },
+    blue: { label: "Blue", dot: "#2e6bc4" },
 };
 
 export default function Navbar() {
@@ -86,6 +86,7 @@ export default function Navbar() {
                     href="/"
                     className="font-heading text-base font-bold tracking-tight flex items-center gap-1 shrink-0"
                     style={{ color: "var(--accent)" }}
+                    draggable={false}
                 >
                     <motion.span
                         whileHover={{ scale: 1.05 }}
@@ -96,38 +97,67 @@ export default function Navbar() {
                 </Link>
 
                 {/* Desktop Nav Links */}
-                <div className="hidden sm:flex items-center gap-0.5">
+                <div
+                    className="hidden sm:flex items-center gap-0.5"
+                    onMouseLeave={() => setHoveredIndex(null)}
+                >
                     {NAV_ITEMS.map((item, idx) => {
                         const isActive = activeView === item.view;
+
                         return (
                             <Link
                                 key={item.href}
                                 href={item.href}
-                                className="relative px-2.5 py-1.5 text-xs font-medium transition-colors duration-200 rounded-full cursor-pointer select-none whitespace-nowrap"
+                                className="
+                    relative px-2.5 py-1.5
+                    text-xs font-medium
+                    transition-colors duration-200
+                    rounded-full cursor-pointer
+                    select-none whitespace-nowrap
+                "
                                 style={{
-                                    color: isActive ? "var(--accent)" : "var(--text-muted)",
+                                    color: isActive
+                                        ? "var(--accent)"
+                                        : "var(--text-muted)",
                                     fontWeight: isActive ? 600 : 500,
                                 }}
                                 onMouseEnter={() => setHoveredIndex(idx)}
-                                onMouseLeave={() => setHoveredIndex(null)}
+                                draggable={false}
                             >
                                 {hoveredIndex === idx && (
                                     <motion.span
                                         layoutId="navHover"
                                         className="absolute inset-0 rounded-full -z-10"
-                                        style={{ backgroundColor: "var(--border)" }}
-                                        transition={{ type: "spring", stiffness: 350, damping: 28 }}
+                                        style={{
+                                            backgroundColor: "var(--border)",
+                                        }}
+                                        transition={{
+                                            type: "spring",
+                                            stiffness: 350,
+                                            damping: 28,
+                                        }}
                                     />
                                 )}
 
                                 {isActive && (
                                     <motion.span
                                         layoutId="activeDot"
-                                        className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full"
-                                        style={{ backgroundColor: "var(--accent)" }}
-                                        transition={{ type: "spring", stiffness: 300, damping: 22 }}
+                                        className="
+                            absolute -bottom-0.5
+                            left-1/2 -translate-x-1/2
+                            w-1 h-1 rounded-full
+                        "
+                                        style={{
+                                            backgroundColor: "var(--accent)",
+                                        }}
+                                        transition={{
+                                            type: "spring",
+                                            stiffness: 300,
+                                            damping: 22,
+                                        }}
                                     />
                                 )}
+
                                 {item.label}
                             </Link>
                         );
