@@ -37,13 +37,13 @@ export default function BlogsListClient({ posts }: BlogsListClientProps) {
                         posts.map((post, idx) => (
                             <Link key={post.id} href={`/blog/${post.id}`} className="block">
                                 <div
-                                    className="group relative py-6 border-b flex flex-col gap-3 cursor-pointer"
+                                    className="group relative py-6 border-b cursor-pointer"
                                     style={{ borderColor: "var(--border-strong)" }}
                                 >
                                     {/* Background */}
-                                    <div className="absolute z-1 -inset-x-6 -inset-y-1 rounded-3xl bg-accent/60 backdrop-blur-sm scale-95 group-hover:scale-100 group-active:scale-95 group-active:opacity-100 opacity-0 group-hover:opacity-100 transition-[opacity,scale] ease-in-out duration-250 pointer-events-none" />
+                                    <div className="absolute z-1 -inset-x-5 -inset-y-0 rounded-3xl bg-accent/60 scale-95 group-hover:scale-100 group-active:scale-95 group-active:opacity-100 opacity-0 group-hover:opacity-100 transition-[opacity,scale] ease-in-out duration-250 pointer-events-none" />
                                     {/* Content */}
-                                    <div className="z-5">
+                                    <div className="relative z-50 flex flex-col gap-3 ">
                                         <div className="flex justify-between items-start gap-4">
                                             {/* Meta */}
                                             <div
