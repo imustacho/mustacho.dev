@@ -109,12 +109,12 @@ export default function Navbar() {
                                 key={item.href}
                                 href={item.href}
                                 className="
-                    relative px-2.5 py-1.5
-                    text-xs font-medium
-                    transition-colors duration-200
-                    rounded-full cursor-pointer
-                    select-none whitespace-nowrap
-                "
+                                    relative px-2.5 py-1.5
+                                    text-xs font-medium
+                                    transition-colors duration-200
+                                    rounded-full cursor-pointer
+                                    select-none whitespace-nowrap
+                                "
                                 style={{
                                     color: isActive
                                         ? "var(--accent)"
@@ -124,20 +124,49 @@ export default function Navbar() {
                                 onMouseEnter={() => setHoveredIndex(idx)}
                                 draggable={false}
                             >
-                                {hoveredIndex === idx && (
-                                    <motion.span
-                                        layoutId="navHover"
-                                        className="absolute inset-0 rounded-full -z-10"
-                                        style={{
-                                            backgroundColor: "var(--border)",
-                                        }}
-                                        transition={{
-                                            type: "spring",
-                                            stiffness: 350,
-                                            damping: 28,
-                                        }}
-                                    />
-                                )}
+                                <AnimatePresence initial={false}>
+                                    {hoveredIndex === idx && (
+                                        <motion.span
+                                            layoutId="navHover"
+                                            className="absolute inset-0 -z-10"
+                                            transition={{
+                                                type: "spring",
+                                                stiffness: 350,
+                                                damping: 28,
+                                                mass: 0.7,
+                                            }}
+                                        >
+                                            <motion.span
+                                                className="absolute inset-0 rounded-full"
+                                                style={{
+                                                    backgroundColor: "var(--border)",
+                                                }}
+                                                initial={{
+                                                    opacity: 0,
+                                                    scale: 0.92,
+                                                }}
+                                                animate={{
+                                                    opacity: 1,
+                                                    scale: 1,
+                                                }}
+                                                exit={{
+                                                    opacity: 0,
+                                                    scale: 0.92,
+                                                }}
+                                                transition={{
+                                                    opacity: {
+                                                        duration: 0.14,
+                                                    },
+                                                    scale: {
+                                                        type: "spring",
+                                                        stiffness: 400,
+                                                        damping: 30,
+                                                    },
+                                                }}
+                                            />
+                                        </motion.span>
+                                    )}
+                                </AnimatePresence>
 
                                 {isActive && (
                                     <motion.span
