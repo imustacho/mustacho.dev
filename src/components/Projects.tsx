@@ -89,12 +89,8 @@ export default function Projects() {
                                     return (
                                         <motion.div
                                             key={project.id}
-                                            initial={{ opacity: 0, y: 20 }}
-                                            whileInView={{ opacity: 1, y: 0 }}
-                                            viewport={{ once: true, margin: "-40px" }}
                                             transition={{ type: "spring", stiffness: 100, damping: 15, delay: idx * 0.06 }}
-                                            whileHover={{ y: -5, transition: { duration: 0.2 } }}
-                                            className="group relative flex flex-col justify-between p-5 rounded-2xl border transition-all duration-300"
+                                            className="group hover:scale-105 active:scale-100 cursor-pointer relative flex flex-col justify-between p-5 rounded-2xl border transition-all duration-250"
                                             style={{
                                                 backgroundColor: "var(--bg-surface)",
                                                 borderColor: "var(--border-strong)",
@@ -205,7 +201,7 @@ export default function Projects() {
 
                                                 {/* Description */}
                                                 <p
-                                                    className="text-xs sm:text-sm leading-relaxed min-h-[42px]"
+                                                    className="text-xs sm:text-sm leading-relaxed min-h-10.5"
                                                     style={{ color: "var(--text-muted)" }}
                                                 >
                                                     {project.description}
