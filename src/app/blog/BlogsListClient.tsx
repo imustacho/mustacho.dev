@@ -36,10 +36,7 @@ export default function BlogsListClient({ posts }: BlogsListClientProps) {
                     ) : (
                         posts.map((post, idx) => (
                             <Link key={post.id} href={`/blog/${post.id}`} className="block">
-                                <motion.div
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ type: "spring", stiffness: 100, damping: 15, delay: idx * 0.08 }}
+                                <div
                                     className="py-6 border-b flex flex-col gap-3 cursor-pointer group transition-all duration-200"
                                     style={{ borderColor: "var(--border-strong)" }}
                                 >
@@ -98,7 +95,7 @@ export default function BlogsListClient({ posts }: BlogsListClientProps) {
                                             {post.excerpt}
                                         </p>
                                     )}
-                                </motion.div>
+                                </div>
                             </Link>
                         ))
                     )}
