@@ -78,12 +78,12 @@
             },
             {
                 "name": "Prompt Engineering",
-                "icon": "SiHuggingface",
+                "icon": "FaWandMagicSparkles",
                 "repoUrl": "https://github.com/imustacho/bubble"
             },
             {
                 "name": "Agent Systems",
-                "icon": "SiHuggingface",
+                "icon": "FaRobot",
                 "repoUrl": "https://github.com/imustacho/overseer"
             }
         ]
@@ -104,7 +104,7 @@
             },
             {
                 "name": "VS Code",
-                "icon": "SiVscodium",
+                "icon": "VscVscode",
                 "repoUrl": ""
             }
         ]

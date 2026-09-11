@@ -8,17 +8,44 @@ import {
     SiNextdotjs, SiReact, SiFramer, SiTailwindcss,
     SiNodedotjs, SiPostman, SiDiscord,
     SiHuggingface,
-    SiGit, SiVercel, SiVscodium,
+    SiGit, SiVercel,
 } from "react-icons/si";
+import { VscVscode } from "react-icons/vsc";
+import { FaBrain, FaWandMagicSparkles, FaRobot } from "react-icons/fa6";
+import { LuBrainCircuit, LuSparkles, LuBot } from "react-icons/lu";
+import { TbApi } from "react-icons/tb";
 import type { IconType } from "react-icons";
 
 /* ─── Icon registry ──────────────────────────────────────────── */
 const iconMap: Record<string, IconType> = {
-    SiTypescript, SiJavascript, SiHtml5,
-    SiNextdotjs, SiReact, SiFramer, SiTailwindcss,
-    SiNodedotjs, SiPostman, SiDiscord,
+    // Languages
+    SiTypescript,
+    SiJavascript,
+    SiHtml5,
+    // Frameworks & Libraries
+    SiNextdotjs,
+    SiReact,
+    SiFramer,
+    SiTailwindcss,
+    // Backend & APIs
+    SiNodedotjs,
+    SiPostman,
+    TbApi,
+    SiDiscord,
+    // AI & Machine Learning
     SiHuggingface,
-    SiGit, SiVercel, SiVscodium,
+    FaBrain,
+    FaWandMagicSparkles,
+    FaRobot,
+    LuBrainCircuit,
+    LuSparkles,
+    LuBot,
+    // Tools & DevOps
+    SiGit,
+    SiVercel,
+    VscVscode,
+    // Fallback aliases
+    SiVscodium: VscVscode,
 };
 
 /* ─── Types ──────────────────────────────────────────────────── */
