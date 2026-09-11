@@ -58,7 +58,7 @@ export default function AboutPage() {
                             style={{ borderColor: "var(--border-strong)", boxShadow: "0 16px 48px var(--shadow-strong)" }}
                         >
                             <img
-                                src="/mustacho_wave.png"
+                                src="/mustacho.png"
                                 alt="Mustacho"
                                 className="w-full h-full object-cover"
                             />
