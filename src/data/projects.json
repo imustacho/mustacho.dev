@@ -18,8 +18,8 @@
         "status": "active",
         "featured": true,
         "images": [
-            "/projects/overseer/demo-1.png",
-            "/projects/overseer/demo-2.png"
+            "/projects/overseer/demo-1.gif",
+            "/projects/overseer/demo-2.gif"
         ]
     },
     {
@@ -60,7 +60,11 @@
         "icon": "🥪",
         "status": "active",
         "featured": false,
-        "images": []
+        "images": [
+            "/projects/hungerfall/demo-1.png",
+            "/projects/hungerfall/demo-2.png",
+            "/projects/hungerfall/demo-3.png"
+        ]
     },
     {
         "id": "recast",
@@ -80,7 +84,10 @@
         "icon": "🔮",
         "status": "active",
         "featured": true,
-        "images": []
+        "images": [
+            "/projects/recast/demo-1.png",
+            "/projects/recast/demo-2.png"
+        ]
     },
     {
         "id": "pearl",
