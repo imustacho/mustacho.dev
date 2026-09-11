@@ -1,24 +1,12 @@
 "use client";
 
 import { motion } from "motion/react";
+import { useRouter } from "next/navigation";
 import { FaGithub, FaExternalLinkAlt, FaRobot, FaDesktop } from "react-icons/fa";
 import { HiSparkles } from "react-icons/hi2";
-import projectsData from "@/data/projects.json";
+import { getProjects, type Project } from "@/lib/projects";
 
-interface Project {
-    id: string;
-    title: string;
-    description: string;
-    tags: string[];
-    demoUrl?: string;
-    codeUrl: string;
-    icon: string;
-    status?: "active" | "archived" | "wip";
-    featured?: boolean;
-    category?: string;
-}
-
-const projects = projectsData as Project[];
+const projects = getProjects();
 
 const CATEGORY_ICONS: Record<string, React.ReactNode> = {
     "Discord Bots": <FaRobot />,
@@ -26,6 +14,7 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
 };
 
 export default function Projects() {
+    const router = useRouter();
     // Group projects by category preserving standard order
     const categories = Array.from(new Set(projects.map((p) => p.category || "Other")));
 
@@ -89,8 +78,17 @@ export default function Projects() {
                                     return (
                                         <motion.div
                                             key={project.id}
+                                            role="button"
+                                            tabIndex={0}
+                                            onClick={() => router.push(`/projects/${project.id}`)}
+                                            onKeyDown={(e) => {
+                                                if (e.key === "Enter" || e.key === " ") {
+                                                    e.preventDefault();
+                                                    router.push(`/projects/${project.id}`);
+                                                }
+                                            }}
                                             transition={{ type: "spring", stiffness: 100, damping: 15, delay: idx * 0.06 }}
-                                            className="group hover:scale-105 active:scale-100 cursor-pointer relative flex flex-col justify-between p-5 rounded-2xl border transition-all duration-250"
+                                            className="group hover:scale-105 active:scale-100 cursor-pointer relative flex flex-col justify-between p-5 rounded-2xl border transition-all duration-250 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
                                             style={{
                                                 backgroundColor: "var(--bg-surface)",
                                                 borderColor: "var(--border-strong)",
@@ -137,12 +135,16 @@ export default function Projects() {
                                                     </div>
 
                                                     {/* Code & Demo Links */}
-                                                    <div className="flex items-center gap-1.5">
+                                                    <div
+                                                        className="flex items-center gap-1.5"
+                                                        onClick={(e) => e.stopPropagation()}
+                                                    >
                                                         {project.codeUrl && (
                                                             <motion.a
                                                                 href={project.codeUrl}
                                                                 target="_blank"
                                                                 rel="noreferrer"
+                                                                onClick={(e) => e.stopPropagation()}
                                                                 className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full border transition-all cursor-pointer"
                                                                 style={{
                                                                     backgroundColor: "var(--border)",
@@ -163,6 +165,7 @@ export default function Projects() {
                                                                 href={project.demoUrl}
                                                                 target="_blank"
                                                                 rel="noreferrer"
+                                                                onClick={(e) => e.stopPropagation()}
                                                                 className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full border transition-all cursor-pointer"
                                                                 style={{
                                                                     backgroundColor: "var(--border)",

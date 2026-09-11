@@ -4,59 +4,102 @@
         "title": "Overseer",
         "category": "Discord Bots",
         "description": "Manage Discord servers with natural language. An AI agent that understands your commands and executes moderation, roles, and server management automatically.",
+        "longDescription": "Overseer is an autonomous AI-driven Discord bot built to streamline community moderation and administration. Instead of memorizing slash commands, server administrators and moderators can converse with Overseer using natural language. It interprets user intent, validates permissions, and performs administrative actions like assigning roles, kicking or muting rule-breakers, and configuring channels.",
+        "features": [
+            "Natural language intent parsing with LLM integration",
+            "Automated moderation and context-aware action triggers",
+            "Granular permission validation before executing sensitive server actions",
+            "Persistent audit log and event history tracking"
+        ],
         "tags": ["Discord", "AI", "Agent", "TypeScript"],
-        "codeUrl": "https://github.com/imustacho",
+        "codeUrl": "https://github.com/imustacho/overseer",
         "demoUrl": "",
         "icon": "🕶",
         "status": "active",
-        "featured": true
+        "featured": true,
+        "images": [
+            "/projects/overseer/demo-1.png",
+            "/projects/overseer/demo-2.png"
+        ]
     },
     {
         "id": "bubble",
         "title": "Bubble",
         "category": "Discord Bots",
         "description": "Discord-powered AI engine generator with persistent memory and custom training support. Build your own AI persona that lives in your Discord server.",
+        "longDescription": "Bubble lets communities create and nurture unique AI personas within Discord. Each Bubble persona can maintain long-term memory across chat conversations, adapt its tone and knowledge base through custom prompt engineering, and interact naturally with community members across multiple channels.",
+        "features": [
+            "Long-term memory persistence across conversation threads",
+            "Custom system prompt configuration for distinct personas",
+            "Context window optimization to preserve chat history efficiently",
+            "Server-specific roleplay and knowledge base customization"
+        ],
         "tags": ["Discord", "AI", "Memory", "Training"],
         "codeUrl": "https://github.com/imustacho",
         "demoUrl": "",
         "icon": "🐡",
         "status": "active",
-        "featured": false
+        "featured": false,
+        "images": []
     },
     {
         "id": "hungerfall",
         "title": "Hungerfall",
         "category": "Discord Bots",
         "description": "A text-based adventure game with an AI-Narrator that adapts the story to your choices. Every playthrough is unique.",
+        "longDescription": "Hungerfall transforms traditional Discord text games into a dynamic, AI-mastered RPG adventure. Players embark on survival quests where the dungeon master / narrator generates original storyline twists, encounters, and challenges in real time, reacting dynamically to player decisions and inventory management.",
+        "features": [
+            "Dynamic AI-driven story generation reacting to player choices",
+            "Turn-based survival mechanics with inventory and health stats",
+            "Multiplayer party decisions and voting mechanism",
+            "Branching storylines with procedural world building"
+        ],
         "tags": ["Game", "AI", "Text-based", "Narrative"],
         "codeUrl": "https://github.com/imustacho/hungerfall",
         "demoUrl": "",
         "icon": "🥪",
         "status": "active",
-        "featured": false
+        "featured": false,
+        "images": []
     },
     {
         "id": "recast",
         "title": "Recast",
         "category": "Desktop Applications",
         "description": "An offline, privacy-first file converter desktop application built with Tauri. Convert images and WebP files seamlessly without uploading online.",
+        "longDescription": "Recast is a high-performance, native desktop application engineered with Tauri and Rust. It gives creators and developers an instant, 100% offline way to batch convert images (PNG, JPEG, WebP, AVIF) without sacrificing quality or uploading private media to third-party web services.",
+        "features": [
+            "100% offline processing for complete privacy",
+            "Multi-threaded batch conversion powered by Rust",
+            "WebP, PNG, JPEG, and modern image format optimization",
+            "Minimal CPU and RAM footprint via Tauri lightweight architecture"
+        ],
         "tags": ["Tauri", "Rust", "Desktop", "React"],
         "codeUrl": "https://github.com/imustacho",
         "demoUrl": "",
         "icon": "🔮",
         "status": "active",
-        "featured": true
+        "featured": true,
+        "images": []
     },
     {
         "id": "pearl",
         "title": "Pearl",
         "category": "Desktop Applications",
         "description": "A lightweight, modern desktop productivity tool designed for speed, custom workflows, and offline-first performance.",
+        "longDescription": "Pearl is an elegant personal command center and productivity companion built with Tauri and React. Focused on speed, clean minimalism, and zero bloat, Pearl assists daily developer routines with quick-access utilities, custom macro workflows, and offline-first notes.",
+        "features": [
+            "Snappy global shortcut access and clean overlay UI",
+            "Customizable workflow shortcuts and macro automation",
+            "Local encrypted storage for offline notes and configuration",
+            "Tailored dark mode interface adhering to system themes"
+        ],
         "tags": ["Tauri", "Desktop", "TypeScript", "Rust"],
         "codeUrl": "https://github.com/imustacho",
         "demoUrl": "",
         "icon": "🦪",
         "status": "active",
-        "featured": false
+        "featured": false,
+        "images": []
     }
 ]
