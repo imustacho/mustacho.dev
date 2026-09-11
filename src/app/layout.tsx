@@ -28,11 +28,10 @@ export const metadata: Metadata = {
     creator: "Mustacho",
     icons: {
         icon: [
-            { url: "/mustache.svg?v=3", type: "image/svg+xml" },
-            { url: "/mustacho.svg?v=3", type: "image/svg+xml" },
+            { url: "/mustacho.png?v=4", type: "image/png" },
         ],
-        shortcut: "/mustache.svg?v=3",
-        apple: "/mustacho.png",
+        shortcut: "/mustacho.png?v=4",
+        apple: "/mustacho.png?v=4",
     },
     openGraph: {
         title: "Mustacho — Developer & Student",
