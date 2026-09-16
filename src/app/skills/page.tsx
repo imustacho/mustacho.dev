@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import SkillsClient from "./SkillsClient";
 
@@ -15,5 +16,9 @@ export const metadata: Metadata = {
 };
 
 export default function SkillsPage() {
-    return <SkillsClient />;
+    return (
+        <Suspense fallback={null}>
+            <SkillsClient />
+        </Suspense>
+    );
 }

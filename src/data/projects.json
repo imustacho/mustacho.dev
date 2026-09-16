@@ -12,6 +12,7 @@
             "Persistent audit log and event history tracking"
         ],
         "tags": ["Discord", "AI", "Agent", "TypeScript"],
+        "skills": ["TypeScript", "Node.js", "Discord.js", "LLM Integration", "Agent Systems", "Git & GitHub"],
         "codeUrl": "https://github.com/imustacho/overseer",
         "demoUrl": "",
         "icon": "🕶",
@@ -35,6 +36,7 @@
             "Server-specific roleplay and knowledge base customization"
         ],
         "tags": ["Discord", "AI", "Memory", "Training"],
+        "skills": ["JavaScript", "Node.js", "Discord.js", "LLM Integration", "Prompt Engineering", "Git & GitHub"],
         "codeUrl": "https://github.com/imustacho",
         "demoUrl": "",
         "icon": "🐡",
@@ -55,6 +57,7 @@
             "Branching storylines with procedural world building"
         ],
         "tags": ["Game", "AI", "Text-based", "Narrative"],
+        "skills": ["TypeScript", "JavaScript", "Node.js", "Discord.js", "LLM Integration", "Prompt Engineering", "Git & GitHub"],
         "codeUrl": "https://github.com/imustacho/hungerfall",
         "demoUrl": "",
         "icon": "🥪",
@@ -69,6 +72,51 @@
         ]
     },
     {
+        "id": "mustacho-dev",
+        "title": "mustacho.dev",
+        "category": "Web Applications",
+        "description": "Personal developer portfolio and interactive showcase built with Next.js, React, Motion, and Tailwind CSS.",
+        "longDescription": "mustacho.dev is the official personal website and portfolio for Mustacho. Crafted with Next.js App Router, React 19, Tailwind CSS, and Motion (Framer), it features dynamic theme switching, an interactive retro canvas, categorized project showcases, interconnected technical skill graphs, and a developer blog.",
+        "features": [
+            "Dynamic theming engine with multiple custom retro & modern palettes",
+            "Interactive retro canvas, pixel art mustache icon, and sound effects",
+            "Interconnected Skills and Projects exploration graph",
+            "Markdown-powered developer blog with syntax highlighting and reading time",
+            "Responsive, accessible design optimized for performance and SEO"
+        ],
+        "tags": ["Next.js", "React", "TypeScript", "Tailwind CSS", "Motion"],
+        "skills": ["Next.js", "React", "TypeScript", "Tailwind CSS", "Motion (Framer)", "HTML & CSS", "Git & GitHub", "Vercel"],
+        "codeUrl": "https://github.com/imustacho/mustacho.dev",
+        "demoUrl": "https://mustacho.dev",
+        "icon": "⚡",
+        "status": "active",
+        "featured": true,
+        "images": [
+            "/mustacho.png"
+        ]
+    },
+    {
+        "id": "evliyacelebi",
+        "title": "Evliya Çelebi",
+        "category": "Web Applications",
+        "description": "Evliya Çelebi'nin Seyahatnâme'sinden alınan tarihi konumları ve rotaları haritada gerekli bilgilerle beraber gösteren interaktif web uygulaması.",
+        "longDescription": "Evliya Çelebi, Osmanlı seyyahı Evliya Çelebi'nin Seyahatnâme eserinde yer alan tarihi durakları, seyahat rotalarını ve mekanları harita üzerinde zengin bilgiler eşliğinde sunan bir web platformudur. Kullanıcılar harita üzerinden mekanların tarihi geçmişini, seyahatnâmedeki tasvirleri ve detaylı bilgileri interaktif olarak keşfedebilir.",
+        "features": [
+            "Seyahatnâme kaynaklı tarihi konumların harita üzerinde görselleştirilmesi",
+            "Mekanlara dair detaylı açıklamalar ve tarihi bilgiler",
+            "İnteraktif harita kontrolleri ve gezinme deneyimi",
+            "Modern ve duyarlı kullanıcı arayüzü"
+        ],
+        "tags": ["Interactive Map", "Web", "Next.js", "React", "Tailwind CSS"],
+        "skills": ["Next.js", "React", "TypeScript", "Tailwind CSS", "REST APIs", "Git & GitHub"],
+        "codeUrl": "https://github.com/imustacho",
+        "demoUrl": "https://celebimiz.com.tr",
+        "icon": "🧭",
+        "status": "active",
+        "featured": true,
+        "images": []
+    },
+    {
         "id": "recast",
         "title": "Recast",
         "category": "Desktop Applications",
@@ -81,6 +129,7 @@
             "Minimal CPU and RAM footprint via Tauri lightweight architecture"
         ],
         "tags": ["Tauri", "Rust", "Desktop", "React"],
+        "skills": ["Rust", "Tauri", "React", "Git & GitHub"],
         "codeUrl": "https://github.com/imustacho",
         "demoUrl": "",
         "icon": "🔮",
@@ -104,6 +153,7 @@
             "Tailored dark mode interface adhering to system themes"
         ],
         "tags": ["Tauri", "Desktop", "TypeScript", "Rust"],
+        "skills": ["Rust", "Tauri", "TypeScript", "React", "Git & GitHub"],
         "codeUrl": "https://github.com/imustacho",
         "demoUrl": "",
         "icon": "🦪",

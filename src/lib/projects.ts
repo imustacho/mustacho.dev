@@ -8,6 +8,7 @@ export interface Project {
     longDescription?: string;
     features?: string[];
     tags: string[];
+    skills?: string[];
     codeUrl: string;
     demoUrl?: string;
     icon: string;

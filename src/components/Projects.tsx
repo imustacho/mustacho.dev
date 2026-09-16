@@ -2,21 +2,38 @@
 
 import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
-import { FaGithub, FaExternalLinkAlt, FaRobot, FaDesktop } from "react-icons/fa";
+import { FaGithub, FaExternalLinkAlt, FaRobot, FaDesktop, FaGlobe } from "react-icons/fa";
 import { HiSparkles } from "react-icons/hi2";
 import { getProjects, type Project } from "@/lib/projects";
+import { getSkillsForProject } from "@/lib/skills";
+import SkillIcon from "@/components/SkillIcon";
 
 const projects = getProjects();
 
+const CATEGORY_ORDER = [
+    "Discord Bots",
+    "Web Applications",
+    "Desktop Applications",
+];
+
 const CATEGORY_ICONS: Record<string, React.ReactNode> = {
     "Discord Bots": <FaRobot />,
+    "Web Applications": <FaGlobe />,
     "Desktop Applications": <FaDesktop />,
 };
 
 export default function Projects() {
     const router = useRouter();
-    // Group projects by category preserving standard order
-    const categories = Array.from(new Set(projects.map((p) => p.category || "Other")));
+    // Group projects by category preserving custom category order
+    const allCategories = Array.from(new Set(projects.map((p) => p.category || "Other")));
+    const categories = allCategories.sort((a, b) => {
+        const indexA = CATEGORY_ORDER.indexOf(a);
+        const indexB = CATEGORY_ORDER.indexOf(b);
+        if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+        if (indexA !== -1) return -1;
+        if (indexB !== -1) return 1;
+        return a.localeCompare(b);
+    });
 
     return (
         <section className="py-20 px-6 max-w-6xl mx-auto flex flex-col items-center gap-14">
@@ -74,6 +91,7 @@ export default function Projects() {
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 w-full">
                                 {categoryProjects.map((project, idx) => {
                                     const status = project.status ?? "active";
+                                    const projectSkills = getSkillsForProject(project);
 
                                     return (
                                         <motion.div
@@ -209,27 +227,36 @@ export default function Projects() {
                                                 >
                                                     {project.description}
                                                 </p>
+
                                             </div>
 
-                                            {/* Tech Tags */}
-                                            <div
-                                                className="flex flex-wrap gap-1.5 mt-4 pt-3 border-t"
-                                                style={{ borderColor: "var(--border)" }}
-                                            >
-                                                {project.tags.map((tag) => (
-                                                    <span
-                                                        key={tag}
-                                                        className="px-2 py-0.5 text-[11px] font-semibold rounded-full border transition-all"
-                                                        style={{
-                                                            backgroundColor: "var(--border)",
-                                                            borderColor: "var(--border-strong)",
-                                                            color: "var(--accent)",
-                                                        }}
-                                                    >
-                                                        #{tag}
-                                                    </span>
-                                                ))}
-                                            </div>
+                                            {/* Related Skills */}
+                                            {projectSkills.length > 0 && (
+                                                <div
+                                                    className="flex items-center gap-1.5 flex-wrap mt-4 pt-3 border-t"
+                                                    style={{ borderColor: "var(--border)" }}
+                                                >
+                                                    {projectSkills.map((skill) => (
+                                                        <span
+                                                            key={skill.name}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                router.push(`/skills?skill=${encodeURIComponent(skill.name)}`);
+                                                            }}
+                                                            className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2 py-0.5 rounded-lg border transition-all hover:border-[var(--accent)] hover:scale-105"
+                                                            style={{
+                                                                backgroundColor: "var(--border)",
+                                                                borderColor: "var(--border-strong)",
+                                                                color: "var(--accent)",
+                                                            }}
+                                                            title={`Explore ${skill.name} in Skills`}
+                                                        >
+                                                            <SkillIcon name={skill.icon} size={11} />
+                                                            <span>{skill.name}</span>
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            )}
                                         </motion.div>
                                     );
                                 })}

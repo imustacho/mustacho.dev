@@ -6,6 +6,8 @@ import Link from "next/link";
 import { FaGithub, FaExternalLinkAlt, FaArrowLeft, FaCheckCircle, FaImages, FaTimes } from "react-icons/fa";
 import { HiSparkles } from "react-icons/hi2";
 import type { Project } from "@/lib/projects";
+import { getSkillsForProject } from "@/lib/skills";
+import SkillIcon from "@/components/SkillIcon";
 
 interface ProjectDetailClientProps {
     project: Project | null;
@@ -43,6 +45,7 @@ export default function ProjectDetailClient({ project }: ProjectDetailClientProp
 
     const status = project.status ?? "active";
     const hasImages = project.images && project.images.length > 0;
+    const relatedSkills = getSkillsForProject(project);
 
     return (
         <main className="min-h-screen relative overflow-hidden" style={{ color: "var(--text-primary)" }}>
@@ -321,6 +324,53 @@ export default function ProjectDetailClient({ project }: ProjectDetailClientProp
                             </div>
                         )}
                     </section>
+
+                    {/* Related Skills */}
+                    {relatedSkills.length > 0 && (
+                        <section className="flex flex-col gap-3 mt-2">
+                            <div className="flex items-center justify-between">
+                                <h2
+                                    className="font-heading text-2xl tracking-tight"
+                                    style={{ color: "var(--accent)" }}
+                                >
+                                    Related Skills
+                                </h2>
+                                <span className="text-xs font-mono" style={{ color: "var(--text-muted)" }}>
+                                    {relatedSkills.length} skill{relatedSkills.length > 1 ? "s" : ""}
+                                </span>
+                            </div>
+                            <p className="text-xs sm:text-sm" style={{ color: "var(--text-muted)" }}>
+                                Technical competencies and tools applied throughout this project. Click any skill to explore related work.
+                            </p>
+                            <div className="flex flex-wrap gap-2.5 pt-1">
+                                {relatedSkills.map((skill) => (
+                                    <Link
+                                        key={skill.name}
+                                        href={`/skills?skill=${encodeURIComponent(skill.name)}`}
+                                        className="group flex items-center gap-2.5 px-3.5 py-2 rounded-xl border text-sm font-semibold transition-all hover:scale-105"
+                                        style={{
+                                            backgroundColor: "var(--bg-surface)",
+                                            borderColor: "var(--border-strong)",
+                                            color: "var(--text-primary)",
+                                            boxShadow: "0 2px 8px var(--shadow)",
+                                        }}
+                                        title={`View projects using ${skill.name}`}
+                                    >
+                                        <span style={{ color: "var(--accent)" }}>
+                                            <SkillIcon name={skill.icon} size={16} />
+                                        </span>
+                                        <span>{skill.name}</span>
+                                        <span
+                                            className="text-xs opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all ml-0.5"
+                                            style={{ color: "var(--accent)" }}
+                                        >
+                                            →
+                                        </span>
+                                    </Link>
+                                ))}
+                            </div>
+                        </section>
+                    )}
 
                     {/* Tech Stack / Tags */}
                     {project.tags && project.tags.length > 0 && (

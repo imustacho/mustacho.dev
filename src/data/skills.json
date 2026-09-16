@@ -6,17 +6,22 @@
             {
                 "name": "TypeScript",
                 "icon": "SiTypescript",
-                "repoUrl": ""
+                "projects": ["overseer", "hungerfall", "pearl", "mustacho-dev", "evliyacelebi"]
             },
             {
                 "name": "JavaScript",
                 "icon": "SiJavascript",
-                "repoUrl": ""
+                "projects": ["overseer", "bubble", "hungerfall"]
+            },
+            {
+                "name": "Rust",
+                "icon": "SiRust",
+                "projects": ["recast", "pearl"]
             },
             {
                 "name": "HTML & CSS",
                 "icon": "SiHtml5",
-                "repoUrl": ""
+                "projects": ["mustacho-dev"]
             }
         ]
     },
@@ -27,22 +32,27 @@
             {
                 "name": "Next.js",
                 "icon": "SiNextdotjs",
-                "repoUrl": "https://github.com/imustacho/mustacho.dev"
+                "projects": ["mustacho-dev", "evliyacelebi"]
             },
             {
                 "name": "React",
                 "icon": "SiReact",
-                "repoUrl": "https://github.com/imustacho/mustacho.dev"
+                "projects": ["recast", "pearl", "mustacho-dev", "evliyacelebi"]
+            },
+            {
+                "name": "Tauri",
+                "icon": "SiTauri",
+                "projects": ["recast", "pearl"]
             },
             {
                 "name": "Motion (Framer)",
                 "icon": "SiFramer",
-                "repoUrl": "https://github.com/imustacho/mustacho.dev"
+                "projects": ["mustacho-dev"]
             },
             {
                 "name": "Tailwind CSS",
                 "icon": "SiTailwindcss",
-                "repoUrl": "https://github.com/imustacho/mustacho.dev"
+                "projects": ["mustacho-dev", "evliyacelebi"]
             }
         ]
     },
@@ -53,17 +63,17 @@
             {
                 "name": "Node.js",
                 "icon": "SiNodedotjs",
-                "repoUrl": ""
+                "projects": ["overseer", "bubble", "hungerfall"]
             },
             {
                 "name": "REST APIs",
                 "icon": "SiPostman",
-                "repoUrl": ""
+                "projects": ["overseer", "bubble", "evliyacelebi"]
             },
             {
                 "name": "Discord.js",
                 "icon": "SiDiscord",
-                "repoUrl": "https://github.com/imustacho/hungerfall"
+                "projects": ["overseer", "bubble", "hungerfall"]
             }
         ]
     },
@@ -74,17 +84,17 @@
             {
                 "name": "LLM Integration",
                 "icon": "SiHuggingface",
-                "repoUrl": "https://github.com/imustacho/overseer"
+                "projects": ["overseer", "bubble", "hungerfall"]
             },
             {
                 "name": "Prompt Engineering",
                 "icon": "FaWandMagicSparkles",
-                "repoUrl": "https://github.com/imustacho/bubble"
+                "projects": ["bubble", "hungerfall"]
             },
             {
                 "name": "Agent Systems",
                 "icon": "FaRobot",
-                "repoUrl": "https://github.com/imustacho/overseer"
+                "projects": ["overseer"]
             }
         ]
     },
@@ -95,17 +105,17 @@
             {
                 "name": "Git & GitHub",
                 "icon": "SiGit",
-                "repoUrl": ""
+                "projects": ["overseer", "bubble", "hungerfall", "recast", "pearl", "mustacho-dev", "evliyacelebi"]
             },
             {
                 "name": "Vercel",
                 "icon": "SiVercel",
-                "repoUrl": ""
+                "projects": ["mustacho-dev"]
             },
             {
                 "name": "VS Code",
                 "icon": "VscVscode",
-                "repoUrl": ""
+                "projects": []
             }
         ]
     }
