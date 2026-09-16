@@ -97,15 +97,15 @@
     },
     {
         "id": "evliyacelebi",
-        "title": "Evliya Çelebi",
+        "title": "celebimiz.com.tr",
         "category": "Web Applications",
-        "description": "Evliya Çelebi'nin Seyahatnâme'sinden alınan tarihi konumları ve rotaları haritada gerekli bilgilerle beraber gösteren interaktif web uygulaması.",
-        "longDescription": "Evliya Çelebi, Osmanlı seyyahı Evliya Çelebi'nin Seyahatnâme eserinde yer alan tarihi durakları, seyahat rotalarını ve mekanları harita üzerinde zengin bilgiler eşliğinde sunan bir web platformudur. Kullanıcılar harita üzerinden mekanların tarihi geçmişini, seyahatnâmedeki tasvirleri ve detaylı bilgileri interaktif olarak keşfedebilir.",
+        "description": "An interactive map application showcasing historical locations, travel routes, and rich contextual notes sourced from Evliya Çelebi's Seyahatnâme.",
+        "longDescription": "celebimiz.com.tr is an interactive web platform designed to map and bring to life the historical landmarks, travel itineraries, and cultural stops documented in Ottoman explorer Evliya Çelebi's renowned 10-volume travelogue, the Seyahatnâme. Users can explore historical locations across an interactive map interface, read contextual excerpts, and trace the journeys of the 17th-century traveller.",
         "features": [
-            "Seyahatnâme kaynaklı tarihi konumların harita üzerinde görselleştirilmesi",
-            "Mekanlara dair detaylı açıklamalar ve tarihi bilgiler",
-            "İnteraktif harita kontrolleri ve gezinme deneyimi",
-            "Modern ve duyarlı kullanıcı arayüzü"
+            "Interactive map visualization of historical stops and landmarks from the Seyahatnâme",
+            "Detailed historical context, excerpts, and localized travel documentation for each location",
+            "Intuitive map controls, category filtering, and route exploration tools",
+            "Responsive, fluid web interface optimized for both desktop and mobile devices"
         ],
         "tags": ["Interactive Map", "Web", "Next.js", "React", "Tailwind CSS"],
         "skills": ["Next.js", "React", "TypeScript", "Tailwind CSS", "REST APIs", "Git & GitHub"],
