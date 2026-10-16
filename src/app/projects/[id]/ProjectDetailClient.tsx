@@ -20,7 +20,6 @@ export default function ProjectDetailClient({ project }: ProjectDetailClientProp
         return (
             <main className="min-h-screen relative overflow-hidden" style={{ color: "var(--text-primary)" }}>
                 <div className="pt-32 pb-20 px-6 max-w-3xl mx-auto flex flex-col items-center justify-center min-h-[60vh] text-center gap-6">
-                    <div className="text-6xl">🔍</div>
                     <h1 className="font-heading text-3xl sm:text-4xl" style={{ color: "var(--accent)" }}>
                         Project Not Found
                     </h1>
@@ -123,24 +122,12 @@ export default function ProjectDetailClient({ project }: ProjectDetailClientProp
                         </span>
                     </div>
 
-                    {/* Title + Icon */}
-                    <div className="flex items-center gap-4">
-                        <div
-                            className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl border shrink-0 shadow-md"
-                            style={{
-                                backgroundColor: "var(--bg-surface)",
-                                borderColor: "var(--border-strong)",
-                            }}
-                        >
-                            {project.icon}
-                        </div>
-                        <h1
-                            className="font-heading text-4xl sm:text-5xl md:text-6xl tracking-tight"
-                            style={{ color: "var(--accent)" }}
-                        >
-                            {project.title}
-                        </h1>
-                    </div>
+                    <h1
+                        className="font-heading text-4xl sm:text-5xl md:text-6xl tracking-tight"
+                        style={{ color: "var(--accent)" }}
+                    >
+                        {project.title}
+                    </h1>
 
                     {/* Tagline / Excerpt */}
                     <p className="text-lg md:text-xl leading-relaxed" style={{ color: "var(--text-muted)" }}>

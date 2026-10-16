@@ -17,6 +17,8 @@ export interface Project {
     status?: "active" | "archived" | "wip";
     featured?: boolean;
     images?: string[];
+    carouselLogo?: string;
+    carouselBackground?: string;
 }
 
 export function getProjects(): Project[] {

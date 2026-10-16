@@ -31,19 +31,51 @@ function getRelativePosition(index: number, activeIndex: number) {
 }
 
 function ProjectVisual({ project, active }: { project: Project; active: boolean }) {
-    const preview = project.images?.[0];
+    const logo = project.carouselLogo;
+    const background = project.carouselBackground;
+    const preview = logo ? undefined : project.images?.[0];
 
     return (
         <div
             className="relative min-h-64 overflow-hidden border-b md:min-h-full md:w-[48%] md:border-b-0 md:border-r"
             style={{
                 borderColor: "var(--border-strong)",
-                background: preview
+                background: preview || background
                     ? "var(--bg-surface)"
                     : "linear-gradient(145deg, var(--bg-elevated), var(--bg-surface))",
             }}
         >
-            {preview ? (
+            {background && (
+                <Image
+                    src={background}
+                    alt=""
+                    fill
+                    draggable={false}
+                    sizes="(max-width: 767px) 82vw, 40vw"
+                    className="absolute inset-0 h-full w-full object-cover"
+                />
+            )}
+            {logo ? (
+                <div className={`relative flex h-full min-h-64 flex-col items-center justify-center gap-4 p-10 md:min-h-full ${background ? "bg-black/20" : ""}`}>
+                    {!background && (
+                        <div className="absolute inset-0 opacity-40 [background-image:linear-gradient(var(--border)_1px,transparent_1px),linear-gradient(90deg,var(--border)_1px,transparent_1px)] [background-size:28px_28px]" />
+                    )}
+                    <Image
+                        src={logo}
+                        alt={`${project.title} logo`}
+                        width={256}
+                        height={256}
+                        draggable={false}
+                        unoptimized={logo.endsWith(".svg")}
+                        className={`relative h-36 w-36 object-contain drop-shadow-xl transition-transform duration-500 group-hover:scale-110 sm:h-44 sm:w-44 ${project.id === "hungerfall" ? "rounded-2xl" : ""}`}
+                    />
+                    {!background && (
+                        <span className="relative font-mono text-[10px] uppercase tracking-[0.32em]" style={{ color: "var(--text-muted)" }}>
+                            {project.category}
+                        </span>
+                    )}
+                </div>
+            ) : preview ? (
                 <Image
                     src={preview}
                     alt={`${project.title} preview`}
@@ -52,7 +84,6 @@ function ProjectVisual({ project, active }: { project: Project; active: boolean 
                     sizes="(max-width: 767px) 82vw, 40vw"
                     unoptimized={/\.gif$/i.test(preview)}
                     className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                    style={project.id === "charged" ? { objectPosition: "15% center" } : undefined}
                 />
             ) : (
                 <>
@@ -88,7 +119,7 @@ function ProjectVisual({ project, active }: { project: Project; active: boolean 
                 style={{
                     borderColor: "var(--border-strong)",
                     backgroundColor: "color-mix(in srgb, var(--bg) 72%, transparent)",
-                    color: preview && active ? "white" : "var(--accent)",
+                    color: (preview || background) && active ? "white" : "var(--accent)",
                 }}
             >
                 {project.category}
@@ -171,9 +202,18 @@ function ProjectSlide({
 
                     <div>
                         <div className="mb-3 flex items-center gap-3">
-                            <span className="text-3xl" aria-hidden="true">
-                                {project.icon}
-                            </span>
+                            {project.carouselLogo ? (
+                                <Image
+                                    src={project.carouselLogo}
+                                    alt=""
+                                    width={32}
+                                    height={32}
+                                    unoptimized={project.carouselLogo.endsWith(".svg")}
+                                    className={`h-8 w-8 object-contain ${project.id === "charged" ? "rounded-md bg-slate-950 p-1" : project.id === "hungerfall" ? "rounded-md" : ""}`}
+                                />
+                            ) : (
+                                <span className="text-3xl" aria-hidden="true">{project.icon}</span>
+                            )}
                             <span
                                 className="font-mono text-xs tracking-[0.18em]"
                                 style={{ color: "var(--text-faint)" }}

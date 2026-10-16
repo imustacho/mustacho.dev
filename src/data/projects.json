@@ -1,6 +1,8 @@
 [
     {
         "id": "charged",
+        "carouselLogo": "/projects/charged/logo.svg",
+        "carouselBackground": "/projects/charged/background.png",
         "title": "Charged",
         "category": "Discord Bots",
         "description": "A Discord community platform for smart auto-replies, personalized onboarding, server management, and conversational AI-assisted setup.",
@@ -68,6 +70,7 @@
     },
     {
         "id": "hungerfall",
+        "carouselLogo": "/projects/hungerfall/logo.webp",
         "title": "Hungerfall",
         "category": "Discord Bots",
         "description": "A text-based adventure game with an AI-Narrator that adapts the story to your choices. Every playthrough is unique.",
@@ -116,6 +119,7 @@
     },
     {
         "id": "recast",
+        "carouselLogo": "/projects/recast/logo.png",
         "title": "Recast",
         "category": "Desktop Applications",
         "description": "An offline, privacy-first file converter desktop application built with Tauri. Convert images and WebP files seamlessly without uploading online.",
