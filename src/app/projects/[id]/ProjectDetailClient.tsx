@@ -359,33 +359,6 @@ export default function ProjectDetailClient({ project }: ProjectDetailClientProp
                         </section>
                     )}
 
-                    {/* Tech Stack / Tags */}
-                    {project.tags && project.tags.length > 0 && (
-                        <section className="flex flex-col gap-3 mt-2">
-                            <h2
-                                className="font-heading text-2xl tracking-tight"
-                                style={{ color: "var(--accent)" }}
-                            >
-                                Technologies Used
-                            </h2>
-                            <div className="flex flex-wrap gap-2">
-                                {project.tags.map((tag) => (
-                                    <span
-                                        key={tag}
-                                        className="px-3 py-1 text-xs font-semibold rounded-full border"
-                                        style={{
-                                            backgroundColor: "var(--border)",
-                                            borderColor: "var(--border-strong)",
-                                            color: "var(--accent)",
-                                        }}
-                                    >
-                                        #{tag}
-                                    </span>
-                                ))}
-                            </div>
-                        </section>
-                    )}
-
                     {/* Bottom Back Button */}
                     <div className="pt-10 border-t mt-4 flex justify-between items-center" style={{ borderColor: "var(--border)" }}>
                         <Link

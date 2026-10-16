@@ -19,6 +19,8 @@ export interface Project {
     images?: string[];
     carouselLogo?: string;
     carouselBackground?: string;
+    carouselPreview?: string;
+    carouselIconOnly?: boolean;
 }
 
 export function getProjects(): Project[] {

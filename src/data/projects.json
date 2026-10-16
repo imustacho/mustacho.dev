@@ -25,6 +25,7 @@
     },
     {
         "id": "overseer",
+        "carouselIconOnly": true,
         "title": "Overseer",
         "category": "Discord Bots",
         "description": "Manage Discord servers with natural language. An AI agent that understands your commands and executes moderation, roles, and server management automatically.",
@@ -98,6 +99,7 @@
     },
     {
         "id": "evliyacelebi",
+        "carouselPreview": "/projects/evliyacelebi/poster.png",
         "title": "celebimiz.com.tr",
         "category": "Web Applications",
         "description": "An interactive map application showcasing historical locations, travel routes, and rich contextual notes sourced from Evliya Çelebi's Seyahatnâme.",
