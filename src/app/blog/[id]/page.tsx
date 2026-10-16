@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getBlogPostById, getBlogPosts } from "@/lib/blogs";
 import BlogDetailClient from "./BlogDetailClient";
+import { SITE_IMAGE_URL, SITE_OG_IMAGE } from "@/lib/site-image";
 
 export async function generateStaticParams() {
     const posts = getBlogPosts();
@@ -36,11 +37,13 @@ export async function generateMetadata({
             type: "article",
             publishedTime: post.date,
             authors: ["Mustacho"],
+            images: [SITE_OG_IMAGE],
         },
         twitter: {
             card: "summary_large_image",
             title: `${post.title} | Mustacho`,
             description: post.excerpt,
+            images: [SITE_IMAGE_URL],
         },
     };
 }

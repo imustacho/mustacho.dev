@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type PointerEvent } from "react";
 import { motion } from "motion/react";
 import Link from "next/link";
 import Image from "next/image";
@@ -48,9 +48,11 @@ function ProjectVisual({ project, active }: { project: Project; active: boolean 
                     src={preview}
                     alt={`${project.title} preview`}
                     fill
+                    draggable={false}
                     sizes="(max-width: 767px) 82vw, 40vw"
                     unoptimized={/\.gif$/i.test(preview)}
                     className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    style={project.id === "charged" ? { objectPosition: "15% center" } : undefined}
                 />
             ) : (
                 <>
@@ -124,7 +126,7 @@ function ProjectSlide({
                 filter: active ? "blur(0px)" : "blur(1px)",
             }}
             transition={{ type: "spring", stiffness: 240, damping: 28 }}
-            className="projects-carousel-slide group absolute left-1/2 top-0 flex h-full w-[min(82vw,800px)] cursor-pointer flex-col overflow-hidden rounded-[2rem] border shadow-[0_24px_80px_var(--shadow-strong)] transition-[transform] duration-500 ease-out md:flex-row"
+            className={`group flex w-[min(82vw,800px)] flex-col overflow-hidden rounded-[2rem] border shadow-[0_24px_80px_var(--shadow-strong)] transition-[transform] duration-500 ease-out md:flex-row ${active ? "projects-carousel-active relative mx-auto min-h-[450px] cursor-grab" : "projects-carousel-slide absolute left-1/2 top-0 h-full cursor-pointer"}`}
             style={{
                 zIndex: 20 - Math.abs(position),
                 backgroundColor: "var(--bg-elevated)",
@@ -254,6 +256,11 @@ function ProjectSlide({
 
 export default function Projects() {
     const [activeIndex, setActiveIndex] = useState(0);
+    const [isPaused, setIsPaused] = useState(false);
+    const [isDragging, setIsDragging] = useState(false);
+    const [dragOffset, setDragOffset] = useState(0);
+    const dragStart = useRef<{ pointerId: number; x: number; y: number; dragging: boolean } | null>(null);
+    const suppressClick = useRef(false);
 
     const goTo = useCallback((index: number) => {
         setActiveIndex(getWrappedIndex(index));
@@ -262,8 +269,58 @@ export default function Projects() {
     const next = useCallback(() => goTo(activeIndex + 1), [activeIndex, goTo]);
     const previous = useCallback(() => goTo(activeIndex - 1), [activeIndex, goTo]);
 
+    const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
+        if (!event.isPrimary || event.button !== 0) return;
+        dragStart.current = { pointerId: event.pointerId, x: event.clientX, y: event.clientY, dragging: false };
+    };
+
+    const handlePointerMove = (event: PointerEvent<HTMLDivElement>) => {
+        const start = dragStart.current;
+        if (!start || start.pointerId !== event.pointerId) return;
+
+        const deltaX = event.clientX - start.x;
+        const deltaY = event.clientY - start.y;
+
+        if (!start.dragging) {
+            if (Math.abs(deltaX) < 10) return;
+            if (Math.abs(deltaY) > Math.abs(deltaX)) {
+                dragStart.current = null;
+                return;
+            }
+            start.dragging = true;
+            event.currentTarget.setPointerCapture(event.pointerId);
+            setIsDragging(true);
+        }
+
+        setDragOffset(Math.max(-220, Math.min(220, deltaX)));
+    };
+
+    const finishDrag = (event: PointerEvent<HTMLDivElement>, cancelled = false) => {
+        const start = dragStart.current;
+        if (!start || start.pointerId !== event.pointerId) return;
+
+        if (start.dragging) {
+            suppressClick.current = true;
+            window.setTimeout(() => { suppressClick.current = false; }, 0);
+
+            const deltaX = event.clientX - start.x;
+            if (!cancelled && Math.abs(deltaX) >= 70) {
+                setActiveIndex((index) => getWrappedIndex(index + (deltaX < 0 ? 1 : -1)));
+            }
+
+            if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+                event.currentTarget.releasePointerCapture(event.pointerId);
+            }
+        }
+
+        dragStart.current = null;
+        setDragOffset(0);
+        setIsDragging(false);
+    };
+
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.altKey || event.ctrlKey || event.metaKey) return;
             if (event.key === "ArrowRight") next();
             if (event.key === "ArrowLeft") previous();
         };
@@ -272,10 +329,30 @@ export default function Projects() {
         return () => window.removeEventListener("keydown", handleKeyDown);
     }, [next, previous]);
 
+    useEffect(() => {
+        if (isPaused || isDragging || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+        const interval = window.setInterval(() => {
+            if (document.visibilityState === "visible") {
+                setActiveIndex((index) => getWrappedIndex(index + 1));
+            }
+        }, 6500);
+
+        return () => window.clearInterval(interval);
+    }, [activeIndex, isPaused, isDragging]);
+
     const activeProject = projects[activeIndex];
 
     return (
-        <section className="mx-auto flex w-full max-w-7xl flex-col gap-10 px-5 py-16 sm:px-8 sm:py-20">
+        <section
+            className="mx-auto flex w-full max-w-7xl flex-col gap-10 px-5 py-16 sm:px-8 sm:py-20"
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+            onFocusCapture={() => setIsPaused(true)}
+            onBlurCapture={(event) => {
+                if (!event.currentTarget.contains(event.relatedTarget)) setIsPaused(false);
+            }}
+        >
             <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                 <div>
                     <p
@@ -297,7 +374,21 @@ export default function Projects() {
             </div>
 
             <div className="relative -mx-5 overflow-hidden px-5 pb-2 sm:-mx-8 sm:px-8">
-                <div className="projects-carousel-stage relative mx-auto h-[620px] max-w-[1220px] sm:h-[570px] md:h-[450px]">
+                <div
+                    className="projects-carousel-stage relative mx-auto max-w-[1220px] touch-pan-y"
+                    data-dragging={isDragging}
+                    style={{ ["--drag-offset" as string]: `${dragOffset}px` }}
+                    onPointerDown={handlePointerDown}
+                    onPointerMove={handlePointerMove}
+                    onPointerUp={(event) => finishDrag(event)}
+                    onPointerCancel={(event) => finishDrag(event, true)}
+                    onClickCapture={(event) => {
+                        if (!suppressClick.current) return;
+                        event.preventDefault();
+                        event.stopPropagation();
+                        suppressClick.current = false;
+                    }}
+                >
                     <div
                         className="pointer-events-none absolute left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl"
                         style={{ backgroundColor: "var(--accent)", opacity: 0.08 }}
@@ -314,7 +405,7 @@ export default function Projects() {
                 </div>
             </div>
 
-            <div className="flex flex-col items-center justify-between gap-5 sm:flex-row">
+            <div className="flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-6">
                 <div className="flex items-center gap-2" aria-label="Choose a project">
                     {projects.map((project, index) => (
                         <button
@@ -359,7 +450,7 @@ export default function Projects() {
             </div>
 
             <p className="text-center text-xs" style={{ color: "var(--text-faint)" }}>
-                Browse with the arrows or your keyboard · currently viewing {activeProject.title}
+                Drag to browse, or use the arrows or your keyboard · currently viewing {activeProject.title}
             </p>
         </section>
     );

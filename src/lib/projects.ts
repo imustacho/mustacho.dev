@@ -1,5 +1,7 @@
 import projectsData from "@/data/projects.json";
 
+const PROJECT_ORDER = ["charged", "recast", "overseer", "hungerfall", "pearl", "evliyacelebi"];
+
 export interface Project {
     id: string;
     title: string;
@@ -18,11 +20,13 @@ export interface Project {
 }
 
 export function getProjects(): Project[] {
-    return projectsData as Project[];
+    const projects = projectsData as Project[];
+    return PROJECT_ORDER.map((id) => projects.find((project) => project.id === id)).filter(
+        (project): project is Project => Boolean(project)
+    );
 }
 
 export function getProjectById(id: string): Project | null {
-    const projects = getProjects();
-    return projects.find((p) => p.id === id) || null;
+    return (projectsData as Project[]).find((project) => project.id === id) || null;
 }
 

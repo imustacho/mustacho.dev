@@ -3,6 +3,7 @@ import "./globals.css";
 import BackgroundWrapper from "@/components/BackgroundWrapper";
 import Navbar from "@/components/Navbar";
 import { ThemeProvider } from "@/context/ThemeContext";
+import { SITE_IMAGE_URL, SITE_OG_IMAGE } from "@/lib/site-image";
 
 export const metadata: Metadata = {
     metadataBase: new URL("https://mustacho.dev"),
@@ -27,11 +28,9 @@ export const metadata: Metadata = {
     authors: [{ name: "Mustacho", url: "https://mustacho.dev" }],
     creator: "Mustacho",
     icons: {
-        icon: [
-            { url: "/mustacho.png?v=4", type: "image/png" },
-        ],
-        shortcut: "/mustacho.png?v=4",
-        apple: "/mustacho.png?v=4",
+        icon: [{ url: "/mustache.svg", type: "image/svg+xml" }],
+        shortcut: "/mustache.svg",
+        apple: SITE_IMAGE_URL,
     },
     openGraph: {
         title: "Mustacho — Developer & Student",
@@ -40,20 +39,13 @@ export const metadata: Metadata = {
         siteName: "Mustacho",
         locale: "en_US",
         type: "website",
-        images: [
-            {
-                url: "/mustacho.png",
-                width: 800,
-                height: 800,
-                alt: "Mustacho",
-            },
-        ],
+        images: [SITE_OG_IMAGE],
     },
     twitter: {
         card: "summary_large_image",
         title: "Mustacho — Developer & Student",
         description: "High school student and developer from Istanbul. Building Discord bots, AI agents, and modern software.",
-        images: ["/mustacho.png"],
+        images: [SITE_IMAGE_URL],
         creator: "@imustachoo",
     },
     robots: {
@@ -77,7 +69,7 @@ const jsonLd = {
     "@type": "Person",
     name: "Mustacho",
     url: "https://mustacho.dev",
-    image: "https://mustacho.dev/mustacho.png",
+    image: `https://mustacho.dev${SITE_IMAGE_URL}`,
     jobTitle: "Developer",
     sameAs: [
         "https://github.com/imustacho",
@@ -126,7 +118,6 @@ export default function RootLayout({
     return (
         <html lang="en" suppressHydrationWarning>
             <head>
-                {/* eslint-disable-next-line @next/next/no-sync-scripts */}
                 <script dangerouslySetInnerHTML={{ __html: themeScript }} />
                 <script
                     type="application/ld+json"

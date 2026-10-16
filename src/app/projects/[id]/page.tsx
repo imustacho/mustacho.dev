@@ -1,10 +1,11 @@
-import { getProjects, getProjectById } from "@/lib/projects";
+import { getProjectById } from "@/lib/projects";
+import projectsData from "@/data/projects.json";
 import ProjectDetailClient from "./ProjectDetailClient";
 import type { Metadata } from "next";
+import { SITE_IMAGE_URL, SITE_OG_IMAGE } from "@/lib/site-image";
 
 export async function generateStaticParams() {
-    const projects = getProjects();
-    return projects.map((project) => ({
+    return projectsData.map((project) => ({
         id: project.id,
     }));
 }
@@ -23,8 +24,6 @@ export async function generateMetadata({
         };
     }
 
-    const ogImage = project.images && project.images.length > 0 ? project.images[0] : "/mustacho.png";
-
     return {
         title: project.title,
         description: project.description,
@@ -36,18 +35,13 @@ export async function generateMetadata({
             description: project.description,
             url: `https://mustacho.dev/projects/${project.id}`,
             type: "website",
-            images: [
-                {
-                    url: ogImage,
-                    alt: project.title,
-                },
-            ],
+            images: [SITE_OG_IMAGE],
         },
         twitter: {
             card: "summary_large_image",
             title: `${project.title} | Mustacho`,
             description: project.description,
-            images: [ogImage],
+            images: [SITE_IMAGE_URL],
         },
     };
 }

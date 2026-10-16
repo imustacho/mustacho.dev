@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Projects from "@/components/Projects";
+import { SITE_OG_IMAGE } from "@/lib/site-image";
 
 export const metadata: Metadata = {
     title: "Projects",
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
         title: "Projects | Mustacho",
         description: "Explore all projects built by Mustacho, including AI Discord bots, offline desktop applications with Tauri, and web software.",
         url: "https://mustacho.dev/projects",
+        images: [SITE_OG_IMAGE],
     },
 };
 

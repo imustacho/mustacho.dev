@@ -286,11 +286,20 @@ body {
 
 /* ─── Projects carousel ─────────────────────────────────────── */
 .projects-carousel-slide {
-    transform: translate3d(calc(-50% + var(--slide-shift)), 0, 0) scale(var(--slide-scale, 1));
+    transform: translate3d(calc(-50% + var(--slide-shift) + var(--drag-offset, 0px)), 0, 0) scale(var(--slide-scale, 1));
+}
+
+.projects-carousel-active {
+    transform: translate3d(var(--drag-offset, 0px), 0, 0);
+}
+
+.projects-carousel-stage[data-dragging="true"] article {
+    cursor: grabbing;
+    transition: none;
 }
 
 @media (max-width: 767px) {
     .projects-carousel-slide {
-        transform: translate3d(calc(-50% + var(--slide-mobile-shift)), 0, 0) scale(var(--slide-scale, 1));
+        transform: translate3d(calc(-50% + var(--slide-mobile-shift) + var(--drag-offset, 0px)), 0, 0) scale(var(--slide-scale, 1));
     }
 }

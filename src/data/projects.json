@@ -1,5 +1,27 @@
 [
     {
+        "id": "charged",
+        "title": "Charged",
+        "category": "Discord Bots",
+        "description": "A Discord community platform for smart auto-replies, personalized onboarding, server management, and conversational AI-assisted setup.",
+        "longDescription": "Charged brings Discord bot configuration and community management into one web dashboard. Server managers can create auto-responders, customize welcome messages and roles, use dynamic variables in bot messages, and review server information. Its AI Agent can help configure modules and draft updates through conversation.",
+        "features": [
+            "Auto-responders with exact, contains, starts-with, and pattern-based triggers",
+            "Custom welcome messages, banners, direct messages, and automatic roles",
+            "Reusable variables and constants for personalized bot messages",
+            "Dashboard for server information, bot settings, and automations",
+            "Conversational AI Agent for configuring modules and drafting updates"
+        ],
+        "tags": ["Discord", "Automation", "AI Agent", "Dashboard", "Next.js"],
+        "skills": ["Next.js", "React", "LLM Integration"],
+        "codeUrl": "",
+        "demoUrl": "https://www.chargedlnch.com/",
+        "icon": "⚡",
+        "status": "active",
+        "featured": true,
+        "images": ["/projects/charged/preview.png"]
+    },
+    {
         "id": "overseer",
         "title": "Overseer",
         "category": "Discord Bots",
@@ -69,30 +91,6 @@
             "/projects/hungerfall/demo-3.png",
             "/projects/hungerfall/demo-4.png",
             "/projects/hungerfall/demo-5.png"
-        ]
-    },
-    {
-        "id": "mustacho-dev",
-        "title": "mustacho.dev",
-        "category": "Web Applications",
-        "description": "Personal developer portfolio and interactive showcase built with Next.js, React, Motion, and Tailwind CSS.",
-        "longDescription": "mustacho.dev is the official personal website and portfolio for Mustacho. Crafted with Next.js App Router, React 19, Tailwind CSS, and Motion (Framer), it features dynamic theme switching, an interactive retro canvas, categorized project showcases, interconnected technical skill graphs, and a developer blog.",
-        "features": [
-            "Dynamic theming engine with multiple custom retro & modern palettes",
-            "Interactive retro canvas, pixel art mustache icon, and sound effects",
-            "Interconnected Skills and Projects exploration graph",
-            "Markdown-powered developer blog with syntax highlighting and reading time",
-            "Responsive, accessible design optimized for performance and SEO"
-        ],
-        "tags": ["Next.js", "React", "TypeScript", "Tailwind CSS", "Motion"],
-        "skills": ["Next.js", "React", "TypeScript", "Tailwind CSS", "Motion (Framer)", "HTML & CSS", "Git & GitHub", "Vercel"],
-        "codeUrl": "https://github.com/imustacho/mustacho.dev",
-        "demoUrl": "https://mustacho.dev",
-        "icon": "⚡",
-        "status": "active",
-        "featured": true,
-        "images": [
-            "/mustacho.png"
         ]
     },
     {

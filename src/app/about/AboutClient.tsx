@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "motion/react";
 import {
     HiMapPin,
@@ -57,9 +58,11 @@ export default function AboutClient() {
                             className="w-28 h-28 md:w-36 md:h-36 rounded-[2rem] overflow-hidden border-2"
                             style={{ borderColor: "var(--border-strong)", boxShadow: "0 16px 48px var(--shadow-strong)" }}
                         >
-                            <img
-                                src="/mustacho.png"
+                            <Image
+                                src="/newmasc.png"
                                 alt="Mustacho"
+                                width={144}
+                                height={144}
                                 className="w-full h-full object-cover"
                             />
                         </div>
