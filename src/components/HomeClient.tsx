@@ -33,7 +33,7 @@ export default function HomeClient() {
                         </h1>
 
                         <p className="mt-5 max-w-2xl text-base md:text-lg" style={{ color: "var(--text-muted)" }}>
-                            Developer in progress. Building things on the internet.
+                            Productive Developer & High School Student
                         </p>
 
                         <Mustache />
