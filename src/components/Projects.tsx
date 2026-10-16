@@ -56,7 +56,7 @@ function ProjectVisual({ project, active }: { project: Project; active: boolean 
                 />
             )}
             {logo ? (
-                <div className={`relative flex h-full min-h-64 flex-col items-center justify-center gap-4 p-10 md:min-h-full ${background ? "bg-black/20" : ""}`}>
+                <div className={`relative flex h-full min-h-64 flex-col items-center justify-center p-10 md:min-h-full ${background ? "bg-black/20" : ""}`}>
                     {!background && (
                         <div className="absolute inset-0 opacity-40 [background-image:linear-gradient(var(--border)_1px,transparent_1px),linear-gradient(90deg,var(--border)_1px,transparent_1px)] [background-size:28px_28px]" />
                     )}
@@ -69,11 +69,6 @@ function ProjectVisual({ project, active }: { project: Project; active: boolean 
                         unoptimized={logo.endsWith(".svg")}
                         className={`relative h-36 w-36 object-contain drop-shadow-xl transition-transform duration-500 group-hover:scale-110 sm:h-44 sm:w-44 ${project.id === "hungerfall" ? "rounded-2xl" : ""}`}
                     />
-                    {!background && (
-                        <span className="relative font-mono text-[10px] uppercase tracking-[0.32em]" style={{ color: "var(--text-muted)" }}>
-                            {project.category}
-                        </span>
-                    )}
                 </div>
             ) : preview ? (
                 <Image
@@ -96,15 +91,9 @@ function ProjectVisual({ project, active }: { project: Project; active: boolean 
                         style={{ backgroundColor: "var(--accent)", opacity: 0.1 }}
                     />
                     <div className="absolute inset-0 opacity-40 [background-image:linear-gradient(var(--border)_1px,transparent_1px),linear-gradient(90deg,var(--border)_1px,transparent_1px)] [background-size:28px_28px]" />
-                    <div className="relative flex h-full min-h-64 flex-col items-center justify-center gap-4 p-10 md:min-h-full">
+                    <div className="relative flex h-full min-h-64 flex-col items-center justify-center p-10 md:min-h-full">
                         <span className="text-7xl drop-shadow-lg transition-transform duration-500 group-hover:scale-110">
                             {project.icon}
-                        </span>
-                        <span
-                            className="font-mono text-[10px] uppercase tracking-[0.32em]"
-                            style={{ color: "var(--text-muted)" }}
-                        >
-                            {project.category}
                         </span>
                     </div>
                 </>
