@@ -117,7 +117,7 @@
         "icon": "🧭",
         "status": "active",
         "featured": true,
-        "images": []
+        "images": ["/projects/evliyacelebi/poster.png"]
     },
     {
         "id": "recast",
@@ -146,6 +146,7 @@
     },
     {
         "id": "pearl",
+        "carouselLogo": "/projects/pearl/logo.png",
         "title": "Pearl",
         "category": "Desktop Applications",
         "description": "A lightweight, modern desktop productivity tool designed for speed, custom workflows, and offline-first performance.",

@@ -175,9 +175,9 @@ export default function ContactClient() {
     /* ── Theme-aware palette ────────────────────────────────── */
     const isDark = theme === "dark";
 
-    // Terminal always uses a dark surface regardless of light/dark mode
-    const termBg      = isDark ? "rgba(0,0,0,0.4)" : "rgba(0,0,0,0.88)";
-    const termSurface = isDark ? "rgba(0,0,0,0.5)" : "rgba(0,0,0,0.92)";
+    // Keep the translucent dark terminal; let light mode inherit its color theme.
+    const termBg      = isDark ? "rgba(0,0,0,0.4)" : "var(--bg-elevated)";
+    const termSurface = isDark ? "rgba(0,0,0,0.5)" : "var(--bg-surface)";
     const termBorder  = isDark
         ? "rgba(255,255,255,0.06)"
         : "var(--border-strong)";
@@ -185,12 +185,12 @@ export default function ContactClient() {
         ? "0 24px 80px rgba(0,0,0,0.6)"
         : "0 24px 80px var(--shadow-strong)";
 
-    // Warm-tinted terminal text palette
+    // The light palette follows the selected theme for readable contrast.
     const colorMap = {
-        output:  "#a09890",
+        output:  isDark ? "#a09890" : "var(--text-primary)",
         input:   "var(--accent)",
         error:   "#e07060",
-        info:    isDark ? "#7090a0" : "#7eb8c9",
+        info:    isDark ? "#7090a0" : "var(--accent-hover)",
     };
 
     const dotColors = isDark
@@ -267,7 +267,7 @@ export default function ContactClient() {
 
                             <span
                                 className="text-[11px] font-mono uppercase tracking-widest"
-                                style={{ color: "rgba(200,196,190,0.5)" }}
+                                style={{ color: isDark ? "rgba(200,196,190,0.5)" : "var(--text-muted)" }}
                             >
                                 Terminal
                             </span>
