@@ -2,7 +2,7 @@
 
 import { motion } from "motion/react";
 import { useState, useRef, useEffect } from "react";
-import { useTheme } from "@/context/ThemeContext";
+import { useTheme, type ColorTheme } from "@/context/ThemeContext";
 
 interface HistoryItem {
     type: "input" | "output" | "error" | "info";
@@ -19,8 +19,15 @@ const BOOT_MESSAGES: HistoryItem[] = [
     { type: "output", text: "" },
 ];
 
+const lightTerminalColors: Record<ColorTheme, { output: string; info: string }> = {
+    default: { output: "#374151", info: "#17647a" },
+    cream: { output: "#49382d", info: "#235f73" },
+    red: { output: "#493438", info: "#5b508c" },
+    blue: { output: "#28384f", info: "#176978" },
+};
+
 export default function ContactClient() {
-    const { theme } = useTheme();
+    const { theme, colorTheme } = useTheme();
     const [input, setInput] = useState("");
     const [history, setHistory] = useState<HistoryItem[]>([]);
     const [cmdHistory, setCmdHistory] = useState<string[]>([]);
@@ -185,12 +192,12 @@ export default function ContactClient() {
         ? "0 24px 80px rgba(0,0,0,0.6)"
         : "0 24px 80px var(--shadow-strong)";
 
-    // The light palette follows the selected theme for readable contrast.
+    // Separate dark ink, theme-colored prompts, and cool info text in light mode.
     const colorMap = {
-        output:  isDark ? "#a09890" : "var(--text-primary)",
+        output:  isDark ? "#a09890" : lightTerminalColors[colorTheme].output,
         input:   "var(--accent)",
-        error:   "#e07060",
-        info:    isDark ? "#7090a0" : "var(--accent-hover)",
+        error:   isDark ? "#e07060" : "#a43d32",
+        info:    isDark ? "#7090a0" : lightTerminalColors[colorTheme].info,
     };
 
     const dotColors = isDark
