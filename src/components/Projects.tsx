@@ -1,8 +1,15 @@
 "use client";
 
+import { useCallback, useEffect, useState } from "react";
 import { motion } from "motion/react";
-import { useRouter } from "next/navigation";
-import { FaGithub, FaExternalLinkAlt, FaRobot, FaDesktop, FaGlobe } from "react-icons/fa";
+import Link from "next/link";
+import Image from "next/image";
+import {
+    FaArrowLeft,
+    FaArrowRight,
+    FaExternalLinkAlt,
+    FaGithub,
+} from "react-icons/fa";
 import { HiSparkles } from "react-icons/hi2";
 import { getProjects, type Project } from "@/lib/projects";
 import { getSkillsForProject } from "@/lib/skills";
@@ -10,261 +17,350 @@ import SkillIcon from "@/components/SkillIcon";
 
 const projects = getProjects();
 
-const CATEGORY_ORDER = [
-    "Discord Bots",
-    "Web Applications",
-    "Desktop Applications",
-];
+function getWrappedIndex(index: number) {
+    return (index + projects.length) % projects.length;
+}
 
-const CATEGORY_ICONS: Record<string, React.ReactNode> = {
-    "Discord Bots": <FaRobot />,
-    "Web Applications": <FaGlobe />,
-    "Desktop Applications": <FaDesktop />,
-};
+function getRelativePosition(index: number, activeIndex: number) {
+    let position = index - activeIndex;
 
-export default function Projects() {
-    const router = useRouter();
-    // Group projects by category preserving custom category order
-    const allCategories = Array.from(new Set(projects.map((p) => p.category || "Other")));
-    const categories = allCategories.sort((a, b) => {
-        const indexA = CATEGORY_ORDER.indexOf(a);
-        const indexB = CATEGORY_ORDER.indexOf(b);
-        if (indexA !== -1 && indexB !== -1) return indexA - indexB;
-        if (indexA !== -1) return -1;
-        if (indexB !== -1) return 1;
-        return a.localeCompare(b);
-    });
+    if (position > projects.length / 2) position -= projects.length;
+    if (position < -projects.length / 2) position += projects.length;
+
+    return position;
+}
+
+function ProjectVisual({ project, active }: { project: Project; active: boolean }) {
+    const preview = project.images?.[0];
 
     return (
-        <section className="py-20 px-6 max-w-6xl mx-auto flex flex-col items-center gap-14">
-            {/* Header */}
-            <div className="text-center flex flex-col items-center gap-3">
-                <motion.h2
-                    initial={{ scale: 0.9, opacity: 0 }}
-                    whileInView={{ scale: 1, opacity: 1 }}
-                    viewport={{ once: true }}
-                    className="font-heading text-5xl tracking-tight"
-                    style={{ color: "var(--accent)" }}
-                >
-                    Projects
-                </motion.h2>
-                <p className="text-lg max-w-lg" style={{ color: "var(--text-muted)" }}>
-                    Things I&apos;ve built, categorized by platform.
-                </p>
-            </div>
+        <div
+            className="relative min-h-64 overflow-hidden border-b md:min-h-full md:w-[48%] md:border-b-0 md:border-r"
+            style={{
+                borderColor: "var(--border-strong)",
+                background: preview
+                    ? "var(--bg-surface)"
+                    : "linear-gradient(145deg, var(--bg-elevated), var(--bg-surface))",
+            }}
+        >
+            {preview ? (
+                <Image
+                    src={preview}
+                    alt={`${project.title} preview`}
+                    fill
+                    sizes="(max-width: 767px) 82vw, 40vw"
+                    unoptimized={/\.gif$/i.test(preview)}
+                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+            ) : (
+                <>
+                    <div
+                        className="absolute -right-14 -top-16 h-48 w-48 rounded-full blur-3xl"
+                        style={{ backgroundColor: "var(--accent)", opacity: 0.14 }}
+                    />
+                    <div
+                        className="absolute -bottom-20 -left-10 h-52 w-52 rounded-full blur-3xl"
+                        style={{ backgroundColor: "var(--accent)", opacity: 0.1 }}
+                    />
+                    <div className="absolute inset-0 opacity-40 [background-image:linear-gradient(var(--border)_1px,transparent_1px),linear-gradient(90deg,var(--border)_1px,transparent_1px)] [background-size:28px_28px]" />
+                    <div className="relative flex h-full min-h-64 flex-col items-center justify-center gap-4 p-10 md:min-h-full">
+                        <span className="text-7xl drop-shadow-lg transition-transform duration-500 group-hover:scale-110">
+                            {project.icon}
+                        </span>
+                        <span
+                            className="font-mono text-[10px] uppercase tracking-[0.32em]"
+                            style={{ color: "var(--text-muted)" }}
+                        >
+                            {project.category}
+                        </span>
+                    </div>
+                </>
+            )}
 
-            {/* Category Groups */}
-            <div className="flex flex-col gap-12 w-full">
-                {categories.map((category) => {
-                    const categoryProjects = projects.filter((p) => (p.category || "Other") === category);
-                    const categoryIcon = CATEGORY_ICONS[category] || null;
+            {preview && (
+                <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/60 to-transparent" />
+            )}
 
-                    return (
-                        <div key={category} className="flex flex-col gap-5 w-full">
-                            {/* Category Section Title */}
-                            <motion.div
-                                initial={{ opacity: 0, x: -15 }}
-                                whileInView={{ opacity: 1, x: 0 }}
-                                viewport={{ once: true }}
-                                className="flex items-center gap-2.5 pb-2 border-b"
-                                style={{ borderColor: "var(--border-strong)" }}
+            <span
+                className="absolute left-5 top-5 rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] backdrop-blur-md"
+                style={{
+                    borderColor: "var(--border-strong)",
+                    backgroundColor: "color-mix(in srgb, var(--bg) 72%, transparent)",
+                    color: preview && active ? "white" : "var(--accent)",
+                }}
+            >
+                {project.category}
+            </span>
+        </div>
+    );
+}
+
+function ProjectSlide({
+    project,
+    position,
+    onSelect,
+}: {
+    project: Project;
+    position: number;
+    onSelect: () => void;
+}) {
+    const active = position === 0;
+    const visible = Math.abs(position) <= 2;
+    const scale = active ? 1 : Math.abs(position) === 1 ? 0.88 : 0.78;
+    const shift = position * 560;
+    const mobileShift = position * 310;
+
+    if (!visible) return null;
+
+    const status = project.status ?? "active";
+    const skills = getSkillsForProject(project).slice(0, 4);
+
+    return (
+        <motion.article
+            aria-hidden={!active}
+            initial={false}
+            animate={{
+                opacity: active ? 1 : Math.abs(position) === 1 ? 0.42 : 0.18,
+                filter: active ? "blur(0px)" : "blur(1px)",
+            }}
+            transition={{ type: "spring", stiffness: 240, damping: 28 }}
+            className="projects-carousel-slide group absolute left-1/2 top-0 flex h-full w-[min(82vw,800px)] cursor-pointer flex-col overflow-hidden rounded-[2rem] border shadow-[0_24px_80px_var(--shadow-strong)] transition-[transform] duration-500 ease-out md:flex-row"
+            style={{
+                zIndex: 20 - Math.abs(position),
+                backgroundColor: "var(--bg-elevated)",
+                borderColor: active ? "var(--border-strong)" : "var(--border)",
+                ["--slide-shift" as string]: `${shift}px`,
+                ["--slide-mobile-shift" as string]: `${mobileShift}px`,
+                ["--slide-scale" as string]: scale,
+            }}
+            onClick={onSelect}
+            onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    onSelect();
+                }
+            }}
+            role="button"
+            tabIndex={active ? 0 : -1}
+        >
+            <ProjectVisual project={project} active={active} />
+
+            <div className="flex min-w-0 flex-1 flex-col justify-between gap-7 p-6 sm:p-8 md:p-9">
+                <div className="flex flex-col gap-5">
+                    <div className="flex items-center justify-between gap-3">
+                        <span
+                            className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em]"
+                            style={{ color: "var(--text-muted)" }}
+                        >
+                            <span
+                                className={`h-2 w-2 rounded-full ${status === "wip" ? "bg-amber-500" : status === "archived" ? "bg-zinc-400" : "bg-emerald-500"}`}
+                            />
+                            {status === "wip" ? "In progress" : status}
+                        </span>
+                        {project.featured && (
+                            <span
+                                className="inline-flex items-center gap-1.5 text-xs font-bold"
+                                style={{ color: "var(--accent)" }}
                             >
-                                <span className="text-lg" style={{ color: "var(--accent)" }}>
-                                    {categoryIcon}
-                                </span>
-                                <h3 className="font-heading text-2xl tracking-tight" style={{ color: "var(--accent)" }}>
-                                    {category}
-                                </h3>
+                                <HiSparkles /> Featured
+                            </span>
+                        )}
+                    </div>
+
+                    <div>
+                        <div className="mb-3 flex items-center gap-3">
+                            <span className="text-3xl" aria-hidden="true">
+                                {project.icon}
+                            </span>
+                            <span
+                                className="font-mono text-xs tracking-[0.18em]"
+                                style={{ color: "var(--text-faint)" }}
+                            >
+                                {project.id.toUpperCase()}
+                            </span>
+                        </div>
+                        <h3
+                            className="font-heading text-3xl leading-tight tracking-tight sm:text-4xl"
+                            style={{ color: "var(--accent)" }}
+                        >
+                            {project.title}
+                        </h3>
+                        <p className="mt-4 max-w-xl text-sm leading-relaxed sm:text-base" style={{ color: "var(--text-muted)" }}>
+                            {project.description}
+                        </p>
+                    </div>
+
+                    {skills.length > 0 && (
+                        <div className="flex flex-wrap gap-2">
+                            {skills.map((skill) => (
                                 <span
-                                    className="text-xs font-mono px-2 py-0.5 rounded-full border"
+                                    key={skill.name}
+                                    className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-semibold"
                                     style={{
-                                        backgroundColor: "var(--border)",
                                         borderColor: "var(--border-strong)",
+                                        backgroundColor: "var(--border)",
                                         color: "var(--text-muted)",
                                     }}
                                 >
-                                    {categoryProjects.length}
+                                    <SkillIcon name={skill.icon} size={11} />
+                                    {skill.name}
                                 </span>
-                            </motion.div>
-
-                            {/* 3-Column Compact Grid */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 w-full">
-                                {categoryProjects.map((project, idx) => {
-                                    const status = project.status ?? "active";
-                                    const projectSkills = getSkillsForProject(project);
-
-                                    return (
-                                        <motion.div
-                                            key={project.id}
-                                            role="button"
-                                            tabIndex={0}
-                                            onClick={() => router.push(`/projects/${project.id}`)}
-                                            onKeyDown={(e) => {
-                                                if (e.key === "Enter" || e.key === " ") {
-                                                    e.preventDefault();
-                                                    router.push(`/projects/${project.id}`);
-                                                }
-                                            }}
-                                            transition={{ type: "spring", stiffness: 100, damping: 15, delay: idx * 0.06 }}
-                                            className="group hover:scale-105 active:scale-100 cursor-pointer relative flex flex-col justify-between p-5 rounded-2xl border transition-all duration-250 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
-                                            style={{
-                                                backgroundColor: "var(--bg-surface)",
-                                                borderColor: "var(--border-strong)",
-                                                boxShadow: "0 4px 16px var(--shadow)",
-                                            }}
-                                        >
-                                            <div className="flex flex-col gap-4">
-                                                {/* Top Bar: Badges + Links */}
-                                                <div className="flex items-center justify-between gap-2 w-full">
-                                                    <div className="flex items-center gap-1.5 flex-wrap">
-                                                        {/* Featured Badge */}
-                                                        {project.featured && (
-                                                            <span
-                                                                className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full shadow-xs"
-                                                                style={{
-                                                                    backgroundColor: "var(--accent)",
-                                                                    color: "var(--bg)",
-                                                                }}
-                                                            >
-                                                                <HiSparkles size={11} /> Featured
-                                                            </span>
-                                                        )}
-
-                                                        {/* Status Badge */}
-                                                        <span
-                                                            className="inline-flex items-center gap-1 text-[10px] font-semibold px-2.5 py-0.5 rounded-full border"
-                                                            style={{
-                                                                backgroundColor: "var(--border)",
-                                                                borderColor: "var(--border-strong)",
-                                                                color: "var(--accent)",
-                                                            }}
-                                                        >
-                                                            {status === "active" && (
-                                                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                                            )}
-                                                            {status === "wip" && (
-                                                                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
-                                                            )}
-                                                            {status === "archived" && (
-                                                                <span className="w-1.5 h-1.5 rounded-full bg-zinc-400" />
-                                                            )}
-                                                            <span className="capitalize">{status}</span>
-                                                        </span>
-                                                    </div>
-
-                                                    {/* Code & Demo Links */}
-                                                    <div
-                                                        className="flex items-center gap-1.5"
-                                                        onClick={(e) => e.stopPropagation()}
-                                                    >
-                                                        {project.codeUrl && (
-                                                            <motion.a
-                                                                href={project.codeUrl}
-                                                                target="_blank"
-                                                                rel="noreferrer"
-                                                                onClick={(e) => e.stopPropagation()}
-                                                                className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full border transition-all cursor-pointer"
-                                                                style={{
-                                                                    backgroundColor: "var(--border)",
-                                                                    borderColor: "var(--border-strong)",
-                                                                    color: "var(--accent)",
-                                                                }}
-                                                                whileHover={{ scale: 1.06, backgroundColor: "var(--border-strong)" }}
-                                                                whileTap={{ scale: 0.94 }}
-                                                                title="Source Code"
-                                                            >
-                                                                <FaGithub size={12} />
-                                                                <span>Code</span>
-                                                            </motion.a>
-                                                        )}
-
-                                                        {project.demoUrl && (
-                                                            <motion.a
-                                                                href={project.demoUrl}
-                                                                target="_blank"
-                                                                rel="noreferrer"
-                                                                onClick={(e) => e.stopPropagation()}
-                                                                className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full border transition-all cursor-pointer"
-                                                                style={{
-                                                                    backgroundColor: "var(--border)",
-                                                                    borderColor: "var(--border-strong)",
-                                                                    color: "var(--accent)",
-                                                                }}
-                                                                whileHover={{ scale: 1.06, backgroundColor: "var(--border-strong)" }}
-                                                                whileTap={{ scale: 0.94 }}
-                                                                title="Live Demo"
-                                                            >
-                                                                <FaExternalLinkAlt size={10} />
-                                                                <span>Demo</span>
-                                                            </motion.a>
-                                                        )}
-                                                    </div>
-                                                </div>
-
-                                                {/* Emoji & Title */}
-                                                <div className="flex items-center gap-3">
-                                                    <div
-                                                        className="w-10 h-10 rounded-xl flex items-center justify-center text-xl border shrink-0 shadow-xs"
-                                                        style={{
-                                                            backgroundColor: "var(--border)",
-                                                            borderColor: "var(--border-strong)",
-                                                        }}
-                                                    >
-                                                        {project.icon}
-                                                    </div>
-                                                    <h4
-                                                        className="font-heading text-xl tracking-tight leading-tight group-hover:underline decoration-2 transition-all"
-                                                        style={{ color: "var(--accent)" }}
-                                                    >
-                                                        {project.title}
-                                                    </h4>
-                                                </div>
-
-                                                {/* Description */}
-                                                <p
-                                                    className="text-xs sm:text-sm leading-relaxed min-h-10.5"
-                                                    style={{ color: "var(--text-muted)" }}
-                                                >
-                                                    {project.description}
-                                                </p>
-
-                                            </div>
-
-                                            {/* Related Skills */}
-                                            {projectSkills.length > 0 && (
-                                                <div
-                                                    className="flex items-center gap-1.5 flex-wrap mt-4 pt-3 border-t"
-                                                    style={{ borderColor: "var(--border)" }}
-                                                >
-                                                    {projectSkills.map((skill) => (
-                                                        <span
-                                                            key={skill.name}
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                router.push(`/skills?skill=${encodeURIComponent(skill.name)}`);
-                                                            }}
-                                                            className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2 py-0.5 rounded-lg border transition-all hover:border-[var(--accent)] hover:scale-105"
-                                                            style={{
-                                                                backgroundColor: "var(--border)",
-                                                                borderColor: "var(--border-strong)",
-                                                                color: "var(--accent)",
-                                                            }}
-                                                            title={`Explore ${skill.name} in Skills`}
-                                                        >
-                                                            <SkillIcon name={skill.icon} size={11} />
-                                                            <span>{skill.name}</span>
-                                                        </span>
-                                                    ))}
-                                                </div>
-                                            )}
-                                        </motion.div>
-                                    );
-                                })}
-                            </div>
+                            ))}
                         </div>
-                    );
-                })}
+                    )}
+                </div>
+
+                {active && (
+                    <div className="flex flex-wrap items-center gap-3 border-t pt-5" style={{ borderColor: "var(--border)" }}>
+                        <Link
+                            href={`/projects/${project.id}`}
+                            onClick={(event) => event.stopPropagation()}
+                            className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold transition-transform hover:-translate-y-0.5"
+                            style={{ backgroundColor: "var(--accent)", color: "var(--bg)" }}
+                        >
+                            View project <FaArrowRight size={12} />
+                        </Link>
+                        {project.codeUrl && (
+                            <a
+                                href={project.codeUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                onClick={(event) => event.stopPropagation()}
+                                className="inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-bold transition-colors hover:bg-[var(--border)]"
+                                style={{ borderColor: "var(--border-strong)", color: "var(--accent)" }}
+                            >
+                                <FaGithub /> Code
+                            </a>
+                        )}
+                        {project.demoUrl && (
+                            <a
+                                href={project.demoUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                onClick={(event) => event.stopPropagation()}
+                                aria-label={`Open ${project.title} demo`}
+                                className="inline-flex h-10 w-10 items-center justify-center rounded-xl border transition-colors hover:bg-[var(--border)]"
+                                style={{ borderColor: "var(--border-strong)", color: "var(--accent)" }}
+                            >
+                                <FaExternalLinkAlt size={13} />
+                            </a>
+                        )}
+                    </div>
+                )}
             </div>
+        </motion.article>
+    );
+}
+
+export default function Projects() {
+    const [activeIndex, setActiveIndex] = useState(0);
+
+    const goTo = useCallback((index: number) => {
+        setActiveIndex(getWrappedIndex(index));
+    }, []);
+
+    const next = useCallback(() => goTo(activeIndex + 1), [activeIndex, goTo]);
+    const previous = useCallback(() => goTo(activeIndex - 1), [activeIndex, goTo]);
+
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === "ArrowRight") next();
+            if (event.key === "ArrowLeft") previous();
+        };
+
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [next, previous]);
+
+    const activeProject = projects[activeIndex];
+
+    return (
+        <section className="mx-auto flex w-full max-w-7xl flex-col gap-10 px-5 py-16 sm:px-8 sm:py-20">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                    <p
+                        className="mb-3 font-mono text-xs font-bold uppercase tracking-[0.28em]"
+                        style={{ color: "var(--text-muted)" }}
+                    >
+                        Selected work
+                    </p>
+                    <h2 className="font-heading text-5xl tracking-tight sm:text-6xl" style={{ color: "var(--accent)" }}>
+                        Projects
+                    </h2>
+                    <p className="mt-4 max-w-xl text-base leading-relaxed" style={{ color: "var(--text-muted)" }}>
+                        A rotating look at the things I&apos;m building, exploring, and shipping.
+                    </p>
+                </div>
+                <p className="font-mono text-xs uppercase tracking-[0.2em]" style={{ color: "var(--text-faint)" }}>
+                    {String(activeIndex + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}
+                </p>
+            </div>
+
+            <div className="relative -mx-5 overflow-hidden px-5 pb-2 sm:-mx-8 sm:px-8">
+                <div className="projects-carousel-stage relative mx-auto h-[620px] max-w-[1220px] sm:h-[570px] md:h-[450px]">
+                    <div
+                        className="pointer-events-none absolute left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl"
+                        style={{ backgroundColor: "var(--accent)", opacity: 0.08 }}
+                    />
+
+                    {projects.map((project, index) => (
+                        <ProjectSlide
+                            key={project.id}
+                            project={project}
+                            position={getRelativePosition(index, activeIndex)}
+                            onSelect={() => goTo(index)}
+                        />
+                    ))}
+                </div>
+            </div>
+
+            <div className="flex flex-col items-center justify-between gap-5 sm:flex-row">
+                <div className="flex items-center gap-2" aria-label="Choose a project">
+                    {projects.map((project, index) => (
+                        <button
+                            key={project.id}
+                            type="button"
+                            aria-label={`Show ${project.title}`}
+                            aria-current={index === activeIndex}
+                            onClick={() => goTo(index)}
+                            className="group flex h-6 items-center"
+                        >
+                            <span
+                                className="block h-1.5 rounded-full transition-all duration-300"
+                                style={{
+                                    width: index === activeIndex ? 28 : 7,
+                                    backgroundColor: index === activeIndex ? "var(--accent)" : "var(--border-strong)",
+                                }}
+                            />
+                        </button>
+                    ))}
+                </div>
+
+                <div className="flex items-center gap-2">
+                    <button
+                        type="button"
+                        onClick={previous}
+                        aria-label="Previous project"
+                        className="flex h-11 w-11 items-center justify-center rounded-full border transition-all hover:-translate-x-1 hover:bg-[var(--border)]"
+                        style={{ borderColor: "var(--border-strong)", color: "var(--accent)" }}
+                    >
+                        <FaArrowLeft size={14} />
+                    </button>
+                    <button
+                        type="button"
+                        onClick={next}
+                        aria-label="Next project"
+                        className="flex h-11 w-11 items-center justify-center rounded-full border transition-all hover:translate-x-1 hover:bg-[var(--border)]"
+                        style={{ borderColor: "var(--border-strong)", color: "var(--accent)" }}
+                    >
+                        <FaArrowRight size={14} />
+                    </button>
+                </div>
+            </div>
+
+            <p className="text-center text-xs" style={{ color: "var(--text-faint)" }}>
+                Browse with the arrows or your keyboard · currently viewing {activeProject.title}
+            </p>
         </section>
     );
 }

@@ -283,3 +283,14 @@ body {
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
+
+/* ─── Projects carousel ─────────────────────────────────────── */
+.projects-carousel-slide {
+    transform: translate3d(calc(-50% + var(--slide-shift)), 0, 0) scale(var(--slide-scale, 1));
+}
+
+@media (max-width: 767px) {
+    .projects-carousel-slide {
+        transform: translate3d(calc(-50% + var(--slide-mobile-shift)), 0, 0) scale(var(--slide-scale, 1));
+    }
+}
