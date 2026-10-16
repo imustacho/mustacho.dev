@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
 import Link from "next/link";
+import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
 import { FaArrowRight, FaTimes, FaFolderOpen, FaExternalLinkAlt, FaGithub } from "react-icons/fa";
-import { HiSparkles } from "react-icons/hi2";
 import SkillIcon from "@/components/SkillIcon";
 import {
     getSkillCategories,
@@ -14,7 +15,6 @@ import {
     type Skill,
     type SkillCategory,
 } from "@/lib/skills";
-import type { Project } from "@/lib/projects";
 
 const categories: SkillCategory[] = getSkillCategories();
 
@@ -137,80 +137,75 @@ function RelatedProjectsModal({
     onClose: () => void;
 }) {
     const projects = getProjectsForSkill(skill.name);
+    const closeButtonRef = useRef<HTMLButtonElement>(null);
 
-    // Close on Escape key
     useEffect(() => {
+        const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+        const previousOverflow = document.body.style.overflow;
+        document.body.style.overflow = "hidden";
+        closeButtonRef.current?.focus();
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === "Escape") onClose();
         };
         window.addEventListener("keydown", handleKeyDown);
-        return () => window.removeEventListener("keydown", handleKeyDown);
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown);
+            document.body.style.overflow = previousOverflow;
+            previousFocus?.focus();
+        };
     }, [onClose]);
 
-    return (
+    return createPortal(
         <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6"
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/35 p-4 backdrop-blur-[6px] sm:p-6"
         >
             <motion.div
-                initial={{ scale: 0.94, opacity: 0, y: 16 }}
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="related-projects-title"
+                initial={{ scale: 0.97, opacity: 0, y: 18 }}
                 animate={{ scale: 1, opacity: 1, y: 0 }}
-                exit={{ scale: 0.94, opacity: 0, y: 16 }}
-                transition={{ type: "spring", stiffness: 260, damping: 25 }}
+                exit={{ scale: 0.97, opacity: 0, y: 18 }}
+                transition={{ type: "spring", stiffness: 240, damping: 27 }}
                 onClick={(e) => e.stopPropagation()}
-                className="relative w-full max-w-2xl max-h-[85vh] flex flex-col rounded-2xl border overflow-hidden shadow-2xl"
+                className="relative flex max-h-[min(84vh,760px)] w-full max-w-3xl flex-col overflow-hidden rounded-[2rem] border shadow-[0_28px_90px_var(--shadow-strong)]"
                 style={{
                     backgroundColor: "var(--bg-elevated)",
                     borderColor: "var(--border-strong)",
                     color: "var(--text-primary)",
                 }}
             >
-                {/* Modal Header */}
-                <div
-                    className="p-5 sm:p-6 border-b flex items-start justify-between gap-4 shrink-0"
-                    style={{ borderColor: "var(--border)" }}
-                >
-                    <div className="flex items-center gap-3.5">
+                <div className="flex shrink-0 items-start justify-between gap-4 border-b px-5 py-5 sm:px-8 sm:py-7" style={{ borderColor: "var(--border)" }}>
+                    <div className="flex items-center gap-4">
                         <div
-                            className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl border shrink-0 shadow-sm"
+                            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border sm:h-14 sm:w-14"
                             style={{
                                 backgroundColor: "var(--bg-surface)",
                                 borderColor: "var(--border-strong)",
                                 color: "var(--accent)",
                             }}
                         >
-                            <SkillIcon name={skill.icon} size={24} />
+                            <SkillIcon name={skill.icon} size={26} />
                         </div>
                         <div>
-                            <div className="flex items-center gap-2">
-                                <h3 className="font-heading text-2xl tracking-tight" style={{ color: "var(--accent)" }}>
-                                    {skill.name}
-                                </h3>
-                                <span
-                                    className="text-xs font-mono font-bold px-2 py-0.5 rounded-full border"
-                                    style={{
-                                        backgroundColor: "var(--border)",
-                                        borderColor: "var(--border-strong)",
-                                        color: "var(--text-muted)",
-                                    }}
-                                >
-                                    {projects.length} {projects.length === 1 ? "Project" : "Projects"}
-                                </span>
-                            </div>
-                            <p className="text-xs sm:text-sm mt-0.5" style={{ color: "var(--text-muted)" }}>
-                                Projects built with or powered by {skill.name}.
+                            <p className="mb-1 font-mono text-[10px] font-bold uppercase tracking-[0.22em]" style={{ color: "var(--text-muted)" }}>
+                                Skill / {String(projects.length).padStart(2, "0")} projects
                             </p>
+                            <h2 id="related-projects-title" className="font-heading text-2xl tracking-tight sm:text-3xl" style={{ color: "var(--accent)" }}>
+                                {skill.name}
+                            </h2>
                         </div>
                     </div>
-
                     <button
+                        ref={closeButtonRef}
+                        type="button"
                         onClick={onClose}
-                        className="p-2 rounded-xl border transition-all hover:scale-105 cursor-pointer"
+                        className="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full border transition-colors hover:bg-[var(--bg-surface)]"
                         style={{
-                            backgroundColor: "var(--border)",
                             borderColor: "var(--border-strong)",
                             color: "var(--accent)",
                         }}
@@ -220,101 +215,59 @@ function RelatedProjectsModal({
                     </button>
                 </div>
 
-                {/* Projects List */}
-                <div className="p-5 sm:p-6 overflow-y-auto flex flex-col gap-4 no-scrollbar">
+                <div className="overflow-y-auto px-5 py-3 no-scrollbar sm:px-8 sm:py-4">
                     {projects.map((project) => {
                         const status = project.status ?? "active";
 
                         return (
-                            <div
+                            <article
                                 key={project.id}
-                                className="p-4 sm:p-5 rounded-xl border flex flex-col gap-3 transition-all hover:border-[var(--accent)]"
-                                style={{
-                                    backgroundColor: "var(--bg-surface)",
-                                    borderColor: "var(--border-strong)",
-                                }}
+                                className="flex flex-col gap-3 border-b py-5 last:border-b-0 sm:gap-4 sm:py-6"
+                                style={{ borderColor: "var(--border)" }}
                             >
-                                <div className="flex items-start justify-between gap-2">
-                                    <div className="flex items-center gap-3">
-                                        <span className="text-2xl">{project.icon}</span>
-                                        <div>
-                                            <h4
-                                                className="font-heading text-lg font-bold tracking-tight"
-                                                style={{ color: "var(--accent)" }}
-                                            >
-                                                {project.title}
-                                            </h4>
-                                            <span className="text-xs font-medium" style={{ color: "var(--text-muted)" }}>
-                                                {project.category}
+                                <div className="flex items-start gap-4">
+                                    <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl border text-2xl sm:h-14 sm:w-14" style={{ backgroundColor: project.id === "charged" ? "#0b1020" : "var(--bg-surface)", borderColor: "var(--border)" }}>
+                                        {project.carouselLogo ? (
+                                            <Image src={project.carouselLogo} alt="" width={44} height={44} unoptimized={project.carouselLogo.endsWith(".svg")} className="h-10 w-10 object-contain" />
+                                        ) : (
+                                            <span aria-hidden="true">{project.icon}</span>
+                                        )}
+                                    </div>
+                                    <div className="min-w-0 flex-1">
+                                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                                            <h3 className="font-heading text-xl tracking-tight sm:text-2xl" style={{ color: "var(--accent)" }}>{project.title}</h3>
+                                            <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.14em]" style={{ color: "var(--text-muted)" }}>
+                                                <span className={`h-1.5 w-1.5 rounded-full ${status === "wip" ? "bg-amber-500" : status === "archived" ? "bg-zinc-400" : "bg-emerald-500"}`} />
+                                                {status === "wip" ? "In progress" : status}
                                             </span>
                                         </div>
-                                    </div>
-
-                                    <div className="flex items-center gap-1.5">
-                                        {project.featured && (
-                                            <span
-                                                className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full"
-                                                style={{
-                                                    backgroundColor: "var(--accent)",
-                                                    color: "var(--bg)",
-                                                }}
-                                            >
-                                                <HiSparkles size={10} /> Featured
-                                            </span>
-                                        )}
-                                        <span
-                                            className="text-[10px] font-semibold px-2 py-0.5 rounded-full border capitalize"
-                                            style={{
-                                                backgroundColor: "var(--border)",
-                                                borderColor: "var(--border-strong)",
-                                                color: "var(--accent)",
-                                            }}
-                                        >
-                                            {status}
-                                        </span>
+                                        <p className="mt-0.5 text-xs font-medium" style={{ color: "var(--text-muted)" }}>{project.category}</p>
                                     </div>
                                 </div>
-
-                                <p className="text-xs sm:text-sm leading-relaxed" style={{ color: "var(--text-muted)" }}>
+                                <p className="text-sm leading-relaxed" style={{ color: "var(--text-muted)" }}>
                                     {project.description}
                                 </p>
-
-                                {/* Tags & Action button */}
-                                <div
-                                    className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t mt-1"
-                                    style={{ borderColor: "var(--border)" }}
-                                >
-                                    <div className="flex flex-wrap gap-1.5">
-                                        {project.tags.map((tag) => (
-                                            <span
-                                                key={tag}
-                                                className="px-2 py-0.5 text-[10px] font-semibold rounded-md border"
-                                                style={{
-                                                    backgroundColor: "var(--border)",
-                                                    borderColor: "var(--border-strong)",
-                                                    color: "var(--accent)",
-                                                }}
-                                            >
-                                                #{tag}
-                                            </span>
-                                        ))}
-                                    </div>
-
-                                    <div className="flex items-center gap-2">
+                                <div className="flex flex-wrap items-center gap-2">
+                                    <Link
+                                        href={`/projects/${project.id}`}
+                                        className="inline-flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-bold transition-transform hover:-translate-y-0.5"
+                                        style={{ backgroundColor: "var(--accent)", color: "var(--bg)" }}
+                                    >
+                                        View project <FaArrowRight size={10} />
+                                    </Link>
                                         {project.codeUrl && (
                                             <a
                                                 href={project.codeUrl}
                                                 target="_blank"
                                                 rel="noreferrer"
-                                                className="p-1.5 rounded-lg border text-xs transition-transform hover:scale-105"
+                                                className="inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-bold transition-colors hover:bg-[var(--bg-surface)]"
                                                 style={{
-                                                    backgroundColor: "var(--border)",
                                                     borderColor: "var(--border-strong)",
                                                     color: "var(--accent)",
                                                 }}
-                                                title="View Source Code"
+                                                aria-label={`View ${project.title} source code`}
                                             >
-                                                <FaGithub size={12} />
+                                                <FaGithub size={12} /> Code
                                             </a>
                                         )}
                                         {project.demoUrl && (
@@ -322,65 +275,51 @@ function RelatedProjectsModal({
                                                 href={project.demoUrl}
                                                 target="_blank"
                                                 rel="noreferrer"
-                                                className="p-1.5 rounded-lg border text-xs transition-transform hover:scale-105"
+                                                className="inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-bold transition-colors hover:bg-[var(--bg-surface)]"
                                                 style={{
-                                                    backgroundColor: "var(--border)",
                                                     borderColor: "var(--border-strong)",
                                                     color: "var(--accent)",
                                                 }}
-                                                title="Live Demo"
+                                                aria-label={`Open ${project.title} live demo`}
                                             >
-                                                <FaExternalLinkAlt size={11} />
+                                                <FaExternalLinkAlt size={11} /> Live
                                             </a>
                                         )}
-                                        <Link
-                                            href={`/projects/${project.id}`}
-                                            className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg transition-transform hover:scale-105 shadow-xs"
-                                            style={{
-                                                backgroundColor: "var(--accent)",
-                                                color: "var(--bg)",
-                                            }}
-                                        >
-                                            <span>Details</span>
-                                            <FaArrowRight size={10} />
-                                        </Link>
-                                    </div>
                                 </div>
-                            </div>
+                            </article>
                         );
                     })}
                 </div>
             </motion.div>
-        </motion.div>
+        </motion.div>,
+        document.body
     );
 }
 
 /* ─── Skills Component ───────────────────────────────────────── */
 export default function SkillsClient() {
-    const [selectedSkill, setSelectedSkill] = useState<Skill | null>(null);
     const searchParams = useSearchParams();
-    const router = useRouter();
+    const skillQuery = searchParams.get("skill");
 
-    // Check if ?skill= URL param is provided and open modal automatically
-    useEffect(() => {
-        const skillQuery = searchParams.get("skill");
-        if (skillQuery) {
-            const allSkills = getAllSkills();
-            const foundSkill = allSkills.find(
-                (s) => s.name.toLowerCase().trim() === skillQuery.toLowerCase().trim()
-            );
-            if (foundSkill) {
-                setSelectedSkill(foundSkill);
-            }
-        }
-    }, [searchParams]);
+    return <SkillsContent key={skillQuery ?? ""} skillQuery={skillQuery} />;
+}
+
+function SkillsContent({ skillQuery }: { skillQuery: string | null }) {
+    const [selectedSkill, setSelectedSkill] = useState<Skill | null>(() =>
+        skillQuery
+            ? getAllSkills().find(
+                (skill) => skill.name.toLowerCase().trim() === skillQuery.toLowerCase().trim()
+            ) ?? null
+            : null
+    );
+    const router = useRouter();
 
     const handleCloseModal = useCallback(() => {
         setSelectedSkill(null);
-        if (searchParams.get("skill")) {
+        if (skillQuery) {
             router.replace("/skills", { scroll: false });
         }
-    }, [searchParams, router]);
+    }, [skillQuery, router]);
 
     return (
         <main className="min-h-screen relative overflow-hidden" style={{ color: "var(--text-primary)" }}>
