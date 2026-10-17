@@ -123,15 +123,22 @@ function ProjectSlide({
     position,
     onSelect,
     onSettle,
+    dragOffset,
+    isDragging,
 }: {
     project: Project;
     position: number;
     onSelect: () => void;
     onSettle: () => void;
+    dragOffset: number;
+    isDragging: boolean;
 }) {
     const active = position === 0;
     const visible = Math.abs(position) <= 2;
-    const scale = active ? 1 : Math.abs(position) === 1 ? 0.88 : 0.78;
+    const distance = typeof window !== "undefined" && window.innerWidth < 768 ? 310 : 560;
+    const progress = Math.min(1, Math.abs(dragOffset) / distance);
+    const approaching = dragOffset !== 0 && position === (dragOffset < 0 ? 1 : -1);
+    const scale = active ? 1 - 0.12 * progress : approaching ? 0.88 + 0.12 * progress : Math.abs(position) === 1 ? 0.88 : 0.78;
     const shift = position * 560;
     const mobileShift = position * 310;
 
@@ -145,10 +152,10 @@ function ProjectSlide({
             aria-hidden={!active}
             initial={false}
             animate={{
-                opacity: active ? 1 : Math.abs(position) === 1 ? 0.42 : 0.18,
-                filter: active ? "blur(0px)" : "blur(1px)",
+                opacity: active ? 1 - 0.58 * progress : approaching ? 0.42 + 0.58 * progress : Math.abs(position) === 1 ? 0.42 : 0.18,
+                filter: active ? `blur(${progress}px)` : approaching ? `blur(${1 - progress}px)` : "blur(1px)",
             }}
-            transition={{ type: "spring", stiffness: 240, damping: 28 }}
+            transition={isDragging ? { duration: 0 } : { duration: 0.36, ease: [0.22, 1, 0.36, 1] }}
             className={`group flex w-[min(82vw,800px)] flex-col overflow-hidden rounded-[2rem] border shadow-[0_24px_80px_var(--shadow-strong)] md:flex-row ${active ? "projects-carousel-active relative mx-auto min-h-[450px] cursor-grab" : "projects-carousel-slide absolute left-1/2 top-0 h-full cursor-pointer"}`}
             style={{
                 zIndex: 20 - Math.abs(position),
@@ -467,6 +474,8 @@ export default function Projects() {
                             position={getRelativePosition(index, activeIndex)}
                             onSelect={() => goTo(index)}
                             onSettle={finishSettle}
+                            dragOffset={dragOffset}
+                            isDragging={isDragging}
                         />
                     ))}
                 </div>
