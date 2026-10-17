@@ -305,27 +305,12 @@ body {
 }
 
 /* ─── Projects carousel ─────────────────────────────────────── */
-.projects-carousel-slide {
-    transform: translate3d(calc(-50% + var(--slide-shift) + var(--drag-offset, 0px)), 0, 0) scale(var(--slide-scale, 1));
-    transition: transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.projects-carousel-active {
-    transform: translate3d(var(--drag-offset, 0px), 0, 0);
-    transition: transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.projects-carousel-stage[data-dragging="true"] article,
-.projects-carousel-stage[data-rebasing="true"] article {
-    transition: none;
+.projects-carousel-card {
+    grid-area: 1 / 1;
+    will-change: transform, opacity;
 }
 
 .projects-carousel-stage[data-dragging="true"] article {
     cursor: grabbing;
 }
 
-@media (max-width: 767px) {
-    .projects-carousel-slide {
-        transform: translate3d(calc(-50% + var(--slide-mobile-shift) + var(--drag-offset, 0px)), 0, 0) scale(var(--slide-scale, 1));
-    }
-}
