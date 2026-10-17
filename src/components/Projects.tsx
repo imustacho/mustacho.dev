@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type PointerEvent } from "react";
+import { flushSync } from "react-dom";
 import { motion } from "motion/react";
 import Link from "next/link";
 import Image from "next/image";
@@ -121,10 +122,12 @@ function ProjectSlide({
     project,
     position,
     onSelect,
+    onSettle,
 }: {
     project: Project;
     position: number;
     onSelect: () => void;
+    onSettle: () => void;
 }) {
     const active = position === 0;
     const visible = Math.abs(position) <= 2;
@@ -146,7 +149,7 @@ function ProjectSlide({
                 filter: active ? "blur(0px)" : "blur(1px)",
             }}
             transition={{ type: "spring", stiffness: 240, damping: 28 }}
-            className={`group flex w-[min(82vw,800px)] flex-col overflow-hidden rounded-[2rem] border shadow-[0_24px_80px_var(--shadow-strong)] md:flex-row ${active ? "projects-carousel-active relative mx-auto min-h-[450px]" : "projects-carousel-slide absolute left-1/2 top-0 h-full cursor-pointer"}`}
+            className={`group flex w-[min(82vw,800px)] flex-col overflow-hidden rounded-[2rem] border shadow-[0_24px_80px_var(--shadow-strong)] md:flex-row ${active ? "projects-carousel-active relative mx-auto min-h-[450px] cursor-grab" : "projects-carousel-slide absolute left-1/2 top-0 h-full cursor-pointer"}`}
             style={{
                 zIndex: 20 - Math.abs(position),
                 backgroundColor: "var(--bg-elevated)",
@@ -156,6 +159,9 @@ function ProjectSlide({
                 ["--slide-scale" as string]: scale,
             }}
             onClick={onSelect}
+            onTransitionEnd={(event) => {
+                if (active && event.target === event.currentTarget && event.propertyName === "transform") onSettle();
+            }}
             onKeyDown={(event) => {
                 if (event.key === "Enter" || event.key === " ") {
                     event.preventDefault();
@@ -286,13 +292,96 @@ function ProjectSlide({
 export default function Projects() {
     const [activeIndex, setActiveIndex] = useState(0);
     const [isPaused, setIsPaused] = useState(false);
+    const [isDragging, setIsDragging] = useState(false);
+    const [isSettling, setIsSettling] = useState(false);
+    const [isRebasing, setIsRebasing] = useState(false);
+    const [dragOffset, setDragOffset] = useState(0);
+    const dragStart = useRef<{ pointerId: number; x: number; y: number; dragging: boolean } | null>(null);
+    const suppressClick = useRef(false);
+    const pendingStep = useRef(0);
+    const settleTimer = useRef<number | null>(null);
+
+    const finishSettle = useCallback(() => {
+        const step = pendingStep.current;
+        if (!step) return;
+        pendingStep.current = 0;
+        if (settleTimer.current !== null) window.clearTimeout(settleTimer.current);
+        settleTimer.current = null;
+
+        // Move the carousel's origin only after the slide reaches its destination.
+        flushSync(() => setIsRebasing(true));
+        flushSync(() => {
+            setActiveIndex((index) => getWrappedIndex(index + step));
+            setDragOffset(0);
+            setIsSettling(false);
+        });
+        requestAnimationFrame(() => requestAnimationFrame(() => setIsRebasing(false)));
+    }, []);
+
+    useEffect(() => () => {
+        if (settleTimer.current !== null) window.clearTimeout(settleTimer.current);
+    }, []);
 
     const goTo = useCallback((index: number) => {
+        if (pendingStep.current || dragStart.current?.dragging) return;
         setActiveIndex(getWrappedIndex(index));
     }, []);
 
     const next = useCallback(() => goTo(activeIndex + 1), [activeIndex, goTo]);
     const previous = useCallback(() => goTo(activeIndex - 1), [activeIndex, goTo]);
+
+    const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
+        if (!event.isPrimary || event.button !== 0 || pendingStep.current) return;
+        if (event.target instanceof Element && event.target.closest("a, button")) return;
+        dragStart.current = { pointerId: event.pointerId, x: event.clientX, y: event.clientY, dragging: false };
+    };
+
+    const handlePointerMove = (event: PointerEvent<HTMLDivElement>) => {
+        const start = dragStart.current;
+        if (!start || start.pointerId !== event.pointerId) return;
+        const deltaX = event.clientX - start.x;
+        const deltaY = event.clientY - start.y;
+
+        if (!start.dragging) {
+            if (Math.abs(deltaX) < 8) return;
+            if (Math.abs(deltaY) > Math.abs(deltaX)) {
+                dragStart.current = null;
+                return;
+            }
+            start.dragging = true;
+            event.currentTarget.setPointerCapture(event.pointerId);
+            setIsDragging(true);
+        }
+
+        const distance = window.innerWidth < 768 ? 310 : 560;
+        setDragOffset(Math.max(-distance, Math.min(distance, deltaX)));
+    };
+
+    const finishDrag = (event: PointerEvent<HTMLDivElement>, cancelled = false) => {
+        const start = dragStart.current;
+        if (!start || start.pointerId !== event.pointerId) return;
+        dragStart.current = null;
+        if (!start.dragging) return;
+
+        suppressClick.current = true;
+        window.setTimeout(() => { suppressClick.current = false; }, 0);
+        if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+            event.currentTarget.releasePointerCapture(event.pointerId);
+        }
+
+        const deltaX = event.clientX - start.x;
+        const distance = window.innerWidth < 768 ? 310 : 560;
+        const step = !cancelled && Math.abs(deltaX) >= 70 ? (deltaX < 0 ? 1 : -1) : 0;
+        setIsDragging(false);
+        if (step) {
+            pendingStep.current = step;
+            setIsSettling(true);
+            setDragOffset(step > 0 ? -distance : distance);
+            settleTimer.current = window.setTimeout(finishSettle, 430);
+        } else {
+            setDragOffset(0);
+        }
+    };
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
@@ -306,7 +395,7 @@ export default function Projects() {
     }, [next, previous]);
 
     useEffect(() => {
-        if (isPaused || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        if (isPaused || isDragging || isSettling || isRebasing || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
         const interval = window.setInterval(() => {
             if (document.visibilityState === "visible") {
@@ -315,7 +404,7 @@ export default function Projects() {
         }, 6500);
 
         return () => window.clearInterval(interval);
-    }, [activeIndex, isPaused]);
+    }, [activeIndex, isPaused, isDragging, isSettling, isRebasing]);
 
     const activeProject = projects[activeIndex];
 
@@ -350,7 +439,22 @@ export default function Projects() {
             </div>
 
             <div className="relative -mx-5 overflow-hidden px-5 pb-2 sm:-mx-8 sm:px-8">
-                <div className="projects-carousel-stage relative mx-auto max-w-[1220px]">
+                <div
+                    className="projects-carousel-stage relative mx-auto max-w-[1220px] touch-pan-y"
+                    data-dragging={isDragging}
+                    data-rebasing={isRebasing}
+                    style={{ ["--drag-offset" as string]: `${dragOffset}px` }}
+                    onPointerDown={handlePointerDown}
+                    onPointerMove={handlePointerMove}
+                    onPointerUp={(event) => finishDrag(event)}
+                    onPointerCancel={(event) => finishDrag(event, true)}
+                    onClickCapture={(event) => {
+                        if (!suppressClick.current) return;
+                        event.preventDefault();
+                        event.stopPropagation();
+                        suppressClick.current = false;
+                    }}
+                >
                     <div
                         className="pointer-events-none absolute left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl"
                         style={{ backgroundColor: "var(--accent)", opacity: 0.08 }}
@@ -362,6 +466,7 @@ export default function Projects() {
                             project={project}
                             position={getRelativePosition(index, activeIndex)}
                             onSelect={() => goTo(index)}
+                            onSettle={finishSettle}
                         />
                     ))}
                 </div>
@@ -412,7 +517,7 @@ export default function Projects() {
             </div>
 
             <p className="text-center text-xs" style={{ color: "var(--text-faint)" }}>
-                Click a project, use the arrows or your keyboard · currently viewing {activeProject.title}
+                Drag, click a project, or use the arrows or your keyboard · currently viewing {activeProject.title}
             </p>
         </section>
     );
