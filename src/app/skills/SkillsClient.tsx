@@ -215,7 +215,7 @@ function RelatedProjectsModal({
                     </button>
                 </div>
 
-                <div className="overflow-y-auto px-5 py-3 no-scrollbar sm:px-8 sm:py-4">
+                <div className="skill-modal-scrollbar overflow-y-auto px-5 py-3 sm:px-8 sm:py-4">
                     {projects.map((project) => {
                         const status = project.status ?? "active";
 

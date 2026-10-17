@@ -284,6 +284,26 @@ body {
     scrollbar-width: none;
 }
 
+.skill-modal-scrollbar {
+    scrollbar-color: var(--accent) var(--bg-surface);
+    scrollbar-width: auto;
+    scrollbar-gutter: stable;
+}
+
+.skill-modal-scrollbar::-webkit-scrollbar {
+    width: 12px;
+}
+
+.skill-modal-scrollbar::-webkit-scrollbar-track {
+    background: var(--bg-surface);
+}
+
+.skill-modal-scrollbar::-webkit-scrollbar-thumb {
+    border: 3px solid var(--bg-surface);
+    border-radius: 999px;
+    background: var(--accent);
+}
+
 /* ─── Projects carousel ─────────────────────────────────────── */
 .projects-carousel-slide {
     transform: translate3d(calc(-50% + var(--slide-shift)), 0, 0) scale(var(--slide-scale, 1));
