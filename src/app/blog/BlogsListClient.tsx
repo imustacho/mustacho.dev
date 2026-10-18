@@ -41,8 +41,9 @@ export default function BlogsListClient({ posts }: BlogsListClientProps) {
                             <Link key={post.id} href={`/blog/${post.id}`} className="block">
                                 <motion.div
                                     initial={{ opacity: 0, y: 22 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ duration: 0.45, ease: "easeOut", delay: Math.min(idx * 0.07, 0.35) }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true, margin: "-60px" }}
+                                    transition={{ type: "spring", stiffness: 100, damping: 16, delay: idx * 0.06 }}
                                     className="group relative py-6 border-b cursor-pointer"
                                     style={{ borderColor: "var(--border-strong)" }}
                                 >
