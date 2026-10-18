@@ -14,7 +14,7 @@
             "Join a room with a game code"
         ],
         "tags": ["Discord", "Chess", "Game", "Activity", "Multiplayer"],
-        "skills": [],
+        "skills": ["Discord.js"],
         "codeUrl": "",
         "demoUrl": "",
         "icon": "♟️",

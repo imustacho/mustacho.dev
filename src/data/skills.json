@@ -73,7 +73,7 @@
             {
                 "name": "Discord.js",
                 "icon": "SiDiscord",
-                "projects": ["overseer", "bubble", "hungerfall"]
+                "projects": ["chesse", "overseer", "bubble", "hungerfall"]
             }
         ]
     },
