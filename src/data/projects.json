@@ -14,14 +14,13 @@
             "Join a room with a game code"
         ],
         "tags": ["Discord", "Chess", "Game", "Activity", "Multiplayer"],
-        "skills": ["Discord.js"],
+        "skills": ["JavaScript", "HTML & CSS", "Node.js", "REST APIs", "Discord.js"],
         "codeUrl": "",
         "demoUrl": "",
         "icon": "♟️",
         "status": "active",
         "featured": true,
         "images": [
-            "/projects/chesse/logo.png",
             "/projects/chesse/discord-game.png",
             "/projects/chesse/activity-room.png"
         ]

@@ -11,7 +11,7 @@
             {
                 "name": "JavaScript",
                 "icon": "SiJavascript",
-                "projects": ["overseer", "bubble", "hungerfall"]
+                "projects": ["overseer", "bubble", "hungerfall", "chesse"]
             },
             {
                 "name": "Rust",
@@ -21,7 +21,7 @@
             {
                 "name": "HTML & CSS",
                 "icon": "SiHtml5",
-                "projects": ["mustacho-dev"]
+                "projects": ["mustacho-dev", "chesse"]
             }
         ]
     },
@@ -63,12 +63,12 @@
             {
                 "name": "Node.js",
                 "icon": "SiNodedotjs",
-                "projects": ["overseer", "bubble", "hungerfall"]
+                "projects": ["overseer", "bubble", "hungerfall", "chesse"]
             },
             {
                 "name": "REST APIs",
                 "icon": "SiPostman",
-                "projects": ["overseer", "bubble", "evliyacelebi"]
+                "projects": ["overseer", "bubble", "evliyacelebi", "chesse"]
             },
             {
                 "name": "Discord.js",

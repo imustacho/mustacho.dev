@@ -99,16 +99,6 @@ function ProjectVisual({ project }: { project: Project }) {
                 <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/60 to-transparent" />
             )}
 
-            <span
-                className="absolute left-5 top-5 rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] backdrop-blur-md"
-                style={{
-                    borderColor: "var(--border-strong)",
-                    backgroundColor: "color-mix(in srgb, var(--bg) 72%, transparent)",
-                    color: preview || background ? "white" : "var(--accent)",
-                }}
-            >
-                {project.category}
-            </span>
         </div>
     );
 }
@@ -139,7 +129,7 @@ function ProjectSlide({
     const pointerEvents = useTransform(distance, (value) => value < 2.5 ? "auto" : "none");
 
     const status = project.status ?? "active";
-    const skills = getSkillsForProject(project).slice(0, 4);
+    const skills = getSkillsForProject(project).slice(0, project.id === "chesse" ? 5 : 4);
 
     return (
         <motion.article
@@ -191,24 +181,12 @@ function ProjectSlide({
                     </div>
 
                     <div>
-                        <div className="mb-3 flex items-center gap-3">
-                            {project.carouselLogo ? (
-                                <Image
-                                    src={project.carouselLogo}
-                                    alt=""
-                                    width={32}
-                                    height={32}
-                                    unoptimized={project.carouselLogo.endsWith(".svg")}
-                                    className={`h-8 w-8 object-contain ${project.id === "charged" ? "rounded-md bg-slate-950 p-1" : project.id === "hungerfall" ? "rounded-md" : ""}`}
-                                />
-                            ) : (
-                                <span className="text-3xl" aria-hidden="true">{project.icon}</span>
-                            )}
+                        <div className="mb-3">
                             <span
-                                className="font-mono text-xs tracking-[0.18em]"
-                                style={{ color: "var(--text-faint)" }}
+                                className="font-mono text-xs font-bold uppercase tracking-[0.18em]"
+                                style={{ color: "var(--text-muted)" }}
                             >
-                                {project.id.toUpperCase()}
+                                {project.category}
                             </span>
                         </div>
                         <h3
