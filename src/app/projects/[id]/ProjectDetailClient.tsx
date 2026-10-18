@@ -235,11 +235,11 @@ export default function ProjectDetailClient({ project }: ProjectDetailClientProp
                                 className="font-heading text-2xl tracking-tight"
                                 style={{ color: "var(--accent)" }}
                             >
-                                Previews & Demos
+                                Project Assets
                             </h2>
                             {hasImages && (
                                 <span className="text-xs font-mono" style={{ color: "var(--text-muted)" }}>
-                                    {project.images!.length} preview{project.images!.length > 1 ? "s" : ""}
+                                    {project.images!.length} asset{project.images!.length > 1 ? "s" : ""}
                                 </span>
                             )}
                         </div>
@@ -273,7 +273,7 @@ export default function ProjectDetailClient({ project }: ProjectDetailClientProp
                                             ) : (
                                                 <img
                                                     src={mediaSrc}
-                                                    alt={`${project.title} preview ${idx + 1}`}
+                                                    alt={`${project.title} asset ${idx + 1}`}
                                                     className="w-full h-full object-contain p-2 transition-transform duration-300 group-hover:scale-105"
                                                 />
                                             )}
@@ -303,10 +303,10 @@ export default function ProjectDetailClient({ project }: ProjectDetailClientProp
                                     <FaImages />
                                 </div>
                                 <h3 className="font-heading text-lg" style={{ color: "var(--accent)" }}>
-                                    Previews Coming Soon
+                                    Project Assets Coming Soon
                                 </h3>
                                 <p className="text-xs sm:text-sm max-w-md" style={{ color: "var(--text-muted)" }}>
-                                    Visual previews, demos, and screenshots for this project will be added here.
+                                    Project images, demos, and other assets will be added here.
                                 </p>
                             </div>
                         )}

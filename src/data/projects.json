@@ -166,10 +166,7 @@
         "icon": "🔮",
         "status": "active",
         "featured": true,
-        "images": [
-            "/projects/recast/demo-1.png",
-            "/projects/recast/demo-2.png"
-        ]
+        "images": ["/projects/recast/preview.png"]
     },
     {
         "id": "pearl",
