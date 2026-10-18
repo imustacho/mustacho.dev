@@ -431,7 +431,10 @@ export default function Projects() {
     const activeProject = projects[activeIndex];
 
     return (
-        <section
+        <motion.section
+            initial={reducedMotion ? false : { opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
             className="mx-auto flex w-full max-w-7xl flex-col gap-10 px-5 py-16 sm:px-8 sm:py-20"
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
@@ -542,6 +545,6 @@ export default function Projects() {
             <p className="text-center text-xs" style={{ color: "var(--text-faint)" }}>
                 Drag, click a project, or use the arrows or your keyboard · currently viewing {activeProject.title}
             </p>
-        </section>
+        </motion.section>
     );
 }

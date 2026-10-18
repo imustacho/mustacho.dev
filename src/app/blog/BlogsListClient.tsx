@@ -14,10 +14,13 @@ export default function BlogsListClient({ posts }: BlogsListClientProps) {
         <main className="min-h-screen relative overflow-hidden" style={{ color: "var(--text-primary)" }}>
             <div className="pt-32 pb-20 px-6 max-w-4xl mx-auto flex flex-col items-center justify-center min-h-screen">
                 {/* Header */}
-                <div className="text-center flex flex-col items-center gap-3 mb-10">
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, ease: "easeOut" }}
+                    className="text-center flex flex-col items-center gap-3 mb-10"
+                >
                     <motion.h1
-                        initial={{ scale: 0.9, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
                         className="font-heading text-5xl tracking-tight"
                         style={{ color: "var(--accent)" }}
                     >
@@ -26,7 +29,7 @@ export default function BlogsListClient({ posts }: BlogsListClientProps) {
                     <p className="text-lg max-w-lg" style={{ color: "var(--text-muted)" }}>
                         Thoughts, notes, and things I figured out.
                     </p>
-                </div>
+                </motion.div>
 
                 <div className="flex flex-col gap-0 w-full mt-4">
                     {posts.length === 0 ? (
@@ -36,7 +39,10 @@ export default function BlogsListClient({ posts }: BlogsListClientProps) {
                     ) : (
                         posts.map((post, idx) => (
                             <Link key={post.id} href={`/blog/${post.id}`} className="block">
-                                <div
+                                <motion.div
+                                    initial={{ opacity: 0, y: 22 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.45, ease: "easeOut", delay: Math.min(idx * 0.07, 0.35) }}
                                     className="group relative py-6 border-b cursor-pointer"
                                     style={{ borderColor: "var(--border-strong)" }}
                                 >
@@ -100,7 +106,7 @@ export default function BlogsListClient({ posts }: BlogsListClientProps) {
                                             </p>
                                         )}
                                     </div>
-                                </div>
+                                </motion.div>
                             </Link>
                         ))
                     )}
