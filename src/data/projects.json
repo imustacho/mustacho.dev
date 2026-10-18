@@ -2,7 +2,7 @@
     {
         "id": "charged",
         "carouselLogo": "/projects/charged/logo.svg",
-        "carouselBackground": "/projects/charged/background.png",
+        "carouselBackground": "/projects/charged/background.webp",
         "title": "Charged",
         "category": "Discord Bots",
         "description": "A Discord community platform for smart auto-replies, personalized onboarding, server management, and conversational AI-assisted setup.",
@@ -21,7 +21,7 @@
         "icon": "⚡",
         "status": "active",
         "featured": true,
-        "images": ["/projects/charged/preview.png"]
+        "images": ["/projects/charged/preview.webp"]
     },
     {
         "id": "overseer",
