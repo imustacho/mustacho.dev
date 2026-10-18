@@ -274,7 +274,7 @@ export default function ProjectDetailClient({ project }: ProjectDetailClientProp
                                                 <img
                                                     src={mediaSrc}
                                                     alt={`${project.title} preview ${idx + 1}`}
-                                                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                                    className={`w-full h-full ${project.id === "chesse" ? "object-contain p-2" : "object-cover"} transition-transform duration-300 group-hover:scale-105`}
                                                 />
                                             )}
                                             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-sm font-semibold pointer-events-none">

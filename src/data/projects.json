@@ -1,5 +1,33 @@
 [
     {
+        "id": "chesse",
+        "carouselPreview": "/projects/chesse/card-art.png",
+        "title": "chesse",
+        "category": "Discord Games",
+        "description": "Play chess on Discord through chat commands or a shared Activity, challenge friends, find opponents, and follow live matches.",
+        "longDescription": "chesse brings chess into Discord in two ways: play directly through messages or open a shared Activity for a visual board and room-based games. Start a match with friends, find other players, watch an ongoing game, or join a room with a code.",
+        "features": [
+            "Play chess through Discord messages",
+            "Open a shared Discord Activity with an interactive chessboard",
+            "Challenge a friend or find other players",
+            "Watch an ongoing match",
+            "Join a room with a game code"
+        ],
+        "tags": ["Discord", "Chess", "Game", "Activity", "Multiplayer"],
+        "skills": [],
+        "codeUrl": "",
+        "demoUrl": "",
+        "icon": "♟️",
+        "status": "active",
+        "featured": true,
+        "images": [
+            "/projects/chesse/logo.png",
+            "/projects/chesse/discord-game.png",
+            "/projects/chesse/board.png",
+            "/projects/chesse/activity-room.png"
+        ]
+    },
+    {
         "id": "charged",
         "carouselLogo": "/projects/charged/logo.svg",
         "carouselBackground": "/projects/charged/background.webp",

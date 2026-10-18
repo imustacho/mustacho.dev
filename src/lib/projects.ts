@@ -1,6 +1,6 @@
 import projectsData from "@/data/projects.json";
 
-const PROJECT_ORDER = ["charged", "recast", "overseer", "hungerfall", "pearl", "evliyacelebi"];
+const PROJECT_ORDER = ["charged", "recast", "chesse", "overseer", "hungerfall", "pearl", "evliyacelebi"];
 
 export interface Project {
     id: string;
