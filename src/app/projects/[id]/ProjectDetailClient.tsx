@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import Link from "next/link";
+import Image from "next/image";
 import { FaGithub, FaExternalLinkAlt, FaArrowLeft, FaCheckCircle, FaImages, FaTimes } from "react-icons/fa";
 import { HiSparkles } from "react-icons/hi2";
 import type { Project } from "@/lib/projects";
@@ -15,6 +16,20 @@ interface ProjectDetailClientProps {
 
 export default function ProjectDetailClient({ project }: ProjectDetailClientProps) {
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (!selectedImage) return;
+        const previousOverflow = document.body.style.overflow;
+        document.body.style.overflow = "hidden";
+        const onKeyDown = (event: KeyboardEvent) => {
+            if (event.key === "Escape") setSelectedImage(null);
+        };
+        window.addEventListener("keydown", onKeyDown);
+        return () => {
+            document.body.style.overflow = previousOverflow;
+            window.removeEventListener("keydown", onKeyDown);
+        };
+    }, [selectedImage]);
 
     if (!project) {
         return (
@@ -271,9 +286,12 @@ export default function ProjectDetailClient({ project }: ProjectDetailClientProp
                                                     className="w-full h-full object-cover"
                                                 />
                                             ) : (
-                                                <img
+                                                <Image
                                                     src={mediaSrc}
                                                     alt={`${project.title} asset ${idx + 1}`}
+                                                    fill
+                                                    sizes="(max-width: 639px) calc(100vw - 48px), 408px"
+                                                    unoptimized={/\.gif$/i.test(mediaSrc)}
                                                     className="w-full h-full object-contain p-2 transition-transform duration-300 group-hover:scale-105"
                                                 />
                                             )}
@@ -406,9 +424,13 @@ export default function ProjectDetailClient({ project }: ProjectDetailClientProp
                                     style={{ borderColor: "var(--border-strong)" }}
                                 />
                             ) : (
-                                <img
+                                <Image
                                     src={selectedImage}
                                     alt="Expanded project preview"
+                                    width={1600}
+                                    height={900}
+                                    sizes="(max-width: 1100px) 90vw, 1024px"
+                                    unoptimized={/\.gif$/i.test(selectedImage)}
                                     className="max-w-full max-h-[85vh] object-contain rounded-xl border"
                                     style={{ borderColor: "var(--border-strong)" }}
                                 />

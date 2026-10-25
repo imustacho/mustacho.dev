@@ -1,3 +1,4 @@
+import { notFound } from "next/navigation";
 import { getProjectById } from "@/lib/projects";
 import projectsData from "@/data/projects.json";
 import ProjectDetailClient from "./ProjectDetailClient";
@@ -54,5 +55,6 @@ export default async function SingleProjectPage({
     const { id } = await params;
     const project = getProjectById(id);
 
+    if (!project) notFound();
     return <ProjectDetailClient project={project} />;
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useMotionValue, useTransform, animate } from "motion/react";
+import { motion, useMotionValue, useTransform, animate, useReducedMotion } from "motion/react";
 import { useEffect, useRef } from "react";
 
 // Original SVG coordinate space (before scale(0.1,-0.1) + translate)
@@ -45,6 +45,7 @@ const SVG_MID_X = (SVG_LEFT_X + SVG_RIGHT_X) / 2; // ~769.5
 const SPRING = { type: "spring" as const, stiffness: 420, damping: 18 };
 
 export default function Mustache() {
+    const reducedMotion = useReducedMotion();
     const svgRef = useRef<SVGSVGElement | null>(null);
 
     const leftX = useMotionValue(0);
@@ -216,8 +217,8 @@ export default function Mustache() {
             transition={{ duration: 0.3 }}
         >
             <motion.g
-                animate={{ y: [0, -6, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                animate={{ y: reducedMotion ? 0 : [0, -6, 0] }}
+                transition={{ duration: reducedMotion ? 0 : 4, repeat: reducedMotion ? 0 : Infinity, ease: "easeInOut" }}
             >
                 <g transform="translate(0,1024) scale(0.1,-0.1)">
                     <motion.path

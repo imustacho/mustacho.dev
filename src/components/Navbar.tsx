@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from "motion/react";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import MustacheSvg from "@/components/mustachesvg";
 import { useTheme } from "@/context/ThemeContext";
 import type { ThemeMode, ColorTheme } from "@/context/ThemeContext";
 import { HiSun, HiMoon, HiComputerDesktop, HiXMark } from "react-icons/hi2";
@@ -25,6 +24,10 @@ const COLOR_THEME_CONFIG: Record<ColorTheme, { label: string; dot: string }> = {
     blue: { label: "Blue", dot: "#2e6bc4" },
 };
 
+function Path({ d }: { d: string }) {
+    return <path d={d} fill="none" strokeWidth="3" stroke="var(--accent)" strokeLinecap="round" />;
+}
+
 export default function Navbar() {
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -33,13 +36,20 @@ export default function Navbar() {
 
     // Prevent body scrolling when mobile fullscreen menu is open
     useEffect(() => {
-        if (isMenuOpen) {
-            document.body.style.overflow = "hidden";
-        } else {
-            document.body.style.overflow = "";
-        }
+        if (!isMenuOpen) return;
+        const previousOverflow = document.body.style.overflow;
+        document.body.style.overflow = "hidden";
+        const closeOnEscape = (event: KeyboardEvent) => {
+            if (event.key === "Escape") setIsMenuOpen(false);
+        };
+        const desktop = window.matchMedia("(min-width: 640px)");
+        const closeOnDesktop = () => { if (desktop.matches) setIsMenuOpen(false); };
+        window.addEventListener("keydown", closeOnEscape);
+        desktop.addEventListener("change", closeOnDesktop);
         return () => {
-            document.body.style.overflow = "";
+            document.body.style.overflow = previousOverflow;
+            window.removeEventListener("keydown", closeOnEscape);
+            desktop.removeEventListener("change", closeOnDesktop);
         };
     }, [isMenuOpen]);
 
@@ -62,23 +72,13 @@ export default function Navbar() {
     const getActiveView = () => {
         if (pathname === "/about") return "about";
         if (pathname === "/skills") return "skills";
-        if (pathname === "/projects") return "projects";
+        if (pathname.startsWith("/projects")) return "projects";
         if (pathname.startsWith("/blog")) return "blog";
         if (pathname === "/contact") return "contact";
         return "home";
     };
 
     const activeView = getActiveView();
-
-    const Path = (props: Record<string, unknown>) => (
-        <motion.path
-            fill="transparent"
-            strokeWidth="3"
-            stroke="var(--accent)"
-            strokeLinecap="round"
-            {...props}
-        />
-    );
 
     return (
         <>
@@ -201,7 +201,8 @@ export default function Navbar() {
                                         />
                                     )}
 
-                                    {item.label}
+                                    {/* Translation can replace text nodes. Keep a stable insertion anchor. */}
+                                    <span>{item.label}</span>
                                 </Link>
                             );
                         })}
@@ -276,6 +277,7 @@ export default function Navbar() {
                             className="sm:hidden flex items-center justify-center w-8 h-8 p-1 cursor-pointer bg-transparent border-none outline-none select-none"
                             style={{ color: "var(--accent)" }}
                             aria-label="Open Menu"
+                            aria-expanded={isMenuOpen}
                         >
                             <svg width="22" height="22" viewBox="0 0 23 23">
                                 <Path d="M 2 2.5 L 20 2.5" />

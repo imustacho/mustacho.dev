@@ -429,9 +429,9 @@ export default function Projects() {
                     >
                         Selected work
                     </p>
-                    <h2 className="font-heading text-5xl tracking-tight sm:text-6xl" style={{ color: "var(--accent)" }}>
+                    <h1 className="font-heading text-5xl tracking-tight sm:text-6xl" style={{ color: "var(--accent)" }}>
                         Projects
-                    </h2>
+                    </h1>
                     <p className="mt-4 max-w-xl text-base leading-relaxed" style={{ color: "var(--text-muted)" }}>
                         A rotating look at the things I&apos;m building, exploring, and shipping.
                     </p>

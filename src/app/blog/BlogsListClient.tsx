@@ -6,7 +6,7 @@ import { FaCalendarAlt, FaClock } from "react-icons/fa";
 import type { BlogPost } from "@/lib/blogs";
 
 interface BlogsListClientProps {
-    posts: BlogPost[];
+    posts: Omit<BlogPost, "content">[];
 }
 
 export default function BlogsListClient({ posts }: BlogsListClientProps) {

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import "./fonts.css";
 import "./globals.css";
 import BackgroundWrapper from "@/components/BackgroundWrapper";
 import Navbar from "@/components/Navbar";
@@ -83,29 +84,24 @@ const jsonLd = {
 const themeScript = `
 (function() {
     try {
-        var mode = localStorage.getItem('mustacho-theme-mode') || 'system';
+        var mode = 'system';
+        var colorTheme = null;
+        try {
+            mode = localStorage.getItem('mustacho-theme-mode') || 'system';
+            colorTheme = localStorage.getItem('mustacho-color-theme');
+        } catch(e) {}
+        if (['light', 'dark', 'system'].indexOf(mode) === -1) mode = 'system';
         var theme = mode;
         if (mode === 'system') {
             theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         }
         document.documentElement.setAttribute('data-theme', theme);
+        document.documentElement.style.colorScheme = theme;
 
-        var colorTheme = localStorage.getItem('mustacho-color-theme');
-        if (!colorTheme) {
+        if (['default', 'cream', 'red', 'blue'].indexOf(colorTheme) === -1) {
             colorTheme = (theme === 'dark') ? 'default' : 'cream';
         }
         document.documentElement.setAttribute('data-color-theme', colorTheme);
-
-        // Suppress CSS transitions during initial paint so the script-set
-        // theme doesn't fade in — only user-triggered toggles should animate.
-        var style = document.createElement('style');
-        style.id = '__theme-no-transition';
-        style.textContent = '*, *::before, *::after { transition: none !important; }';
-        document.head.appendChild(style);
-        window.addEventListener('load', function() {
-            var el = document.getElementById('__theme-no-transition');
-            if (el) el.remove();
-        });
     } catch(e) {}
 })();
 `;
@@ -118,6 +114,8 @@ export default function RootLayout({
     return (
         <html lang="en" suppressHydrationWarning>
             <head>
+                <link rel="preload" href="/fonts/dynapuff-latin.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+                <link rel="preload" href="/fonts/fredoka-latin.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
                 <script dangerouslySetInnerHTML={{ __html: themeScript }} />
                 <script
                     type="application/ld+json"

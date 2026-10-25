@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import {
     HiMapPin,
     HiAcademicCap,
@@ -34,6 +34,7 @@ const links = [
 
 /* ─── Component ────────────────────────────────────────────────── */
 export default function AboutClient() {
+    const reducedMotion = useReducedMotion();
     return (
         <main
             className="min-h-screen relative overflow-hidden"
@@ -50,8 +51,8 @@ export default function AboutClient() {
                 >
                     {/* Avatar */}
                     <motion.div
-                        animate={{ y: [0, -6, 0] }}
-                        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+                        animate={{ y: reducedMotion ? 0 : [0, -6, 0] }}
+                        transition={{ duration: reducedMotion ? 0 : 5, repeat: reducedMotion ? 0 : Infinity, ease: "easeInOut" }}
                         className="relative shrink-0"
                     >
                         <div

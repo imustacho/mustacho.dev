@@ -1,144 +1,62 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
-
-export type ThemeMode = "light" | "dark" | "system";
-export type ResolvedTheme = "light" | "dark";
-export type ColorTheme = "default" | "cream" | "red" | "blue";
+import { createContext, useContext, useEffect, useMemo, useRef, useSyncExternalStore } from "react";
+import { getThemeSnapshot, getServerThemeSnapshot, subscribeToTheme, savePreference } from "@/lib/theme";
+import type { ThemeMode, ResolvedTheme, ColorTheme } from "@/lib/theme";
+export type { ThemeMode, ResolvedTheme, ColorTheme } from "@/lib/theme";
 
 interface ThemeContextValue {
-    mode: ThemeMode;           // what the user selected
-    theme: ResolvedTheme;      // what is actually applied
-    setMode: (m: ThemeMode) => void;
+    mode: ThemeMode;
+    theme: ResolvedTheme;
+    setMode: (mode: ThemeMode) => void;
     colorTheme: ColorTheme;
-    setColorTheme: (t: ColorTheme) => void;
+    setColorTheme: (color: ColorTheme) => void;
 }
 
 const ThemeContext = createContext<ThemeContextValue>({
-    mode: "system",
-    theme: "light",
-    setMode: () => { },
-    colorTheme: "cream",
-    setColorTheme: () => { },
+    mode: "system", theme: "light", colorTheme: "cream",
+    setMode: () => {}, setColorTheme: () => {},
 });
 
-function getSystemTheme(): ResolvedTheme {
-    if (typeof window === "undefined") return "light";
-    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-}
-
-function resolveTheme(mode: ThemeMode): ResolvedTheme {
-    if (mode === "system") return getSystemTheme();
-    return mode;
-}
-
-/** Returns the smart default color theme based on resolved light/dark mode */
-function getDefaultColorTheme(resolved: ResolvedTheme): ColorTheme {
-    return resolved === "dark" ? "default" : "cream";
-}
-
-function applyTheme(resolved: ResolvedTheme) {
-    document.documentElement.setAttribute("data-theme", resolved);
-}
-
-function applyColorTheme(ct: ColorTheme) {
-    document.documentElement.setAttribute("data-color-theme", ct);
-}
-
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-    const [mode, setModeState] = useState<ThemeMode>("system");
-    const [theme, setTheme] = useState<ResolvedTheme>("light");
-    const [colorTheme, setColorThemeState] = useState<ColorTheme>("cream");
-    // Track whether user has explicitly chosen a color theme
-    const [userChoseColor, setUserChoseColor] = useState(false);
+    const snapshot = useSyncExternalStore(subscribeToTheme, getThemeSnapshot, getServerThemeSnapshot);
+    const [mode, theme, colorTheme] = snapshot.split(":") as [ThemeMode, ResolvedTheme, ColorTheme];
+    const transitionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    /* ── On mount: read saved preference ─────────────────────── */
     useEffect(() => {
-        const stored = (localStorage.getItem("mustacho-theme-mode") as ThemeMode) ?? "system";
-        const resolved = resolveTheme(stored);
-        setModeState(stored);
-        setTheme(resolved);
-        applyTheme(resolved);
+        const root = document.documentElement;
+        root.dataset.theme = theme;
+        root.dataset.colorTheme = colorTheme;
+        root.style.colorScheme = theme;
+    }, [theme, colorTheme]);
 
-        const storedColor = localStorage.getItem("mustacho-color-theme") as ColorTheme | null;
-        if (storedColor) {
-            // User explicitly chose a color theme before
-            setColorThemeState(storedColor);
-            applyColorTheme(storedColor);
-            setUserChoseColor(true);
-        } else {
-            // No saved preference: smart default based on light/dark
-            const defaultColor = getDefaultColorTheme(resolved);
-            setColorThemeState(defaultColor);
-            applyColorTheme(defaultColor);
-        }
+    useEffect(() => () => {
+        if (transitionTimer.current) clearTimeout(transitionTimer.current);
+        document.documentElement.removeAttribute("data-theme-transitioning");
     }, []);
 
-    /* ── Listen for OS preference changes when in system mode ── */
-    useEffect(() => {
-        const mq = window.matchMedia("(prefers-color-scheme: dark)");
-        const handler = () => {
-            if (mode === "system") {
-                const resolved = getSystemTheme();
-                setTheme(resolved);
-                applyTheme(resolved);
-
-                // If user hasn't explicitly chosen a color theme, update it
-                if (!userChoseColor) {
-                    const defaultColor = getDefaultColorTheme(resolved);
-                    setColorThemeState(defaultColor);
-                    applyColorTheme(defaultColor);
-                }
-            }
+    const value = useMemo(() => {
+        const transition = () => {
+            if (transitionTimer.current) clearTimeout(transitionTimer.current);
+            document.documentElement.dataset.themeTransitioning = "1";
+            transitionTimer.current = setTimeout(() => {
+                document.documentElement.removeAttribute("data-theme-transitioning");
+            }, 900);
         };
-        mq.addEventListener("change", handler);
-        return () => mq.removeEventListener("change", handler);
-    }, [mode, userChoseColor]);
+        return {
+            mode, theme, colorTheme,
+            setMode: (nextMode: ThemeMode) => {
+                transition();
+                savePreference("mustacho-theme-mode", nextMode);
+            },
+            setColorTheme: (nextColor: ColorTheme) => {
+                transition();
+                savePreference("mustacho-color-theme", nextColor);
+            },
+        };
+    }, [mode, theme, colorTheme]);
 
-    const setMode = (m: ThemeMode) => {
-        const resolved = resolveTheme(m);
-
-        // Mark transitioning — CSS uses this to apply 0.8s color transitions
-        document.documentElement.setAttribute("data-theme-transitioning", "1");
-        document.documentElement.setAttribute("data-theme", resolved);
-
-        setModeState(m);
-        setTheme(resolved);
-        localStorage.setItem("mustacho-theme-mode", m);
-
-        // If user hasn't explicitly chosen a color theme, update it with the mode
-        if (!userChoseColor) {
-            const defaultColor = getDefaultColorTheme(resolved);
-            setColorThemeState(defaultColor);
-            applyColorTheme(defaultColor);
-        }
-
-        // Remove after transition completes (slightly longer than 0.8s CSS duration)
-        setTimeout(() => {
-            document.documentElement.removeAttribute("data-theme-transitioning");
-        }, 900);
-    };
-
-    const setColorTheme = (t: ColorTheme) => {
-        // Mark transitioning — CSS uses this to apply 0.8s color transitions
-        document.documentElement.setAttribute("data-theme-transitioning", "1");
-        applyColorTheme(t);
-
-        setColorThemeState(t);
-        setUserChoseColor(true);
-        localStorage.setItem("mustacho-color-theme", t);
-
-        // Remove after transition completes
-        setTimeout(() => {
-            document.documentElement.removeAttribute("data-theme-transitioning");
-        }, 900);
-    };
-
-    return (
-        <ThemeContext.Provider value={{ mode, theme, setMode, colorTheme, setColorTheme }}>
-            {children}
-        </ThemeContext.Provider>
-    );
+    return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }
 
 export function useTheme() {

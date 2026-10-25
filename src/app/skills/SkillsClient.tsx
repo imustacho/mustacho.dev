@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
 import Link from "next/link";
 import Image from "next/image";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { FaArrowRight, FaTimes, FaFolderOpen, FaExternalLinkAlt, FaGithub } from "react-icons/fa";
 import SkillIcon from "@/components/SkillIcon";
 import {
@@ -17,6 +17,9 @@ import {
 } from "@/lib/skills";
 
 const categories: SkillCategory[] = getSkillCategories();
+const subscribeToMount = () => () => {};
+const isClient = () => true;
+const isServer = () => false;
 
 /* ─── Skill Chip ─────────────────────────────────────────────── */
 function SkillChip({
@@ -138,8 +141,10 @@ function RelatedProjectsModal({
 }) {
     const projects = getProjectsForSkill(skill.name);
     const closeButtonRef = useRef<HTMLButtonElement>(null);
+    const mounted = useSyncExternalStore(subscribeToMount, isClient, isServer);
 
     useEffect(() => {
+        if (!mounted) return;
         const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
         const previousOverflow = document.body.style.overflow;
         document.body.style.overflow = "hidden";
@@ -153,8 +158,9 @@ function RelatedProjectsModal({
             document.body.style.overflow = previousOverflow;
             previousFocus?.focus();
         };
-    }, [onClose]);
+    }, [onClose, mounted]);
 
+    if (!mounted) return null;
     return createPortal(
         <motion.div
             initial={{ opacity: 0 }}
@@ -312,14 +318,16 @@ function SkillsContent({ skillQuery }: { skillQuery: string | null }) {
             ) ?? null
             : null
     );
-    const router = useRouter();
-
     const handleCloseModal = useCallback(() => {
         setSelectedSkill(null);
         if (skillQuery) {
-            router.replace("/skills", { scroll: false });
+            // Closing client-only UI needs no server navigation. Next synchronizes
+            // useSearchParams with the native history API.
+            const url = new URL(window.location.href);
+            url.searchParams.delete("skill");
+            window.history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`);
         }
-    }, [skillQuery, router]);
+    }, [skillQuery]);
 
     return (
         <main className="min-h-screen relative overflow-hidden" style={{ color: "var(--text-primary)" }}>

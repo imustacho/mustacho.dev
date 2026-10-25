@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 };
 
 export default function BlogsPage() {
-    const posts = getBlogPosts();
+    const posts = getBlogPosts().map(({ id, title, excerpt, date, readTime, category }) => ({ id, title, excerpt, date, readTime, category }));
 
     return <BlogsListClient posts={posts} />;
 }

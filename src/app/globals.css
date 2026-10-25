@@ -1,7 +1,6 @@
-@import url("https://fonts.googleapis.com/css2?family=DynaPuff:wght@400..700&family=Fredoka:wght@300..700&display=swap");
 @import "tailwindcss";
 
-@theme {
+@theme inline {
     --font-heading: "DynaPuff", cursive;
     --font-body: "Fredoka", sans-serif;
     --color-accent: #1a1a1a;
@@ -187,9 +186,6 @@ body {
     color: var(--text-primary);
     user-select: none;
     -webkit-user-select: none;
-    transition:
-        background-color 0.8s cubic-bezier(0.4, 0, 0.2, 1),
-        color 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ─── Smooth theme transition (only during toggle) ──────────── */
@@ -209,6 +205,15 @@ body {
 
 .animate-blink {
     animation: cursor-blink 1.2s step-end infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
 }
 
 /* ─── Skill Chip ─────────────────────────────────────────────── */

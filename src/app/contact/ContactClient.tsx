@@ -33,28 +33,24 @@ export default function ContactClient() {
     const [cmdHistory, setCmdHistory] = useState<string[]>([]);
     const [cmdIndex, setCmdIndex] = useState(-1);
 
-    // Use ref (not state) to guard boot so it never causes a re-render loop
-    const hasBooted = useRef(false);
     const inputRef  = useRef<HTMLInputElement>(null);
     const endRef    = useRef<HTMLDivElement>(null);
 
     /* ── Boot sequence (runs exactly once) ──────────────────── */
     useEffect(() => {
-        if (hasBooted.current) return;
-        hasBooted.current = true;
-
         let i = 0;
         let cancelled = false;
+        let timer: ReturnType<typeof setTimeout>;
 
         const tick = () => {
             if (cancelled || i >= BOOT_MESSAGES.length) return;
             const msg = BOOT_MESSAGES[i];
             i++;
             setHistory((prev) => [...prev, msg]);
-            setTimeout(tick, i < 2 ? 120 : 40);
+            timer = setTimeout(tick, i < 2 ? 120 : 40);
         };
 
-        const timer = setTimeout(tick, 150);
+        timer = setTimeout(tick, 150);
 
         return () => {
             cancelled = true;
@@ -316,6 +312,7 @@ export default function ContactClient() {
                                 {/* Hidden real input */}
                                 <input
                                     ref={inputRef}
+                                    aria-label="Terminal command"
                                     type="text"
                                     value={input}
                                     onChange={(e) => setInput(e.target.value)}

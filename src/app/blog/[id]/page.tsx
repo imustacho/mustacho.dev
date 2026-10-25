@@ -1,3 +1,5 @@
+import BlogContent from "@/components/BlogContent";
+import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getBlogPostById, getBlogPosts } from "@/lib/blogs";
 import BlogDetailClient from "./BlogDetailClient";
@@ -56,5 +58,7 @@ export default async function SingleBlogPage({
     const { id } = await params;
     const post = getBlogPostById(id);
 
-    return <BlogDetailClient post={post} />;
+    if (!post) notFound();
+    const { content, ...summary } = post;
+    return <BlogDetailClient post={summary}><BlogContent content={content} /></BlogDetailClient>;
 }
