@@ -1,7 +1,7 @@
 [
     {
         "id": "chesse",
-        "carouselPreview": "/projects/chesse/card-art.png",
+        "carouselPreview": "/projects/chesse/card-art.webp",
         "title": "chesse",
         "category": "Discord Games",
         "description": "Play chess on Discord through chat commands or a shared Activity, challenge friends, find opponents, and follow live matches.",
@@ -125,7 +125,7 @@
     },
     {
         "id": "evliyacelebi",
-        "carouselPreview": "/projects/evliyacelebi/poster.png",
+        "carouselPreview": "/projects/evliyacelebi/poster.webp",
         "title": "celebimiz.com.tr",
         "category": "Web Applications",
         "description": "An interactive map application showcasing historical locations, travel routes, and rich contextual notes sourced from Evliya Çelebi's Seyahatnâme.",
@@ -143,11 +143,11 @@
         "icon": "🧭",
         "status": "active",
         "featured": true,
-        "images": ["/projects/evliyacelebi/poster.png"]
+        "images": ["/projects/evliyacelebi/poster.webp"]
     },
     {
         "id": "recast",
-        "carouselLogo": "/projects/recast/logo.png",
+        "carouselLogo": "/projects/recast/logo.webp",
         "title": "Recast",
         "category": "Desktop Applications",
         "description": "An offline, privacy-first file converter desktop application built with Tauri. Convert images and WebP files seamlessly without uploading online.",
@@ -169,7 +169,7 @@
     },
     {
         "id": "pearl",
-        "carouselLogo": "/projects/pearl/logo.png",
+        "carouselLogo": "/projects/pearl/logo.webp",
         "title": "Pearl",
         "category": "Desktop Applications",
         "description": "A lightweight, modern desktop productivity tool designed for speed, custom workflows, and offline-first performance.",

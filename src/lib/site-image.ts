@@ -1,4 +1,4 @@
-export const SITE_IMAGE_URL = "/newmasc.png";
+export const SITE_IMAGE_URL = "/newmasc.webp";
 
 export const SITE_OG_IMAGE = {
     url: SITE_IMAGE_URL,

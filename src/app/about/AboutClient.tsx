@@ -59,7 +59,7 @@ export default function AboutClient() {
                             style={{ borderColor: "var(--border-strong)", boxShadow: "0 16px 48px var(--shadow-strong)" }}
                         >
                             <Image
-                                src="/newmasc.png"
+                                src="/newmasc.webp"
                                 alt="Mustacho"
                                 width={144}
                                 height={144}
