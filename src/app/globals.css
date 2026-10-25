@@ -176,6 +176,78 @@
 }
 
 /* ─── Base ───────────────────────────────────────────────────── */
+.site-paper {
+    background: var(--bg);
+}
+
+/* Quiet paper and loose ink curves frame the content without tracking input. */
+.paper-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+    color: var(--accent);
+    background:
+        linear-gradient(115deg, color-mix(in srgb, var(--accent) 3%, transparent), transparent 38%),
+        linear-gradient(345deg, color-mix(in srgb, var(--accent) 4%, transparent), transparent 45%);
+}
+
+.paper-grain {
+    position: absolute;
+    inset: 0;
+    background-image: url("/paper-grain.svg");
+    opacity: 0.065;
+    mix-blend-mode: multiply;
+}
+
+[data-theme="dark"] .paper-grain {
+    mix-blend-mode: screen;
+    opacity: 0.035;
+}
+
+.paper-flourish {
+    position: absolute;
+    width: clamp(270px, 33vw, 520px);
+    overflow: visible;
+}
+
+.paper-flourish-top {
+    top: -115px;
+    left: clamp(-245px, -16vw, -125px);
+    transform: rotate(-8deg);
+}
+
+.paper-flourish-bottom {
+    right: clamp(-225px, -14vw, -100px);
+    bottom: -110px;
+    transform: rotate(-12deg);
+}
+
+.paper-ribbon {
+    stroke: currentColor;
+    stroke-width: 34;
+    stroke-linecap: round;
+    opacity: 0.045;
+}
+
+.paper-ink {
+    stroke: currentColor;
+    stroke-width: 1.3;
+    stroke-linecap: round;
+    opacity: 0.17;
+}
+
+.paper-ink-faint {
+    opacity: 0.09;
+}
+
+@media (max-width: 639px) {
+    .paper-flourish-top { top: -140px; left: -190px; }
+    .paper-flourish-bottom { right: -185px; bottom: -80px; }
+    .paper-ink { opacity: 0.12; }
+}
+
 html {
     scrollbar-gutter: stable;
 }
