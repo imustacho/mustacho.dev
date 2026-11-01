@@ -103,8 +103,8 @@ export default function Navbar() {
                         draggable={false}
                     >
                         <motion.span
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
+                            whileHover={{ y: -1 }}
+                            whileTap={{ y: 1 }}
                         >
                             Mustacho
                         </motion.span>

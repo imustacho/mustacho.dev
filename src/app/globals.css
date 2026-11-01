@@ -320,7 +320,44 @@ body {
     initial-value: 1;
 }
 
-/* Animate only artwork; text and its containers retain a stable raster size. */
+/* Text floats at a constant size; hover never restarts or rescales this motion. */
+.site-paper :where(.alive:not(.alive-icon), main h1, main h2) {
+    --text-lift: -4px;
+    animation: text-float 8s ease-in-out infinite;
+}
+
+.site-paper .alive:not(.alive-icon):nth-child(3n + 2) {
+    animation-duration: 9.5s;
+    animation-delay: -3s;
+}
+
+.site-paper .alive:not(.alive-icon):nth-child(3n) {
+    animation-duration: 7.5s;
+    animation-delay: -5s;
+}
+
+.site-paper main h1 { --text-lift: -6px; }
+
+.site-paper :is(.alive-copy, .alive-chip, .alive-nav, .alive-panel) {
+    --text-lift: -2px;
+}
+
+/* A heading inside a floating card travels with that card, only once. */
+.site-paper .alive :is(h1, h2) {
+    animation: none;
+    translate: none;
+}
+
+.site-paper .alive-panel:focus-within {
+    animation-play-state: paused;
+}
+
+@keyframes text-float {
+    0%, 100% { translate: 0 0; }
+    50% { translate: 0 var(--text-lift); }
+}
+
+/* Breathing, rotation and hover scaling are reserved for artwork. */
 .site-paper :is(.alive-icon, .skill-chip-icon) {
     --alive-lift: -7px;
     --alive-angle: 1.5deg;
@@ -390,7 +427,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .site-paper :is(.alive-icon, .skill-chip-icon) {
+    .site-paper :is(.alive, .alive-icon, .skill-chip-icon, main h1, main h2) {
         animation: none !important;
         translate: none;
         rotate: none;

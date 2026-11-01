@@ -121,8 +121,8 @@ export default function AboutClient() {
                                     target="_blank"
                                     rel="noreferrer"
                                     aria-label={label}
-                                    whileHover={{ scale: 1.08, y: -2 }}
-                                    whileTap={{ scale: 0.95 }}
+                                    whileHover={{ y: -2 }}
+                                    whileTap={{ y: 1 }}
                                     className="flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-semibold transition-colors"
                                     style={{
                                         borderColor: "var(--border-strong)",
@@ -207,7 +207,7 @@ export default function AboutClient() {
                                 initial={{ opacity: 0, scale: 0.92 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: 0.42 + idx * 0.07, type: "spring", stiffness: 180, damping: 18 }}
-                                whileHover={{ y: -4, scale: 1.02 }}
+                                whileHover={{ y: -4 }}
                                 className="alive group flex flex-col items-center text-center gap-3 p-5 rounded-2xl border relative overflow-hidden"
                                 style={{
                                     backgroundColor: "var(--bg-elevated)",
