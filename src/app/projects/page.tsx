@@ -4,13 +4,13 @@ import { SITE_OG_IMAGE } from "@/lib/site-image";
 
 export const metadata: Metadata = {
     title: "Projects",
-    description: "çalışıyorum...",
+    description: "New projects are coming soon.",
     alternates: {
         canonical: "/projects",
     },
     openGraph: {
         title: "Projects | Mustacho",
-        description: "çalışıyorum...",
+        description: "New projects are coming soon.",
         url: "https://mustacho.dev/projects",
         images: [SITE_OG_IMAGE],
     },

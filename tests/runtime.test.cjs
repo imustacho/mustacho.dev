@@ -150,7 +150,7 @@ test("all published routes, favicon and local fonts load", async () => {
 test("projects show the placeholder and retired project pages return 404", async () => {
     await session({}, async page => {
         await page.goto("/projects");
-        await page.getByText("çalışıyorum...", { exact: true }).waitFor();
+        await page.getByText("New projects are coming soon.", { exact: true }).waitFor();
         assert.equal(await page.locator('main a[href^="/projects/"]').count(), 0);
         assert.equal(await page.locator("[data-project]").count(), 0);
 
