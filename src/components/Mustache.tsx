@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, useMotionValue, useTransform, useReducedMotion } from "motion/react";
-import { useCallback, useEffect, useRef, type PointerEvent as ReactPointerEvent } from "react";
+import { motion, useMotionValue, useTransform, animate, useReducedMotion } from "motion/react";
+import { useEffect, useRef } from "react";
 
 // Original SVG coordinate space (before scale(0.1,-0.1) + translate)
 // Points are in the 10x scaled system that gets rendered via transform
@@ -28,227 +28,238 @@ const POINTS = [
     { type: "C", x1: 7299, y1: 5888, x2: 7012, y2: 5992, x: 6720, y: 5963 }
 ] as const;
 
-type Point = { x: number; y: number };
-type Side = "left" | "right";
-const MID_X = 769.5;
-const toPoint = (x: number, y: number): Point => ({ x: x / 10, y: 1024 - y / 10 });
-const REST: Point[] = POINTS.flatMap(p => p.type === "M"
-    ? [toPoint(p.x, p.y)]
-    : [toPoint(p.x1, p.y1), toPoint(p.x2, p.y2), toPoint(p.x, p.y)]);
-const LEFT_INDEX = REST.length;
-const RIGHT_INDEX = REST.length + 1;
-REST.push({ x: 440, y: 498.9 }, { x: 1099, y: 499.7 });
+// ViewBox: "420 412 700 200"
+// SVG display space (after scale 0.1,-0.1 + translate 0,1024):
+//   x_display = raw_x * 0.1
+//   y_display = 1024 - raw_y * 0.1
+// Left tip:  x=440, y=499  (raw 4400, 5249)
+// Right tip: x=1099, y=500 (raw 10990, 5240)
+// Mid X in display space: ~770
 
-function makePath(points: Point[]) {
-    let index = 0;
-    const coordinate = () => {
-        const point = points[index++];
-        return `${point.x} ${point.y}`;
-    };
-    return POINTS.map(p => p.type === "M" ? `M ${coordinate()}`
-        : `C ${coordinate()}, ${coordinate()}, ${coordinate()}`).join(" ") + " Z";
-}
+const VIEWBOX_W = 700;
+const SVG_LEFT_X = 440;   // left circle cx in SVG display units
+const SVG_RIGHT_X = 1099; // right circle cx in SVG display units
+const SVG_MID_X = (SVG_LEFT_X + SVG_RIGHT_X) / 2; // ~769.5
 
-// A continuous rubber response: no hard clamp, dead zone, or cursor attachment.
-function resistPull(x: number, y: number): Point {
-    const distance = Math.hypot(x, y);
-    const resistance = 0.65 / (1 + distance / 360);
-    return { x: x * resistance, y: y * resistance };
-}
-
-type Drag = {
-    pointerId: number;
-    start: Point;
-    pose: Point[];
-    weights: number[];
-};
+// Spring config for snap-back
+const SPRING = { type: "spring" as const, stiffness: 420, damping: 18 };
 
 export default function Mustache() {
     const reducedMotion = useReducedMotion();
-    const svgRef = useRef<SVGSVGElement>(null);
-    const drag = useRef<Drag | null>(null);
-    const shape = useMotionValue<Point[]>(REST);
-    const simulation = useRef({
-        target: REST,
-        velocity: REST.map(() => ({ x: 0, y: 0 })),
-        frame: 0,
-        lastTime: 0,
+    const svgRef = useRef<SVGSVGElement | null>(null);
+
+    const leftX = useMotionValue(0);
+    const leftY = useMotionValue(0);
+    const rightX = useMotionValue(0);
+    const rightY = useMotionValue(0);
+
+    const dragInfo = useRef({
+        isDragging: false,
+        /** 0–1: how much the left side is influenced */
+        wL: 0,
+        /** 0–1: how much the right side is influenced */
+        wR: 0,
+        startClientX: 0,
+        startClientY: 0,
+        startLX: 0,
+        startLY: 0,
+        startRX: 0,
+        startRY: 0,
     });
-    const path = useTransform(shape, makePath);
-    const leftCX = useTransform(shape, points => points[LEFT_INDEX].x);
-    const leftCY = useTransform(shape, points => points[LEFT_INDEX].y);
-    const rightCX = useTransform(shape, points => points[RIGHT_INDEX].x);
-    const rightCY = useTransform(shape, points => points[RIGHT_INDEX].y);
 
-    const setTarget = useCallback((target: Point[]) => {
-        const state = simulation.current;
-        state.target = target;
-        if (reducedMotion) {
-            cancelAnimationFrame(state.frame);
-            state.frame = 0;
-            state.velocity = REST.map(() => ({ x: 0, y: 0 }));
-            shape.set(target);
-            return;
-        }
-        if (state.frame) return;
-        state.lastTime = performance.now();
-        const tick = (now: number) => {
-            // Small integration steps keep the spring stable after a slow frame.
-            let remaining = Math.min((now - state.lastTime) / 1000, 0.04);
-            state.lastTime = now;
-            const next = shape.get().map(point => ({ ...point }));
-            const stiffness = drag.current ? 900 : 300;
-            const damping = drag.current ? 52 : 25;
-            while (remaining > 0) {
-                const dt = Math.min(remaining, 1 / 120);
-                remaining -= dt;
-                next.forEach((point, index) => {
-                    const goal = state.target[index];
-                    const velocity = state.velocity[index];
-                    velocity.x += ((goal.x - point.x) * stiffness - velocity.x * damping) * dt;
-                    velocity.y += ((goal.y - point.y) * stiffness - velocity.y * damping) * dt;
-                    point.x += velocity.x * dt;
-                    point.y += velocity.y * dt;
-                });
+    const path = useTransform([leftX, leftY, rightX, rightY], (values) => {
+        const [lxVal, lyVal, rxVal, ryVal] = values as number[];
+
+        // Scale pixel offsets into the raw coordinate space (10× scale, Y flipped)
+        const ldx = lxVal * 10;
+        const ldy = -lyVal * 10;
+        const rdx = rxVal * 10;
+        const rdy = -ryVal * 10;
+
+        const warpPoint = (x: number, y: number) => {
+            const MID_X = 7695;
+            const LEFT_EDGE = 4400;
+            const RIGHT_EDGE = 10990;
+
+            let wL = 0;
+            if (x <= LEFT_EDGE) {
+                wL = 1;
+            } else if (x < MID_X) {
+                const t = (MID_X - x) / (MID_X - LEFT_EDGE);
+                wL = Math.pow(t, 1.5); // softer falloff
             }
-            const settled = next.every((point, index) =>
-                Math.hypot(point.x - state.target[index].x, point.y - state.target[index].y) < 0.02 &&
-                Math.hypot(state.velocity[index].x, state.velocity[index].y) < 0.1);
-            shape.set(settled ? state.target : next);
-            state.frame = settled ? 0 : requestAnimationFrame(tick);
+
+            let wR = 0;
+            if (x >= RIGHT_EDGE) {
+                wR = 1;
+            } else if (x > MID_X) {
+                const t = (x - MID_X) / (RIGHT_EDGE - MID_X);
+                wR = Math.pow(t, 1.5);
+            }
+
+            return {
+                x: x + ldx * wL + rdx * wR,
+                y: y + ldy * wL + rdy * wR,
+            };
         };
-        state.frame = requestAnimationFrame(tick);
-    }, [shape, reducedMotion]);
 
-    const localPoint = (clientX: number, clientY: number) => {
-        const matrix = svgRef.current?.getScreenCTM();
-        return matrix ? new DOMPoint(clientX, clientY).matrixTransform(matrix.inverse()) : null;
-    };
+        let pathString = "";
 
-    const finishDrag = useCallback((pointerId?: number) => {
-        const current = drag.current;
-        if (!current || (pointerId !== undefined && current.pointerId !== pointerId)) return;
-        drag.current = null;
-        const svg = svgRef.current;
-        if (svg?.hasPointerCapture(current.pointerId)) svg.releasePointerCapture(current.pointerId);
-        setTarget(REST);
-    }, [setTarget]);
-
-    const startDrag = (event: ReactPointerEvent<SVGElement>, handle?: Side) => {
-        if (drag.current || !event.isPrimary || event.button !== 0) return;
-        const point = localPoint(event.clientX, event.clientY);
-        if (!point || !svgRef.current) return;
-        event.preventDefault();
-        const pose = shape.get();
-        // Locate the material being held, even while it is returning or stretched.
-        let nearest = handle === "left" ? LEFT_INDEX : RIGHT_INDEX;
-        if (!handle) {
-            let distance = Infinity;
-            pose.forEach((candidate, index) => {
-                const next = Math.hypot(candidate.x - point.x, candidate.y - point.y);
-                if (next < distance) { distance = next; nearest = index; }
-            });
+        for (const p of POINTS) {
+            if (p.type === "M") {
+                const pt = warpPoint(p.x, p.y);
+                pathString += `M ${pt.x} ${pt.y} `;
+            } else {
+                const pt1 = warpPoint(p.x1, p.y1);
+                const pt2 = warpPoint(p.x2, p.y2);
+                const pt = warpPoint(p.x, p.y);
+                pathString += `C ${pt1.x} ${pt1.y}, ${pt2.x} ${pt2.y}, ${pt.x} ${pt.y} `;
+            }
         }
-        const grip = REST[nearest];
-        const weights = REST.map(material => {
-            const distance = Math.hypot(material.x - grip.x, (material.y - grip.y) * 0.6);
-            const localInfluence = Math.exp(-(distance * distance) / (2 * 190 * 190));
-            // Keep the central seam attached, while a root grab bends the surrounding hairs.
-            // The influence is based on the grabbed region, never attenuated by grab distance.
-            const rootDistance = Math.min(1, Math.abs(material.x - MID_X) / 45);
-            const attachment = rootDistance * rootDistance * (3 - 2 * rootDistance);
-            return localInfluence * attachment;
-        });
-        drag.current = { pointerId: event.pointerId, start: point, pose, weights };
-        // Regrabbing freezes the visible pose without resetting its geometry.
-        simulation.current.velocity = REST.map(() => ({ x: 0, y: 0 }));
-        setTarget(pose);
-        svgRef.current.setPointerCapture(event.pointerId);
-    };
 
-    const moveDrag = (event: ReactPointerEvent<SVGSVGElement>) => {
-        const current = drag.current;
-        if (!current || event.pointerId !== current.pointerId) return;
-        if (event.pointerType === "mouse" && (event.buttons & 1) === 0) {
-            finishDrag(event.pointerId);
-            return;
+        pathString += "Z";
+        return pathString;
+    });
+
+    const startDrag = (e: React.PointerEvent<SVGPathElement | SVGCircleElement>) => {
+        const svgEl = svgRef.current;
+        if (!svgEl) return;
+
+        // Capture pointer so drag continues even if cursor leaves the element
+        e.currentTarget.setPointerCapture(e.pointerId);
+
+        // Convert client X to SVG display space using the rendered bounding rect
+        const rect = svgEl.getBoundingClientRect();
+        // ViewBox starts at x=420, width=700 → scale factor
+        const svgScale = VIEWBOX_W / rect.width;
+        const svgX = (e.clientX - rect.left) * svgScale + 420;
+
+        // Smooth weight: distance from midpoint, clamped 0–1
+        // Points closer to an end get higher weight for that side
+        const rangeL = SVG_MID_X - SVG_LEFT_X;   // ~329.5
+        const rangeR = SVG_RIGHT_X - SVG_MID_X;  // ~329.5
+
+        let wL = 0;
+        let wR = 0;
+
+        if (svgX <= SVG_MID_X) {
+            // Left half: left weight goes 0→1 as x approaches left tip
+            wL = Math.min(1, (SVG_MID_X - svgX) / rangeL);
+            wR = 0;
+        } else {
+            // Right half
+            wR = Math.min(1, (svgX - SVG_MID_X) / rangeR);
+            wL = 0;
         }
-        const point = localPoint(event.clientX, event.clientY);
-        if (!point) return;
-        const pull = resistPull(point.x - current.start.x, point.y - current.start.y);
-        setTarget(current.pose.map((material, index) => ({
-            x: material.x + pull.x * current.weights[index],
-            y: material.y + pull.y * current.weights[index],
-        })));
+
+        dragInfo.current = {
+            isDragging: true,
+            wL,
+            wR,
+            startClientX: e.clientX,
+            startClientY: e.clientY,
+            startLX: leftX.get(),
+            startLY: leftY.get(),
+            startRX: rightX.get(),
+            startRY: rightY.get(),
+        };
     };
 
     useEffect(() => {
-        const state = simulation.current;
-        const reset = () => finishDrag();
-        const onVisibilityChange = () => { if (document.hidden) reset(); };
-        window.addEventListener("blur", reset);
-        window.addEventListener("resize", reset);
-        document.addEventListener("visibilitychange", onVisibilityChange);
-        return () => {
-            window.removeEventListener("blur", reset);
-            window.removeEventListener("resize", reset);
-            document.removeEventListener("visibilitychange", onVisibilityChange);
-            drag.current = null;
-            cancelAnimationFrame(state.frame);
-            state.frame = 0;
+        const handleMove = (e: PointerEvent) => {
+            const info = dragInfo.current;
+            if (!info.isDragging) return;
+
+            const svgEl = svgRef.current;
+            if (!svgEl) return;
+
+            const rect = svgEl.getBoundingClientRect();
+            // Pixel offset mapped to SVG display units
+            const scale = VIEWBOX_W / rect.width;
+
+            const dx = (e.clientX - info.startClientX) * scale;
+            const dy = (e.clientY - info.startClientY) * scale;
+
+            leftX.set(info.startLX + dx * info.wL);
+            leftY.set(info.startLY + dy * info.wL);
+            rightX.set(info.startRX + dx * info.wR);
+            rightY.set(info.startRY + dy * info.wR);
         };
-    }, [finishDrag]);
+
+        const handleUp = () => {
+            if (!dragInfo.current.isDragging) return;
+            dragInfo.current.isDragging = false;
+
+            animate(leftX, 0, SPRING);
+            animate(leftY, 0, SPRING);
+            animate(rightX, 0, SPRING);
+            animate(rightY, 0, SPRING);
+        };
+
+        window.addEventListener("pointermove", handleMove);
+        window.addEventListener("pointerup", handleUp);
+        window.addEventListener("pointercancel", handleUp);
+
+        return () => {
+            window.removeEventListener("pointermove", handleMove);
+            window.removeEventListener("pointerup", handleUp);
+            window.removeEventListener("pointercancel", handleUp);
+        };
+    }, [leftX, leftY, rightX, rightY]);
 
     return (
         <motion.svg
             ref={svgRef}
-            data-mustache
-            aria-label="Stretch the mustache"
             viewBox="420 412 700 200"
-            className="mt-8 w-72 overflow-visible select-none touch-none md:w-96"
+            className="mt-8 w-72 overflow-visible select-none md:w-96"
             initial={{ filter: "drop-shadow(0px 6px 12px var(--shadow))" }}
             whileHover={{ filter: "drop-shadow(0px 14px 24px var(--shadow-strong))" }}
-            transition={{ duration: reducedMotion ? 0 : 0.3 }}
-            onPointerMove={moveDrag}
-            onPointerUp={event => finishDrag(event.pointerId)}
-            onPointerCancel={event => finishDrag(event.pointerId)}
-            onLostPointerCapture={event => finishDrag(event.pointerId)}
+            transition={{ duration: 0.3 }}
         >
-            <motion.path
-                d={path}
-                fill="var(--accent)"
-                stroke="transparent"
-                strokeWidth={20}
-                pointerEvents="all"
-                className="cursor-grab touch-none active:cursor-grabbing"
-                onPointerDown={event => startDrag(event)}
-            />
-            {(["left", "right"] as const).map(side => (
-                <g
-                    key={side}
-                    data-mustache-handle={side}
-                    className="group cursor-grab touch-none active:cursor-grabbing"
-                    onPointerDown={event => startDrag(event, side)}
-                >
-                    <motion.circle
-                        cx={side === "left" ? leftCX : rightCX}
-                        cy={side === "left" ? leftCY : rightCY}
-                        r={30}
-                        fill="transparent"
-                        pointerEvents="all"
-                    />
-                    <motion.circle
-                        cx={side === "left" ? leftCX : rightCX}
-                        cy={side === "left" ? leftCY : rightCY}
-                        r={10}
-                        fill="var(--accent-hover)"
-                        stroke="var(--bg)"
-                        strokeWidth={2.5}
-                        pointerEvents="none"
-                        className="group-hover:fill-[var(--accent)]"
+            <motion.g
+                animate={{ y: reducedMotion ? 0 : [0, -6, 0] }}
+                transition={{ duration: reducedMotion ? 0 : 4, repeat: reducedMotion ? 0 : Infinity, ease: "easeInOut" }}
+            >
+                <g transform="translate(0,1024) scale(0.1,-0.1)">
+                    <motion.path
+                        d={path}
+                        fill="var(--accent)"
+                        stroke="none"
+                        className="cursor-grab touch-none active:cursor-grabbing"
+                        onPointerDown={startDrag}
                     />
                 </g>
-            ))}
+
+                {/* Left tip handle */}
+                <motion.circle
+                    cx={SVG_LEFT_X}
+                    cy={499}
+                    r={10}
+                    fill="var(--accent-hover)"
+                    stroke="var(--bg)"
+                    strokeWidth={2.5}
+                    className="cursor-grab touch-none active:cursor-grabbing"
+                    style={{ x: leftX, y: leftY }}
+                    onPointerDown={startDrag}
+                    whileHover={{ scale: 1.35, fill: "var(--accent)" }}
+                    whileTap={{ scale: 0.9 }}
+                />
+
+                {/* Right tip handle */}
+                <motion.circle
+                    cx={SVG_RIGHT_X}
+                    cy={500}
+                    r={10}
+                    fill="var(--accent-hover)"
+                    stroke="var(--bg)"
+                    strokeWidth={2.5}
+                    className="cursor-grab touch-none active:cursor-grabbing"
+                    style={{ x: rightX, y: rightY }}
+                    onPointerDown={startDrag}
+                    whileHover={{ scale: 1.35, fill: "var(--accent)" }}
+                    whileTap={{ scale: 0.9 }}
+                />
+            </motion.g>
         </motion.svg>
     );
 }

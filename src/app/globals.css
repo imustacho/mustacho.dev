@@ -180,7 +180,7 @@
     background: var(--bg);
 }
 
-/* Quiet paper and loose ink curves frame the content without tracking input. */
+/* Quiet paper and loose ink curves frame the content. */
 .paper-backdrop {
     position: fixed;
     inset: 0;
@@ -229,11 +229,19 @@
     top: var(--mark-top);
     width: clamp(180px, 24vw, 330px);
     opacity: 0;
-    transform: translate(-50%, -50%) rotate(var(--mark-rotation)) scale(var(--mark-scale));
+    transform: translate(-50%, -50%)
+        translate(var(--mark-pull-x, 0px), var(--mark-pull-y, 0px))
+        rotate(calc(var(--mark-rotation) + var(--mark-turn, 0deg)))
+        scale(var(--mark-scale));
+    transition: transform 550ms cubic-bezier(0.22, 1, 0.36, 1), opacity 400ms ease;
 }
 
 .paper-flourish-scattered.is-ready {
     opacity: 0.76;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .paper-flourish-scattered { transition: none; }
 }
 
 .paper-ribbon {

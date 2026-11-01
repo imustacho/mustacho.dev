@@ -13,16 +13,73 @@ export default function BackgroundWrapper({ children }: { children: React.ReactN
     const backdropRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        const marks = backdropRef.current?.querySelectorAll<SVGSVGElement>(".paper-flourish-scattered");
-        marks?.forEach((mark, index) => {
+        const backdrop = backdropRef.current;
+        if (!backdrop) return;
+        const marks = Array.from(backdrop.querySelectorAll<SVGSVGElement>(".paper-flourish-scattered"), (mark, index) => {
             const region = markRegions[index];
             const between = ([min, max]: readonly [number, number]) => min + Math.random() * (max - min);
-            mark.style.setProperty("--mark-left", `${between(region.left)}%`);
-            mark.style.setProperty("--mark-top", `${between(region.top)}%`);
-            mark.style.setProperty("--mark-rotation", `${Math.round(Math.random() * 100 - 50)}deg`);
+            const left = between(region.left);
+            const top = between(region.top);
+            const rotation = Math.round(Math.random() * 100 - 50);
+            mark.style.setProperty("--mark-left", `${left}%`);
+            mark.style.setProperty("--mark-top", `${top}%`);
+            mark.style.setProperty("--mark-rotation", `${rotation}deg`);
             mark.style.setProperty("--mark-scale", (0.75 + Math.random() * 0.45).toFixed(2));
             mark.classList.add("is-ready");
+            return { mark, left, top, rotation };
         });
+
+        const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+        let frame = 0;
+        let pointer: { x: number; y: number } | null = null;
+        const update = () => {
+            frame = 0;
+            const bounds = backdrop.getBoundingClientRect();
+            for (const { mark, left, top, rotation } of marks) {
+                let x = 0;
+                let y = 0;
+                let turn = 0;
+                if (pointer && !reducedMotion.matches) {
+                    // Measure from the spawn position, never the moving artwork.
+                    const dx = pointer.x - (bounds.left + bounds.width * left / 100);
+                    const dy = pointer.y - (bounds.top + bounds.height * top / 100);
+                    const distance = Math.hypot(dx, dy);
+                    const pull = 24 / (distance + 180);
+                    x = dx * pull;
+                    y = dy * pull;
+                    // A small turn toward the cursor, with no angle-wrap snapping.
+                    const heading = (rotation - 20) * Math.PI / 180;
+                    turn = (Math.cos(heading) * dy - Math.sin(heading) * dx) / (distance + 80) * 16;
+                }
+                mark.style.setProperty("--mark-pull-x", `${x.toFixed(2)}px`);
+                mark.style.setProperty("--mark-pull-y", `${y.toFixed(2)}px`);
+                mark.style.setProperty("--mark-turn", `${turn.toFixed(2)}deg`);
+            }
+        };
+        const scheduleUpdate = () => { if (!frame) frame = requestAnimationFrame(update); };
+        const onMove = (event: PointerEvent) => {
+            if (event.pointerType === "touch" || reducedMotion.matches) return;
+            pointer = { x: event.clientX, y: event.clientY };
+            scheduleUpdate();
+        };
+        const reset = () => { pointer = null; scheduleUpdate(); };
+        const onLeave = (event: PointerEvent) => { if (!event.relatedTarget) reset(); };
+        const onVisibility = () => { if (document.hidden) reset(); };
+        window.addEventListener("pointermove", onMove, { passive: true });
+        window.addEventListener("pointerout", onLeave);
+        window.addEventListener("blur", reset);
+        window.addEventListener("resize", reset);
+        document.addEventListener("visibilitychange", onVisibility);
+        reducedMotion.addEventListener("change", reset);
+        return () => {
+            cancelAnimationFrame(frame);
+            window.removeEventListener("pointermove", onMove);
+            window.removeEventListener("pointerout", onLeave);
+            window.removeEventListener("blur", reset);
+            window.removeEventListener("resize", reset);
+            document.removeEventListener("visibilitychange", onVisibility);
+            reducedMotion.removeEventListener("change", reset);
+        };
     }, []);
 
     return (
