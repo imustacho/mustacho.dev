@@ -204,3 +204,132 @@ test("each published page shares its own generated Open Graph and Twitter image"
         }
     });
 });
+
+async function mustachePoint(page, side) {
+    return page.locator(`[data-mustache-handle="${side}"] circle`).first().evaluate(circle => {
+        const point = new DOMPoint(circle.cx.baseVal.value, circle.cy.baseVal.value).matrixTransform(circle.getScreenCTM());
+        return { x: point.x, y: point.y };
+    });
+}
+
+async function mustacheFrame(page) {
+    await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+}
+
+function nearPoint(actual, expected, message) {
+    assert.ok(Math.hypot(actual.x - expected.x, actual.y - expected.y) < 2, `${message}: ${JSON.stringify({ actual, expected })}`);
+}
+
+async function openMustache(page) {
+    await page.goto("/");
+    await page.locator("[data-mustache]").waitFor();
+    await page.waitForFunction(() => getComputedStyle(document.querySelector("main section")).transform === "none");
+}
+
+async function waitForMustacheRest(page) {
+    await page.waitForFunction(() => {
+        const left = document.querySelector('[data-mustache-handle="left"] circle');
+        const right = document.querySelector('[data-mustache-handle="right"] circle');
+        return Math.abs(left.cx.baseVal.value - 440) < 0.1 && Math.abs(left.cy.baseVal.value - 498.9) < 0.1 &&
+            Math.abs(right.cx.baseVal.value - 1099) < 0.1 && Math.abs(right.cy.baseVal.value - 499.7) < 0.1;
+    });
+}
+
+for (const width of [1280, 390]) {
+    test(`mustache tracks both handles outside its bounds at ${width}px`, async () => {
+        await session({ viewport: { width, height: 900 } }, async page => {
+            await openMustache(page);
+            const originalPath = await page.locator("[data-mustache] path").getAttribute("d");
+            for (const side of ["left", "right"]) {
+                const start = await mustachePoint(page, side);
+                const otherSide = side === "left" ? "right" : "left";
+                const other = await mustachePoint(page, otherSide);
+                await page.mouse.move(start.x, start.y);
+                await page.mouse.down();
+                const target = { x: start.x + (side === "left" ? 70 : -70), y: start.y + 110 };
+                await page.mouse.move(target.x, target.y, { steps: 8 });
+                await mustacheFrame(page);
+                nearPoint(await mustachePoint(page, side), target, "Handle follows the pointer 1:1");
+                nearPoint(await mustachePoint(page, otherSide), other, "Other half stays still");
+                assert.notEqual(await page.locator("[data-mustache] path").getAttribute("d"), originalPath);
+                await page.mouse.up();
+                await waitForMustacheRest(page);
+            }
+        });
+    });
+}
+
+test("mustache regrab stops the spring and keeps the same handle across the center", async () => {
+    await session({}, async page => {
+        await openMustache(page);
+        for (let attempt = 0; attempt < 3; attempt++) {
+            const start = await mustachePoint(page, "left");
+            await page.mouse.move(start.x, start.y);
+            await page.mouse.down();
+            await page.mouse.move(start.x + 240, start.y - 45, { steps: 5 });
+            await mustacheFrame(page);
+            // Release, then catch the moving left handle on the right half of the SVG.
+            await page.mouse.up();
+            const catching = await mustachePoint(page, "left");
+            await page.mouse.move(catching.x, catching.y);
+            await page.mouse.down();
+            await mustacheFrame(page);
+            const caught = await mustachePoint(page, "left");
+            const right = await mustachePoint(page, "right");
+            await page.waitForTimeout(250);
+            nearPoint(await mustachePoint(page, "left"), caught, "Spring stops while held");
+            await page.mouse.move(catching.x - 35, catching.y + 30, { steps: 4 });
+            await mustacheFrame(page);
+            nearPoint(await mustachePoint(page, "left"), { x: caught.x - 35, y: caught.y + 30 }, "Regrab preserves grab offset and handle identity");
+            nearPoint(await mustachePoint(page, "right"), right, "Right handle does not switch on");
+            await page.mouse.up();
+            await waitForMustacheRest(page);
+        }
+    });
+});
+
+test("mustache ignores unrelated pointers and recovers after focus or capture loss", async () => {
+    await session({ reducedMotion: "reduce" }, async page => {
+        await openMustache(page);
+        for (const ending of ["blur", "capture"]) {
+            const start = await mustachePoint(page, "left");
+            await page.mouse.move(start.x, start.y);
+            await page.mouse.down();
+            await page.mouse.move(start.x + 60, start.y + 40);
+            await mustacheFrame(page);
+            const held = await mustachePoint(page, "left");
+            await page.locator("[data-mustache]").evaluate(svg => {
+                svg.dispatchEvent(new PointerEvent("pointermove", { bubbles: true, pointerId: 99, clientX: 0, clientY: 0, buttons: 1 }));
+                svg.dispatchEvent(new PointerEvent("pointerup", { bubbles: true, pointerId: 99 }));
+            });
+            await mustacheFrame(page);
+            nearPoint(await mustachePoint(page, "left"), held, "Another pointer cannot move or release this drag");
+            if (ending === "blur") await page.evaluate(() => window.dispatchEvent(new Event("blur")));
+            else await page.locator("[data-mustache]").evaluate(svg => { if (svg.hasPointerCapture(1)) svg.releasePointerCapture(1); });
+            await page.mouse.move(start.x + 65, start.y + 45);
+            await page.mouse.up();
+            await waitForMustacheRest(page);
+        }
+    });
+});
+
+test("mustache touch drag survives a second finger and resets on cancellation", async () => {
+    await session({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, reducedMotion: "reduce" }, async (page, context) => {
+        await openMustache(page);
+        const cdp = await context.newCDPSession(page);
+        const start = await mustachePoint(page, "left");
+        const target = { x: start.x + 60, y: start.y + 70, id: 1 };
+        await cdp.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ ...start, id: 1 }] });
+        await cdp.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [target] });
+        await mustacheFrame(page);
+        nearPoint(await mustachePoint(page, "left"), target, "Touch follows finger");
+        const second = { x: 300, y: 300, id: 2 };
+        await cdp.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [target, second] });
+        await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [target] });
+        await mustacheFrame(page);
+        nearPoint(await mustachePoint(page, "left"), target, "Second finger release cannot end drag");
+        await cdp.send("Input.dispatchTouchEvent", { type: "touchCancel", touchPoints: [] });
+        await waitForMustacheRest(page);
+        assert.equal(await page.evaluate(() => window.scrollY), 0, "Pulling the mustache does not scroll the page");
+    });
+});
