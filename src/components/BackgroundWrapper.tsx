@@ -4,9 +4,9 @@ import { MotionConfig } from "motion/react";
 import { useEffect, useRef } from "react";
 
 const markRegions = [
-    { left: [16, 30], top: [18, 39] },
-    { left: [43, 59], top: [59, 81] },
-    { left: [70, 84], top: [18, 43] },
+    { left: [8, 20], top: [18, 39] },
+    { left: [8, 20], top: [65, 85] },
+    { left: [80, 92], top: [24, 55] },
 ] as const;
 
 export default function BackgroundWrapper({ children }: { children: React.ReactNode }) {

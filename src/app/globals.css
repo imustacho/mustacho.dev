@@ -233,7 +233,7 @@
 }
 
 .paper-flourish-scattered.is-ready {
-    opacity: 0.58;
+    opacity: 0.76;
 }
 
 .paper-ribbon {
@@ -258,7 +258,7 @@
     .paper-flourish-top { top: -140px; left: -190px; }
     .paper-flourish-bottom { right: -18px; bottom: -80px; }
     .paper-flourish-scattered { width: 185px; }
-    .paper-flourish-scattered.is-ready { opacity: 0.4; }
+    .paper-flourish-scattered.is-ready { opacity: 0.58; }
     .paper-ink { opacity: 0.12; }
 }
 
