@@ -237,8 +237,19 @@
     opacity: 0.76;
 }
 
+.paper-mark-drift {
+    animation: paper-mark-drift 16s ease-in-out infinite;
+}
+
+@keyframes paper-mark-drift {
+    0%, 100% { transform: translate(0, 0); }
+    33% { transform: translate(12px, -18px); }
+    66% { transform: translate(-10px, 12px); }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .paper-flourish-scattered { transition: none; }
+    .paper-mark-drift { animation: none; }
 }
 
 .paper-ribbon {

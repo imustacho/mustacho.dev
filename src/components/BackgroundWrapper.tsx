@@ -1,6 +1,6 @@
 "use client";
 
-import { MotionConfig } from "motion/react";
+import { motion, MotionConfig, useReducedMotion } from "motion/react";
 import { useEffect, useRef } from "react";
 
 const markRegions = [
@@ -9,8 +9,34 @@ const markRegions = [
     { left: [80, 92], top: [24, 55] },
 ] as const;
 
+function bendMark(source: string, amount: number) {
+    const points = source.match(/-?\d+(?:\.\d+)?/g)!.map(Number);
+    const warped: string[] = [];
+    for (let index = 0; index < points.length; index += 2) {
+        const x = points[index];
+        const y = points[index + 1];
+        const t = (x - 210) / 250;
+        // Bend the ends and the inner loop at different rates, like a loose ribbon.
+        const nextX = x + Math.sin(t * Math.PI) * amount * 25;
+        const nextY = y + (t * t * 65 + Math.sin(t * Math.PI * 2) * 18) * amount;
+        warped.push(`${nextX.toFixed(2)} ${nextY.toFixed(2)}`);
+    }
+    return `M ${warped[0]} C ${warped.slice(1).join(" ")}`;
+}
+
+const markPaths = [
+    { className: "paper-ribbon", d: "M-34 237C62 274 141 242 143 171C145 100 76 78 89 125C103 178 230 178 285 84C314 33 370 49 450 80" },
+    { className: "paper-ink", d: "M-31 253C72 289 159 249 159 169C159 101 67 60 73 126C80 204 240 191 301 92C337 34 389 62 451 69" },
+    { className: "paper-ink paper-ink-faint", d: "M59 309C139 323 214 286 250 241C294 184 373 190 436 218" },
+].map(path => ({
+    className: path.className,
+    d: bendMark(path.d, 0),
+    frames: [0, 0.75, 0, -0.65, 0].map(amount => bendMark(path.d, amount)),
+}));
+
 export default function BackgroundWrapper({ children }: { children: React.ReactNode }) {
     const backdropRef = useRef<HTMLDivElement>(null);
+    const reducedMotion = useReducedMotion();
 
     useEffect(() => {
         const marks = backdropRef.current?.querySelectorAll<SVGSVGElement>(".paper-flourish-scattered");
@@ -42,9 +68,22 @@ export default function BackgroundWrapper({ children }: { children: React.ReactN
                     </svg>
                     {markRegions.map((_, index) => (
                         <svg key={index} className="paper-flourish paper-flourish-scattered" viewBox="0 0 420 340" fill="none">
-                            <path className="paper-ribbon" d="M-34 237C62 274 141 242 143 171C145 100 76 78 89 125C103 178 230 178 285 84C314 33 370 49 450 80" />
-                            <path className="paper-ink" d="M-31 253C72 289 159 249 159 169C159 101 67 60 73 126C80 204 240 191 301 92C337 34 389 62 451 69" />
-                            <path className="paper-ink paper-ink-faint" d="M59 309C139 323 214 286 250 241C294 184 373 190 436 218" />
+                            <g className="paper-mark-drift" style={{ animationDuration: `${14 + index * 3}s`, animationDelay: `${-index * 4}s` }}>
+                                {markPaths.map(path => (
+                                    <motion.path
+                                        key={path.className}
+                                        className={path.className}
+                                        d={path.d}
+                                        initial={false}
+                                        animate={{ d: reducedMotion === false ? path.frames : path.d }}
+                                        transition={{
+                                            duration: reducedMotion === false ? 15 + index * 4 : 0,
+                                            repeat: reducedMotion === false ? Infinity : 0,
+                                            ease: "easeInOut",
+                                        }}
+                                    />
+                                ))}
+                            </g>
                         </svg>
                     ))}
                 </div>
