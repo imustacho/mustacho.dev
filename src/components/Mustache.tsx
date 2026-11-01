@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useMotionValue, useTransform, animate, useReducedMotion } from "motion/react";
+import { motion, useMotionValue, useTransform, useReducedMotion } from "motion/react";
 import { useCallback, useEffect, useRef, type PointerEvent as ReactPointerEvent } from "react";
 
 // Original SVG coordinate space (before scale(0.1,-0.1) + translate)
@@ -28,50 +28,97 @@ const POINTS = [
     { type: "C", x1: 7299, y1: 5888, x2: 7012, y2: 5992, x: 6720, y: 5963 }
 ] as const;
 
-const LEFT = { x: 440, y: 498.9 };
-const RIGHT = { x: 1099, y: 499.7 };
-const MID_X = (LEFT.x + RIGHT.x) / 2;
-const SPRING = { type: "spring" as const, stiffness: 320, damping: 26, velocity: 0 };
+type Point = { x: number; y: number };
 type Side = "left" | "right";
+const MID_X = 769.5;
+const toPoint = (x: number, y: number): Point => ({ x: x / 10, y: 1024 - y / 10 });
+const REST: Point[] = POINTS.flatMap(p => p.type === "M"
+    ? [toPoint(p.x, p.y)]
+    : [toPoint(p.x1, p.y1), toPoint(p.x2, p.y2), toPoint(p.x, p.y)]);
+const LEFT_INDEX = REST.length;
+const RIGHT_INDEX = REST.length + 1;
+REST.push({ x: 440, y: 498.9 }, { x: 1099, y: 499.7 });
+
+function makePath(points: Point[]) {
+    let index = 0;
+    const coordinate = () => {
+        const point = points[index++];
+        return `${point.x} ${point.y}`;
+    };
+    return POINTS.map(p => p.type === "M" ? `M ${coordinate()}`
+        : `C ${coordinate()}, ${coordinate()}, ${coordinate()}`).join(" ") + " Z";
+}
+
+// A continuous rubber response: no hard clamp, dead zone, or cursor attachment.
+function resistPull(x: number, y: number): Point {
+    const distance = Math.hypot(x, y);
+    const resistance = 0.65 / (1 + distance / 360);
+    return { x: x * resistance, y: y * resistance };
+}
+
 type Drag = {
     pointerId: number;
-    side: Side | "body";
-    startX: number;
-    startY: number;
-    offsetX: number;
-    offsetY: number;
+    start: Point;
+    pose: Point[];
+    weights: number[];
 };
 
 export default function Mustache() {
     const reducedMotion = useReducedMotion();
     const svgRef = useRef<SVGSVGElement>(null);
     const drag = useRef<Drag | null>(null);
-    const leftX = useMotionValue(0);
-    const leftY = useMotionValue(0);
-    const rightX = useMotionValue(0);
-    const rightY = useMotionValue(0);
-    const bodyX = useMotionValue(0);
-    const bodyY = useMotionValue(0);
-    const leftCX = useTransform(() => LEFT.x + leftX.get() + bodyX.get());
-    const leftCY = useTransform(() => LEFT.y + leftY.get() + bodyY.get());
-    const rightCX = useTransform(() => RIGHT.x + rightX.get() + bodyX.get());
-    const rightCY = useTransform(() => RIGHT.y + rightY.get() + bodyY.get());
-
-    // The path and handles share SVG coordinates; no CSS transform origins can drift.
-    const path = useTransform([leftX, leftY, rightX, rightY, bodyX, bodyY], values => {
-        const [lx, ly, rx, ry, bx, by] = values as number[];
-        const warp = (rawX: number, rawY: number) => {
-            const x = rawX / 10;
-            const y = 1024 - rawY / 10;
-            const leftWeight = Math.pow(Math.max(0, Math.min(1, (MID_X - x) / (MID_X - LEFT.x))), 1.5);
-            const rightWeight = Math.pow(Math.max(0, Math.min(1, (x - MID_X) / (RIGHT.x - MID_X))), 1.5);
-            return `${x + bx + lx * leftWeight + rx * rightWeight} ${y + by + ly * leftWeight + ry * rightWeight}`;
-        };
-        return POINTS.map(p => p.type === "M"
-            ? `M ${warp(p.x, p.y)}`
-            : `C ${warp(p.x1, p.y1)}, ${warp(p.x2, p.y2)}, ${warp(p.x, p.y)}`
-        ).join(" ") + " Z";
+    const shape = useMotionValue<Point[]>(REST);
+    const simulation = useRef({
+        target: REST,
+        velocity: REST.map(() => ({ x: 0, y: 0 })),
+        frame: 0,
+        lastTime: 0,
     });
+    const path = useTransform(shape, makePath);
+    const leftCX = useTransform(shape, points => points[LEFT_INDEX].x);
+    const leftCY = useTransform(shape, points => points[LEFT_INDEX].y);
+    const rightCX = useTransform(shape, points => points[RIGHT_INDEX].x);
+    const rightCY = useTransform(shape, points => points[RIGHT_INDEX].y);
+
+    const setTarget = useCallback((target: Point[]) => {
+        const state = simulation.current;
+        state.target = target;
+        if (reducedMotion) {
+            cancelAnimationFrame(state.frame);
+            state.frame = 0;
+            state.velocity = REST.map(() => ({ x: 0, y: 0 }));
+            shape.set(target);
+            return;
+        }
+        if (state.frame) return;
+        state.lastTime = performance.now();
+        const tick = (now: number) => {
+            // Small integration steps keep the spring stable after a slow frame.
+            let remaining = Math.min((now - state.lastTime) / 1000, 0.04);
+            state.lastTime = now;
+            const next = shape.get().map(point => ({ ...point }));
+            const stiffness = drag.current ? 900 : 300;
+            const damping = drag.current ? 52 : 25;
+            while (remaining > 0) {
+                const dt = Math.min(remaining, 1 / 120);
+                remaining -= dt;
+                next.forEach((point, index) => {
+                    const goal = state.target[index];
+                    const velocity = state.velocity[index];
+                    velocity.x += ((goal.x - point.x) * stiffness - velocity.x * damping) * dt;
+                    velocity.y += ((goal.y - point.y) * stiffness - velocity.y * damping) * dt;
+                    point.x += velocity.x * dt;
+                    point.y += velocity.y * dt;
+                });
+            }
+            const settled = next.every((point, index) =>
+                Math.hypot(point.x - state.target[index].x, point.y - state.target[index].y) < 0.02 &&
+                Math.hypot(state.velocity[index].x, state.velocity[index].y) < 0.1);
+            shape.set(settled ? state.target : next);
+            state.frame = settled ? 0 : requestAnimationFrame(tick);
+        };
+        state.frame = requestAnimationFrame(tick);
+    }, [shape, reducedMotion]);
 
     const localPoint = (clientX: number, clientY: number) => {
         const matrix = svgRef.current?.getScreenCTM();
@@ -84,30 +131,38 @@ export default function Mustache() {
         drag.current = null;
         const svg = svgRef.current;
         if (svg?.hasPointerCapture(current.pointerId)) svg.releasePointerCapture(current.pointerId);
-        for (const offset of [leftX, leftY, rightX, rightY, bodyX, bodyY]) {
-            offset.stop();
-            if (reducedMotion) offset.set(0);
-            else animate(offset, 0, SPRING);
-        }
-    }, [leftX, leftY, rightX, rightY, bodyX, bodyY, reducedMotion]);
+        setTarget(REST);
+    }, [setTarget]);
 
     const startDrag = (event: ReactPointerEvent<SVGElement>, handle?: Side) => {
         if (drag.current || !event.isPrimary || event.button !== 0) return;
         const point = localPoint(event.clientX, event.clientY);
         if (!point || !svgRef.current) return;
         event.preventDefault();
-        // Body grabs translate the whole shape, so even the root follows 1:1.
-        // Only the explicit tip handles stretch a half of the mustache.
-        const side = handle ?? "body";
-        const [x, y] = side === "body" ? [bodyX, bodyY]
-            : side === "left" ? [leftX, leftY] : [rightX, rightY];
-        // Freeze the complete pose when regrabbing during any return animation.
-        for (const offset of [leftX, leftY, rightX, rightY, bodyX, bodyY]) offset.stop();
-        drag.current = {
-            pointerId: event.pointerId, side,
-            startX: point.x, startY: point.y,
-            offsetX: x.get(), offsetY: y.get(),
-        };
+        const pose = shape.get();
+        // Locate the material being held, even while it is returning or stretched.
+        let nearest = handle === "left" ? LEFT_INDEX : RIGHT_INDEX;
+        if (!handle) {
+            let distance = Infinity;
+            pose.forEach((candidate, index) => {
+                const next = Math.hypot(candidate.x - point.x, candidate.y - point.y);
+                if (next < distance) { distance = next; nearest = index; }
+            });
+        }
+        const grip = REST[nearest];
+        const weights = REST.map(material => {
+            const distance = Math.hypot(material.x - grip.x, (material.y - grip.y) * 0.6);
+            const localInfluence = Math.exp(-(distance * distance) / (2 * 190 * 190));
+            // Keep the central seam attached, while a root grab bends the surrounding hairs.
+            // The influence is based on the grabbed region, never attenuated by grab distance.
+            const rootDistance = Math.min(1, Math.abs(material.x - MID_X) / 45);
+            const attachment = rootDistance * rootDistance * (3 - 2 * rootDistance);
+            return localInfluence * attachment;
+        });
+        drag.current = { pointerId: event.pointerId, start: point, pose, weights };
+        // Regrabbing freezes the visible pose without resetting its geometry.
+        simulation.current.velocity = REST.map(() => ({ x: 0, y: 0 }));
+        setTarget(pose);
         svgRef.current.setPointerCapture(event.pointerId);
     };
 
@@ -120,13 +175,15 @@ export default function Mustache() {
         }
         const point = localPoint(event.clientX, event.clientY);
         if (!point) return;
-        const [x, y] = current.side === "body" ? [bodyX, bodyY]
-            : current.side === "left" ? [leftX, leftY] : [rightX, rightY];
-        x.set(current.offsetX + point.x - current.startX);
-        y.set(current.offsetY + point.y - current.startY);
+        const pull = resistPull(point.x - current.start.x, point.y - current.start.y);
+        setTarget(current.pose.map((material, index) => ({
+            x: material.x + pull.x * current.weights[index],
+            y: material.y + pull.y * current.weights[index],
+        })));
     };
 
     useEffect(() => {
+        const state = simulation.current;
         const reset = () => finishDrag();
         const onVisibilityChange = () => { if (document.hidden) reset(); };
         window.addEventListener("blur", reset);
@@ -137,15 +194,16 @@ export default function Mustache() {
             window.removeEventListener("resize", reset);
             document.removeEventListener("visibilitychange", onVisibilityChange);
             drag.current = null;
-            for (const offset of [leftX, leftY, rightX, rightY, bodyX, bodyY]) offset.stop();
+            cancelAnimationFrame(state.frame);
+            state.frame = 0;
         };
-    }, [finishDrag, leftX, leftY, rightX, rightY, bodyX, bodyY]);
+    }, [finishDrag]);
 
     return (
         <motion.svg
             ref={svgRef}
             data-mustache
-            aria-label="Drag the mustache"
+            aria-label="Stretch the mustache"
             viewBox="420 412 700 200"
             className="mt-8 w-72 overflow-visible select-none touch-none md:w-96"
             initial={{ filter: "drop-shadow(0px 6px 12px var(--shadow))" }}

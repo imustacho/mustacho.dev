@@ -220,6 +220,14 @@ function nearPoint(actual, expected, message) {
     assert.ok(Math.hypot(actual.x - expected.x, actual.y - expected.y) < 2, `${message}: ${JSON.stringify({ actual, expected })}`);
 }
 
+function assertElasticPull(actual, start, pointer) {
+    const movement = { x: actual.x - start.x, y: actual.y - start.y };
+    const pull = { x: pointer.x - start.x, y: pointer.y - start.y };
+    const fraction = Math.hypot(movement.x, movement.y) / Math.hypot(pull.x, pull.y);
+    assert.ok(movement.x * pull.x + movement.y * pull.y > 0, "Shape stretches in the pull direction");
+    assert.ok(fraction > 0.1 && fraction < 0.85, "Elastic resistance prevents rigid pointer following");
+}
+
 async function openMustache(page) {
     await page.goto("/");
     await page.locator("[data-mustache]").waitFor();
@@ -236,7 +244,7 @@ async function waitForMustacheRest(page) {
 }
 
 for (const width of [1280, 390]) {
-    test(`mustache tracks both handles outside its bounds at ${width}px`, async () => {
+    test(`mustache stretches with resistance outside its bounds at ${width}px`, async () => {
         await session({ viewport: { width, height: 900 } }, async page => {
             await openMustache(page);
             const originalPath = await page.locator("[data-mustache] path").getAttribute("d");
@@ -248,8 +256,8 @@ for (const width of [1280, 390]) {
                 await page.mouse.down();
                 const target = { x: start.x + (side === "left" ? 70 : -70), y: start.y + 110 };
                 await page.mouse.move(target.x, target.y, { steps: 8 });
-                await mustacheFrame(page);
-                nearPoint(await mustachePoint(page, side), target, "Handle follows the pointer 1:1");
+                await page.waitForTimeout(300);
+                assertElasticPull(await mustachePoint(page, side), start, target);
                 nearPoint(await mustachePoint(page, otherSide), other, "Other half stays still");
                 assert.notEqual(await page.locator("[data-mustache] path").getAttribute("d"), originalPath);
                 await page.mouse.up();
@@ -259,7 +267,7 @@ for (const width of [1280, 390]) {
     });
 }
 
-test("mustache regrab stops the spring and keeps the same handle across the center", async () => {
+test("mustache regrab preserves the visible pose and resumes elastic stretching", async () => {
     await session({}, async page => {
         await openMustache(page);
         for (let attempt = 0; attempt < 3; attempt++) {
@@ -268,7 +276,7 @@ test("mustache regrab stops the spring and keeps the same handle across the cent
             await page.mouse.down();
             await page.mouse.move(start.x + 240, start.y - 45, { steps: 5 });
             await mustacheFrame(page);
-            // Release, then catch the moving left handle on the right half of the SVG.
+            // Release, then catch the moving left handle during its return.
             await page.mouse.up();
             const catching = await mustachePoint(page, "left");
             await page.mouse.move(catching.x, catching.y);
@@ -279,8 +287,8 @@ test("mustache regrab stops the spring and keeps the same handle across the cent
             await page.waitForTimeout(250);
             nearPoint(await mustachePoint(page, "left"), caught, "Spring stops while held");
             await page.mouse.move(catching.x - 35, catching.y + 30, { steps: 4 });
-            await mustacheFrame(page);
-            nearPoint(await mustachePoint(page, "left"), { x: caught.x - 35, y: caught.y + 30 }, "Regrab preserves grab offset and handle identity");
+            await page.waitForTimeout(300);
+            assertElasticPull(await mustachePoint(page, "left"), caught, { x: caught.x - 35, y: caught.y + 30 });
             nearPoint(await mustachePoint(page, "right"), right, "Right handle does not switch on");
             await page.mouse.up();
             await waitForMustacheRest(page);
@@ -313,7 +321,7 @@ test("mustache ignores unrelated pointers and recovers after focus or capture lo
     });
 });
 
-test("mustache touch drag follows the finger and resets on cancellation", async () => {
+test("mustache touch pull stretches with resistance and resets on cancellation", async () => {
     await session({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, reducedMotion: "reduce" }, async (page, context) => {
         await openMustache(page);
         const cdp = await context.newCDPSession(page);
@@ -322,7 +330,7 @@ test("mustache touch drag follows the finger and resets on cancellation", async 
         await cdp.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ ...start, id: 1 }] });
         await cdp.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [target] });
         await mustacheFrame(page);
-        nearPoint(await mustachePoint(page, "left"), target, "Touch follows finger");
+        assertElasticPull(await mustachePoint(page, "left"), start, target);
         await cdp.send("Input.dispatchTouchEvent", { type: "touchCancel", touchPoints: [] });
         await waitForMustacheRest(page);
         assert.equal(await page.evaluate(() => window.scrollY), 0, "Pulling the mustache does not scroll the page");
