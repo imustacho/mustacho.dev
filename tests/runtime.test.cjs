@@ -147,23 +147,19 @@ test("all published routes, favicon and local fonts load", async () => {
     });
 });
 
-test("optimized gallery images and animated GIF previews open and close", async () => {
+test("projects show the placeholder and retired project pages return 404", async () => {
     await session({}, async page => {
-        for (const id of ["hungerfall", "overseer"]) {
-            await page.goto(`/projects/${id}`);
-            const thumbnail = page.locator('main img[alt*="asset"]').first();
-            await thumbnail.scrollIntoViewIfNeeded();
-            await thumbnail.evaluate(image => image.decode());
-            const src = await thumbnail.getAttribute("src");
-            assert.ok(id === "overseer" ? src.endsWith(".gif") : src.startsWith("/_next/image?"));
-            await thumbnail.click();
-            const preview = page.getByRole("img", { name: "Expanded project preview" });
-            await preview.waitFor();
-            await preview.evaluate(image => image.decode());
-            assert.equal(await page.evaluate(() => document.body.style.overflow), "hidden");
-            await page.keyboard.press("Escape");
-            await preview.waitFor({ state: "detached" });
-            assert.notEqual(await page.evaluate(() => document.body.style.overflow), "hidden");
+        await page.goto("/projects");
+        await page.getByText("çalışıyorum...", { exact: true }).waitFor();
+        assert.equal(await page.locator('main a[href^="/projects/"]').count(), 0);
+        assert.equal(await page.locator("[data-project]").count(), 0);
+
+        for (const id of ["charged", "recast", "chesse", "overseer", "hungerfall", "pearl", "evliyacelebi"]) {
+            assert.equal((await page.request.get(`/projects/${id}`)).status(), 404, id);
         }
+        const sitemap = await (await page.request.get("/sitemap.xml")).text();
+        assert.ok(!sitemap.includes("https://mustacho.dev/projects/"));
+        await page.goto("/skills");
+        assert.equal(await page.locator('main a[href^="/projects/"]').count(), 0);
     });
 });

@@ -343,7 +343,7 @@ function SkillsContent({ skillQuery }: { skillQuery: string | null }) {
                         Skills
                     </h1>
                     <p className="text-lg max-w-lg" style={{ color: "var(--text-muted)" }}>
-                        Things I&apos;ve picked up along the way. Click any skill to explore related projects.
+                        Things I&apos;ve picked up along the way.
                     </p>
                 </motion.div>
 

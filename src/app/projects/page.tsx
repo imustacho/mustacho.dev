@@ -4,13 +4,13 @@ import { SITE_OG_IMAGE } from "@/lib/site-image";
 
 export const metadata: Metadata = {
     title: "Projects",
-    description: "Explore all projects built by Mustacho, including AI Discord bots, offline desktop applications with Tauri, and web software.",
+    description: "çalışıyorum...",
     alternates: {
         canonical: "/projects",
     },
     openGraph: {
         title: "Projects | Mustacho",
-        description: "Explore all projects built by Mustacho, including AI Discord bots, offline desktop applications with Tauri, and web software.",
+        description: "çalışıyorum...",
         url: "https://mustacho.dev/projects",
         images: [SITE_OG_IMAGE],
     },

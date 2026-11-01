@@ -1,12 +1,11 @@
 import { notFound } from "next/navigation";
-import { getProjectById } from "@/lib/projects";
-import projectsData from "@/data/projects.json";
+import { getProjectById, getProjects } from "@/lib/projects";
 import ProjectDetailClient from "./ProjectDetailClient";
 import type { Metadata } from "next";
 import { SITE_IMAGE_URL, SITE_OG_IMAGE } from "@/lib/site-image";
 
 export async function generateStaticParams() {
-    return projectsData.map((project) => ({
+    return getProjects().map((project) => ({
         id: project.id,
     }));
 }
