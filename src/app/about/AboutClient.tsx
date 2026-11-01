@@ -168,7 +168,7 @@ export default function AboutClient() {
                             }}
                         >
                             <div
-                                className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                                className="alive-icon w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
                                 style={{ backgroundColor: "var(--border)", color: "var(--accent)" }}
                             >
                                 <Icon size={18} />
@@ -221,7 +221,7 @@ export default function AboutClient() {
                                     style={{ background: "radial-gradient(ellipse at top, var(--border) 0%, transparent 70%)" }}
                                 />
                                 <div
-                                    className="w-12 h-12 rounded-2xl flex items-center justify-center"
+                                    className="alive-icon w-12 h-12 rounded-2xl flex items-center justify-center"
                                     style={{ backgroundColor: "var(--border)", color: "var(--accent)" }}
                                 >
                                     <Icon size={22} />
@@ -248,7 +248,7 @@ export default function AboutClient() {
                     }}
                 >
                     <div
-                        className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 mt-0.5"
+                        className="alive-icon w-10 h-10 rounded-xl flex items-center justify-center shrink-0 mt-0.5"
                         style={{ backgroundColor: "var(--border)", color: "var(--accent)" }}
                     >
                         <HiCpuChip size={20} />

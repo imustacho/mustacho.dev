@@ -320,58 +320,35 @@ body {
     initial-value: 1;
 }
 
-/* Independent transform properties compose with existing Motion entrances. */
-.site-paper :where(.alive, main h1, main h2) {
-    --alive-lift: -5px;
-    --alive-angle: 0.45deg;
-    --alive-peak: 1.012;
+/* Animate only artwork; text and its containers retain a stable raster size. */
+.site-paper :is(.alive-icon, .skill-chip-icon) {
+    --alive-lift: -7px;
+    --alive-angle: 1.5deg;
+    --alive-peak: 1.035;
     translate: 0 var(--alive-float);
     rotate: calc(var(--alive-tilt) + var(--scroll-lean, 0deg));
     scale: calc(var(--alive-breath) + var(--scroll-energy, 0) + var(--alive-hover, 0));
     animation: alive-sway 7s ease-in-out infinite;
-    transition: scale 280ms ease, rotate 400ms ease, translate 400ms ease,
-        box-shadow 280ms ease, color 280ms ease, background-color 280ms ease, border-color 280ms ease;
+    transition: scale 280ms ease, box-shadow 280ms ease, color 280ms ease,
+        background-color 280ms ease, border-color 280ms ease;
 }
 
-.site-paper :is(.alive, main h2):nth-child(3n + 2) {
+.site-paper .alive-icon:nth-child(3n + 2),
+.site-paper .alive-chip:nth-child(3n + 2) .skill-chip-icon {
     animation-duration: 8.5s;
     animation-delay: -2.8s;
 }
 
-.site-paper :is(.alive, main h2):nth-child(3n) {
+.site-paper .alive-icon:nth-child(3n),
+.site-paper .alive-chip:nth-child(3n) .skill-chip-icon {
     animation-duration: 6.4s;
     animation-delay: -4.2s;
 }
 
-.site-paper main h1 {
-    --alive-lift: -7px;
-    --alive-angle: 0.65deg;
-    --alive-peak: 1.025;
-    animation-duration: 6.8s;
-}
-
-.site-paper .alive-icon {
-    --alive-lift: -9px;
-    --alive-angle: 2deg;
-    --alive-peak: 1.04;
-}
-
-.site-paper .alive-chip {
-    --alive-lift: -3px;
-    --alive-angle: 1deg;
-    --alive-peak: 1.025;
-}
-
-.site-paper :is(.alive-copy, .alive-panel, .alive-nav) {
-    --alive-lift: -3px;
-    --alive-angle: 0.2deg;
-    --alive-peak: 1.005;
-    animation-duration: 9s;
-}
-
-.site-paper .alive-nav {
-    --scroll-energy: 0;
-    --scroll-lean: 0deg;
+.site-paper .skill-chip-icon {
+    --alive-lift: -2px;
+    --alive-angle: 3deg;
+    --alive-peak: 1.06;
 }
 
 @keyframes alive-sway {
@@ -388,49 +365,38 @@ body {
 }
 
 @media (hover: hover) and (pointer: fine) {
-    .site-paper :is(.alive, main h1, main h2):hover {
-        --alive-hover: 0.025;
+    .site-paper .alive-icon:hover,
+    .site-paper .alive-chip:hover .skill-chip-icon {
+        --alive-hover: 0.07;
         animation-play-state: paused;
     }
-
-    .site-paper .alive-icon:hover { --alive-hover: 0.09; }
-    .site-paper .alive-chip:hover { --alive-hover: 0.045; }
-    .site-paper :is(.alive-nav, .alive-panel):hover { --alive-hover: 0; }
 }
 
-.site-paper :is(.alive, main h1, main h2):focus-within {
+.site-paper .alive-icon:focus-within {
     animation-play-state: paused;
 }
 
-.site-paper :is(a.alive, button.alive, .alive-chip):active {
+.site-paper :is(a.alive-icon, button.alive-icon):active {
     --alive-hover: -0.04;
     animation-play-state: paused;
 }
 
-/* Keep navigation targets and typing surfaces steady while being used. */
-.site-paper :is(.alive-nav, .alive-panel):is(:hover, :focus-within) {
-    translate: 0 0;
-    rotate: 0deg;
-    scale: 1;
-}
-
 @media (max-width: 639px) {
-    .site-paper :is(.alive, main h1, main h2) {
-        --alive-lift: -3px;
-        --alive-angle: 0.35deg;
-        --alive-peak: 1.012;
+    .site-paper .alive-icon {
+        --alive-lift: -4px;
+        --alive-angle: 0.8deg;
+        --alive-peak: 1.02;
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .site-paper :is(.alive, main h1, main h2) {
+    .site-paper :is(.alive-icon, .skill-chip-icon) {
         animation: none !important;
         translate: none;
         rotate: none;
         scale: none;
     }
 }
-
 @keyframes cursor-blink {
     0%, 100% { opacity: 1; }
     50% { opacity: 0; }
@@ -551,4 +517,5 @@ body {
 .projects-carousel-stage[data-dragging="true"] article {
     cursor: grabbing;
 }
+
 
