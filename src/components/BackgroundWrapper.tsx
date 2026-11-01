@@ -9,6 +9,21 @@ const markRegions = [
     { left: [80, 92], top: [24, 55] },
 ] as const;
 
+function curlPath(points: number[], bendX: number, bendY: number) {
+    const warped: string[] = [];
+    for (let index = 0; index < points.length; index += 2) {
+        const x = points[index];
+        const y = points[index + 1];
+        const t = (x - 210) / 250;
+        // Vary the bend along the stroke: the middle stays put while the ends curl.
+        const wave = Math.sin(t * Math.PI);
+        const nextX = x + bendX * wave * 32 - bendY * (y - 170) * t * 0.35;
+        const nextY = y + bendY * t * t * 100 + bendX * wave * 38;
+        warped.push(`${nextX.toFixed(2)} ${nextY.toFixed(2)}`);
+    }
+    return `M ${warped[0]} C ${warped.slice(1).join(" ")}`;
+}
+
 export default function BackgroundWrapper({ children }: { children: React.ReactNode }) {
     const backdropRef = useRef<HTMLDivElement>(null);
 
@@ -26,37 +41,61 @@ export default function BackgroundWrapper({ children }: { children: React.ReactN
             mark.style.setProperty("--mark-rotation", `${rotation}deg`);
             mark.style.setProperty("--mark-scale", (0.75 + Math.random() * 0.45).toFixed(2));
             mark.classList.add("is-ready");
-            return { mark, left, top, rotation };
+            const paths = Array.from(mark.querySelectorAll("path"), path => {
+                const original = path.getAttribute("d")!;
+                // These authored paths contain one move followed by cubic curves.
+                const points = original.match(/-?\d+(?:\.\d+)?/g)!.map(Number);
+                return { path, original, points };
+            });
+            return { mark, paths, x: 0, y: 0, targetX: 0, targetY: 0 };
         });
 
         const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
         let frame = 0;
+        let lastTime = 0;
+        let targetDirty = false;
         let pointer: { x: number; y: number } | null = null;
-        const update = () => {
+        const update = (time: number) => {
             frame = 0;
-            const bounds = backdrop.getBoundingClientRect();
-            for (const { mark, left, top, rotation } of marks) {
-                let x = 0;
-                let y = 0;
-                let turn = 0;
-                if (pointer && !reducedMotion.matches) {
-                    // Measure from the spawn position, never the moving artwork.
-                    const dx = pointer.x - (bounds.left + bounds.width * left / 100);
-                    const dy = pointer.y - (bounds.top + bounds.height * top / 100);
-                    const distance = Math.hypot(dx, dy);
-                    const pull = 24 / (distance + 180);
-                    x = dx * pull;
-                    y = dy * pull;
-                    // A small turn toward the cursor, with no angle-wrap snapping.
-                    const heading = (rotation - 20) * Math.PI / 180;
-                    turn = (Math.cos(heading) * dy - Math.sin(heading) * dx) / (distance + 80) * 16;
+            const elapsed = Math.min(time - lastTime, 64);
+            lastTime = time;
+            const blend = reducedMotion.matches ? 1 : 1 - Math.exp(-elapsed / 160);
+            let moving = false;
+            for (const state of marks) {
+                if (targetDirty) {
+                    state.targetX = 0;
+                    state.targetY = 0;
+                    const matrix = state.mark.getScreenCTM();
+                    if (pointer && !reducedMotion.matches && matrix) {
+                        // Convert into each randomly rotated mark's own coordinates.
+                        const local = new DOMPoint(pointer.x, pointer.y).matrixTransform(matrix.inverse());
+                        const dx = local.x - 210;
+                        const dy = local.y - 170;
+                        const resistance = Math.hypot(dx, dy) + 180;
+                        state.targetX = dx / resistance;
+                        state.targetY = dy / resistance;
+                    }
                 }
-                mark.style.setProperty("--mark-pull-x", `${x.toFixed(2)}px`);
-                mark.style.setProperty("--mark-pull-y", `${y.toFixed(2)}px`);
-                mark.style.setProperty("--mark-turn", `${turn.toFixed(2)}deg`);
+                state.x += (state.targetX - state.x) * blend;
+                state.y += (state.targetY - state.y) * blend;
+                const settled = Math.hypot(state.targetX - state.x, state.targetY - state.y) < 0.001;
+                if (settled) { state.x = state.targetX; state.y = state.targetY; }
+                else moving = true;
+                for (const { path, original, points } of state.paths) {
+                    path.setAttribute("d", state.x === 0 && state.y === 0
+                        ? original : curlPath(points, state.x, state.y));
+                }
+            }
+            targetDirty = false;
+            if (moving) frame = requestAnimationFrame(update);
+        };
+        const scheduleUpdate = () => {
+            targetDirty = true;
+            if (!frame) {
+                lastTime = performance.now();
+                frame = requestAnimationFrame(update);
             }
         };
-        const scheduleUpdate = () => { if (!frame) frame = requestAnimationFrame(update); };
         const onMove = (event: PointerEvent) => {
             if (event.pointerType === "touch" || reducedMotion.matches) return;
             pointer = { x: event.clientX, y: event.clientY };
@@ -73,6 +112,9 @@ export default function BackgroundWrapper({ children }: { children: React.ReactN
         reducedMotion.addEventListener("change", reset);
         return () => {
             cancelAnimationFrame(frame);
+            for (const { paths } of marks) {
+                for (const { path, original } of paths) path.setAttribute("d", original);
+            }
             window.removeEventListener("pointermove", onMove);
             window.removeEventListener("pointerout", onLeave);
             window.removeEventListener("blur", reset);
