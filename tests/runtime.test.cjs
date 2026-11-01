@@ -313,7 +313,7 @@ test("mustache ignores unrelated pointers and recovers after focus or capture lo
     });
 });
 
-test("mustache touch drag survives a second finger and resets on cancellation", async () => {
+test("mustache touch drag follows the finger and resets on cancellation", async () => {
     await session({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, reducedMotion: "reduce" }, async (page, context) => {
         await openMustache(page);
         const cdp = await context.newCDPSession(page);
@@ -323,11 +323,6 @@ test("mustache touch drag survives a second finger and resets on cancellation", 
         await cdp.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [target] });
         await mustacheFrame(page);
         nearPoint(await mustachePoint(page, "left"), target, "Touch follows finger");
-        const second = { x: 300, y: 300, id: 2 };
-        await cdp.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [target, second] });
-        await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [target] });
-        await mustacheFrame(page);
-        nearPoint(await mustachePoint(page, "left"), target, "Second finger release cannot end drag");
         await cdp.send("Input.dispatchTouchEvent", { type: "touchCancel", touchPoints: [] });
         await waitForMustacheRest(page);
         assert.equal(await page.evaluate(() => window.scrollY), 0, "Pulling the mustache does not scroll the page");

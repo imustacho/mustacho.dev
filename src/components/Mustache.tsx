@@ -143,7 +143,7 @@ export default function Mustache() {
             data-mustache
             aria-label="Drag the mustache"
             viewBox="420 412 700 200"
-            className="mt-8 w-72 overflow-visible select-none md:w-96"
+            className="mt-8 w-72 overflow-visible select-none touch-none md:w-96"
             initial={{ filter: "drop-shadow(0px 6px 12px var(--shadow))" }}
             whileHover={{ filter: "drop-shadow(0px 14px 24px var(--shadow-strong))" }}
             transition={{ duration: reducedMotion ? 0 : 0.3 }}
