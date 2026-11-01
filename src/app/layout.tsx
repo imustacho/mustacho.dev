@@ -4,7 +4,8 @@ import "./globals.css";
 import BackgroundWrapper from "@/components/BackgroundWrapper";
 import Navbar from "@/components/Navbar";
 import { ThemeProvider } from "@/context/ThemeContext";
-import { SITE_IMAGE_URL, SITE_OG_IMAGE } from "@/lib/site-image";
+import { SITE_IMAGE_URL } from "@/lib/site-image";
+import { getSocialImage, getTwitterMetadata } from "@/lib/social-image";
 
 export const metadata: Metadata = {
     metadataBase: new URL("https://mustacho.dev"),
@@ -40,15 +41,9 @@ export const metadata: Metadata = {
         siteName: "Mustacho",
         locale: "en_US",
         type: "website",
-        images: [SITE_OG_IMAGE],
+        images: [getSocialImage("/", "Mustacho — Developer & Student")],
     },
-    twitter: {
-        card: "summary_large_image",
-        title: "Mustacho — Developer & Student",
-        description: "High school student and developer from Istanbul. Building Discord bots, AI agents, and modern software.",
-        images: [SITE_IMAGE_URL],
-        creator: "@imustachoo",
-    },
+    twitter: getTwitterMetadata("/", "Mustacho — Developer & Student", "High school student and developer from Istanbul. Building Discord bots, AI agents, and modern software."),
     robots: {
         index: true,
         follow: true,

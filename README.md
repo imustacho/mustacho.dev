@@ -48,3 +48,18 @@ exercise React Strict Mode as well as against `npm start` for production.
 Fonts are served from `public/fonts/`; their SIL Open Font Licenses are included
 there. Both builds and page loads work without contacting Google Fonts. Blog
 Markdown is rendered on the server, and list pages only send post summaries.
+
+## Social sharing images
+
+Every published page has a 1200 × 630 PNG at `/og/home`, `/og/about`, and so on.
+Open Graph and Twitter metadata point to the same page-specific image. Cards
+are generated and cached at build time using `next/og` and bundled fonts, with
+no image service, API key, or external requests.
+
+Edit the shared design in `src/lib/render-social-image.tsx` and page copy in
+`src/lib/social-cards.ts`. Blog and project cards are created automatically from
+their content, including the title, description, category, and reading time or
+tags. Adding a published post or project includes its card in the next build.
+
+The browser suite also verifies every sharing URL, PNG dimensions, unique image
+content, and missing-card 404s.

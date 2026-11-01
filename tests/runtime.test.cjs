@@ -3,6 +3,7 @@ const assert = require("node:assert/strict");
 const { chromium } = require("playwright");
 const fs = require("node:fs");
 const matter = require("gray-matter");
+const { createHash } = require("node:crypto");
 
 const baseURL = process.env.TEST_BASE_URL || "http://localhost:3000";
 let browser;
@@ -161,5 +162,45 @@ test("projects show the placeholder and retired project pages return 404", async
         assert.ok(!sitemap.includes("https://mustacho.dev/projects/"));
         await page.goto("/skills");
         assert.equal(await page.locator('main a[href^="/projects/"]').count(), 0);
+    });
+});
+
+test("each published page shares its own generated Open Graph and Twitter image", async () => {
+    await session({}, async page => {
+        const blogs = fs.readdirSync("blogs").filter(name => /\.mdx?$/.test(name)).map(name => {
+            const { data } = matter(fs.readFileSync(`blogs/${name}`, "utf8"));
+            return data.id || name.replace(/\.mdx?$/, "");
+        });
+        const projects = JSON.parse(fs.readFileSync("src/data/projects.json", "utf8"));
+        const routes = ["/", "/about", "/skills", "/projects", "/blog", "/contact", ...blogs.map(id => `/blog/${id}`), ...projects.map(project => `/projects/${project.id}`)];
+        const imageHashes = new Set();
+
+        for (const route of routes) {
+            await page.goto(route);
+            const expected = `https://mustacho.dev/og/${route === "/" ? "home" : route.slice(1)}`;
+            assert.equal(await page.locator('meta[property="og:image"]').count(), 1, route);
+            assert.equal(await page.locator('meta[property="og:image"]').getAttribute("content"), expected, route);
+            assert.equal(await page.locator('meta[name="twitter:image"]').getAttribute("content"), expected, route);
+            assert.equal(await page.locator('meta[name="twitter:card"]').getAttribute("content"), "summary_large_image", route);
+            assert.equal(await page.locator('meta[name="twitter:title"]').getAttribute("content"), await page.locator('meta[property="og:title"]').getAttribute("content"), route);
+            assert.ok(await page.locator('meta[property="og:image:alt"]').getAttribute("content"), route);
+            assert.equal(await page.locator('meta[property="og:image:width"]').getAttribute("content"), "1200", route);
+            assert.equal(await page.locator('meta[property="og:image:height"]').getAttribute("content"), "630", route);
+
+            const response = await page.request.get(new URL(expected).pathname);
+            assert.equal(response.status(), 200, route);
+            assert.match(response.headers()["content-type"], /^image\/png/, route);
+            const png = await response.body();
+            assert.deepEqual(png.subarray(0, 8), Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), route);
+            assert.equal(png.readUInt32BE(16), 1200, route);
+            assert.equal(png.readUInt32BE(20), 630, route);
+            assert.ok(png.length < 5 * 1024 * 1024, "Image fits social platform limits");
+            imageHashes.add(createHash("sha256").update(png).digest("hex"));
+        }
+
+        assert.equal(imageHashes.size, routes.length, "Each page has a distinct image");
+        for (const route of ["/og/not-a-real-page", "/og/blog/not-a-real-post", "/og/projects/not-a-real-project"]) {
+            assert.equal((await page.request.get(route)).status(), 404, route);
+        }
     });
 });

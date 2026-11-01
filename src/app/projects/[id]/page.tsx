@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { getProjectById, getProjects } from "@/lib/projects";
 import ProjectDetailClient from "./ProjectDetailClient";
 import type { Metadata } from "next";
-import { SITE_IMAGE_URL, SITE_OG_IMAGE } from "@/lib/site-image";
+import { getSocialImage, getTwitterMetadata } from "@/lib/social-image";
 
 export async function generateStaticParams() {
     return getProjects().map((project) => ({
@@ -35,14 +35,9 @@ export async function generateMetadata({
             description: project.description,
             url: `https://mustacho.dev/projects/${project.id}`,
             type: "website",
-            images: [SITE_OG_IMAGE],
+            images: [getSocialImage(`/projects/${project.id}`, project.title)],
         },
-        twitter: {
-            card: "summary_large_image",
-            title: `${project.title} | Mustacho`,
-            description: project.description,
-            images: [SITE_IMAGE_URL],
-        },
+        twitter: getTwitterMetadata(`/projects/${project.id}`, `${project.title} | Mustacho`, project.description),
     };
 }
 

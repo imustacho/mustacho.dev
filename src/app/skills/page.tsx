@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import SkillsClient from "./SkillsClient";
-import { SITE_OG_IMAGE } from "@/lib/site-image";
+import { getSocialImage, getTwitterMetadata } from "@/lib/social-image";
 
 export const metadata: Metadata = {
     title: "Skills",
@@ -13,8 +13,9 @@ export const metadata: Metadata = {
         title: "Skills | Mustacho",
         description: "Technical skills and technologies used by Mustacho — TypeScript, React, Next.js, Node.js, Tailwind CSS, AI integrations, Tauri, and more.",
         url: "https://mustacho.dev/skills",
-        images: [SITE_OG_IMAGE],
+        images: [getSocialImage("/skills", "Skills | Mustacho")],
     },
+    twitter: getTwitterMetadata("/skills", "Skills | Mustacho", "The tools and technologies I use to bring ideas to life."),
 };
 
 export default function SkillsPage() {

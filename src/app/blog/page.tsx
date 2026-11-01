@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getBlogPosts } from "@/lib/blogs";
 import BlogsListClient from "./BlogsListClient";
-import { SITE_OG_IMAGE } from "@/lib/site-image";
+import { getSocialImage, getTwitterMetadata } from "@/lib/social-image";
 
 export const metadata: Metadata = {
     title: "Blog",
@@ -13,8 +13,9 @@ export const metadata: Metadata = {
         title: "Blog | Mustacho",
         description: "Read thoughts, devlogs, technical challenges, and stories written by Mustacho.",
         url: "https://mustacho.dev/blog",
-        images: [SITE_OG_IMAGE],
+        images: [getSocialImage("/blog", "Blog | Mustacho")],
     },
+    twitter: getTwitterMetadata("/blog", "Blog | Mustacho", "Thoughts, devlogs, technical challenges, and stories written by Mustacho."),
 };
 
 export default function BlogsPage() {

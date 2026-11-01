@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Projects from "@/components/Projects";
-import { SITE_OG_IMAGE } from "@/lib/site-image";
+import { getSocialImage, getTwitterMetadata } from "@/lib/social-image";
 
 export const metadata: Metadata = {
     title: "Projects",
@@ -12,8 +12,9 @@ export const metadata: Metadata = {
         title: "Projects | Mustacho",
         description: "New projects are coming soon.",
         url: "https://mustacho.dev/projects",
-        images: [SITE_OG_IMAGE],
+        images: [getSocialImage("/projects", "Projects | Mustacho")],
     },
+    twitter: getTwitterMetadata("/projects", "Projects | Mustacho", "New projects are coming soon."),
 };
 
 export default function ProjectsPage() {
