@@ -32,7 +32,7 @@ export default function HomeClient() {
                             Mustacho
                         </h1>
 
-                        <p className="mt-5 max-w-2xl text-base md:text-lg" style={{ color: "var(--text-muted)" }}>
+                        <p className="alive alive-copy mt-5 max-w-2xl text-base md:text-lg" style={{ color: "var(--text-muted)" }}>
                             Productive Developer & High School Student
                         </p>
 
@@ -50,10 +50,10 @@ export default function HomeClient() {
                                         rel="noreferrer"
                                         aria-label={social.name}
                                         className={`
-                                            group flex h-14 w-14 sm:h-16 sm:w-16 md:h-20 md:w-20 items-center justify-center rounded-full
+                                            alive alive-icon group flex h-14 w-14 sm:h-16 sm:w-16 md:h-20 md:w-20 items-center justify-center rounded-full
                                             shadow-[0_10px_30px_rgba(0,0,0,0.12)] backdrop-blur-sm
                                             transition-all duration-300 ease-out
-                                            hover:-translate-y-2 hover:scale-110 md:hover:scale-125 hover:border-transparent hover:text-white
+                                            hover:border-transparent hover:text-white
                                             hover:shadow-[0_18px_40px_rgba(0,0,0,0.22)]
                                             ${social.hover}
                                         `}

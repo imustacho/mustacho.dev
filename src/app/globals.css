@@ -302,6 +302,135 @@ body {
 }
 
 /* ─── Animations ─────────────────────────────────────────────── */
+@property --alive-float {
+    syntax: "<length>";
+    inherits: false;
+    initial-value: 0px;
+}
+
+@property --alive-tilt {
+    syntax: "<angle>";
+    inherits: false;
+    initial-value: 0deg;
+}
+
+@property --alive-breath {
+    syntax: "<number>";
+    inherits: false;
+    initial-value: 1;
+}
+
+/* Independent transform properties compose with existing Motion entrances. */
+.site-paper :where(.alive, main h1, main h2) {
+    --alive-lift: -5px;
+    --alive-angle: 0.45deg;
+    --alive-peak: 1.012;
+    translate: 0 var(--alive-float);
+    rotate: calc(var(--alive-tilt) + var(--scroll-lean, 0deg));
+    scale: calc(var(--alive-breath) + var(--scroll-energy, 0) + var(--alive-hover, 0));
+    animation: alive-sway 7s ease-in-out infinite;
+    transition: scale 280ms ease, rotate 400ms ease, translate 400ms ease,
+        box-shadow 280ms ease, color 280ms ease, background-color 280ms ease, border-color 280ms ease;
+}
+
+.site-paper :is(.alive, main h2):nth-child(3n + 2) {
+    animation-duration: 8.5s;
+    animation-delay: -2.8s;
+}
+
+.site-paper :is(.alive, main h2):nth-child(3n) {
+    animation-duration: 6.4s;
+    animation-delay: -4.2s;
+}
+
+.site-paper main h1 {
+    --alive-lift: -7px;
+    --alive-angle: 0.65deg;
+    --alive-peak: 1.025;
+    animation-duration: 6.8s;
+}
+
+.site-paper .alive-icon {
+    --alive-lift: -9px;
+    --alive-angle: 2deg;
+    --alive-peak: 1.04;
+}
+
+.site-paper .alive-chip {
+    --alive-lift: -3px;
+    --alive-angle: 1deg;
+    --alive-peak: 1.025;
+}
+
+.site-paper :is(.alive-copy, .alive-panel, .alive-nav) {
+    --alive-lift: -3px;
+    --alive-angle: 0.2deg;
+    --alive-peak: 1.005;
+    animation-duration: 9s;
+}
+
+.site-paper .alive-nav {
+    --scroll-energy: 0;
+    --scroll-lean: 0deg;
+}
+
+@keyframes alive-sway {
+    0%, 100% {
+        --alive-float: 0px;
+        --alive-tilt: calc(var(--alive-angle) * -1);
+        --alive-breath: 1;
+    }
+    50% {
+        --alive-float: var(--alive-lift);
+        --alive-tilt: var(--alive-angle);
+        --alive-breath: var(--alive-peak);
+    }
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .site-paper :is(.alive, main h1, main h2):hover {
+        --alive-hover: 0.025;
+        animation-play-state: paused;
+    }
+
+    .site-paper .alive-icon:hover { --alive-hover: 0.09; }
+    .site-paper .alive-chip:hover { --alive-hover: 0.045; }
+    .site-paper :is(.alive-nav, .alive-panel):hover { --alive-hover: 0; }
+}
+
+.site-paper :is(.alive, main h1, main h2):focus-within {
+    animation-play-state: paused;
+}
+
+.site-paper :is(a.alive, button.alive, .alive-chip):active {
+    --alive-hover: -0.04;
+    animation-play-state: paused;
+}
+
+/* Keep navigation targets and typing surfaces steady while being used. */
+.site-paper :is(.alive-nav, .alive-panel):is(:hover, :focus-within) {
+    translate: 0 0;
+    rotate: 0deg;
+    scale: 1;
+}
+
+@media (max-width: 639px) {
+    .site-paper :is(.alive, main h1, main h2) {
+        --alive-lift: -3px;
+        --alive-angle: 0.35deg;
+        --alive-peak: 1.012;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .site-paper :is(.alive, main h1, main h2) {
+        animation: none !important;
+        translate: none;
+        rotate: none;
+        scale: none;
+    }
+}
+
 @keyframes cursor-blink {
     0%, 100% { opacity: 1; }
     50% { opacity: 0; }

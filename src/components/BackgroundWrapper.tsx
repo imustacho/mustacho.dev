@@ -2,6 +2,7 @@
 
 import { motion, MotionConfig, useReducedMotion } from "motion/react";
 import { useEffect, useRef } from "react";
+import ScrollMotion from "@/components/ScrollMotion";
 
 const markRegions = [
     { left: [8, 20], top: [18, 39] },
@@ -53,6 +54,7 @@ export default function BackgroundWrapper({ children }: { children: React.ReactN
 
     return (
         <MotionConfig reducedMotion="user">
+            <ScrollMotion />
             <div className="site-paper min-h-screen w-full relative isolate">
                 <div ref={backdropRef} className="paper-backdrop" aria-hidden="true">
                     <div className="paper-grain" />

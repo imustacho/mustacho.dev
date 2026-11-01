@@ -12,7 +12,7 @@ export default function Projects() {
                 Projects
             </h1>
             <p
-                className="text-lg sm:text-xl"
+                className="alive alive-copy text-lg sm:text-xl"
                 style={{ color: "var(--text-muted)" }}
             >
                 New projects are coming soon.

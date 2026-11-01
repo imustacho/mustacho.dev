@@ -46,7 +46,7 @@ function SkillChip({
                 damping: 18,
                 delay,
             }}
-            className="group relative"
+            className="alive alive-chip group relative"
         >
             <div
                 onClick={() => {

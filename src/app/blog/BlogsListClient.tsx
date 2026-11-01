@@ -38,7 +38,7 @@ export default function BlogsListClient({ posts }: BlogsListClientProps) {
                         </div>
                     ) : (
                         posts.map((post, idx) => (
-                            <Link key={post.id} href={`/blog/${post.id}`} className="block">
+                            <Link key={post.id} href={`/blog/${post.id}`} className="alive block">
                                 <motion.div
                                     initial={{ opacity: 0, y: 22 }}
                                     whileInView={{ opacity: 1, y: 0 }}

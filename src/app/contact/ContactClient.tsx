@@ -242,7 +242,7 @@ export default function ContactClient() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ type: "spring", stiffness: 90, damping: 16, delay: 0.1 }}
                         onClick={handleContainerClick}
-                        className="w-full rounded-3xl overflow-hidden cursor-text flex flex-col"
+                        className="alive alive-panel w-full rounded-3xl overflow-hidden cursor-text flex flex-col"
                         style={{
                             backgroundColor: termBg,
                             border: `1px solid ${termBorder}`,

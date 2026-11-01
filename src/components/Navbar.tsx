@@ -88,7 +88,7 @@ export default function Navbar() {
                     initial={{ y: -100, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ type: "spring", stiffness: 120, damping: 18, delay: 0.15 }}
-                    className="flex items-center justify-between gap-2 px-4 py-2 rounded-full border backdrop-blur-xl w-full relative"
+                    className="alive alive-nav flex items-center justify-between gap-2 px-4 py-2 rounded-full border backdrop-blur-xl w-full relative"
                     style={{
                         backgroundColor: "var(--navbar-bg)",
                         borderColor: "var(--border)",

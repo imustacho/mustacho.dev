@@ -56,7 +56,7 @@ export default function AboutClient() {
                         className="relative shrink-0"
                     >
                         <div
-                            className="w-28 h-28 md:w-36 md:h-36 rounded-[2rem] overflow-hidden border-2"
+                            className="alive alive-icon w-28 h-28 md:w-36 md:h-36 rounded-[2rem] overflow-hidden border-2"
                             style={{ borderColor: "var(--border-strong)", boxShadow: "0 16px 48px var(--shadow-strong)" }}
                         >
                             <Image
@@ -160,7 +160,7 @@ export default function AboutClient() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.25 + idx * 0.06, duration: 0.35 }}
                             whileHover={{ y: -2 }}
-                            className="flex items-center gap-4 p-4 rounded-2xl border"
+                            className="alive flex items-center gap-4 p-4 rounded-2xl border"
                             style={{
                                 backgroundColor: "var(--bg-elevated)",
                                 borderColor: "var(--border)",
@@ -208,7 +208,7 @@ export default function AboutClient() {
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: 0.42 + idx * 0.07, type: "spring", stiffness: 180, damping: 18 }}
                                 whileHover={{ y: -4, scale: 1.02 }}
-                                className="group flex flex-col items-center text-center gap-3 p-5 rounded-2xl border relative overflow-hidden"
+                                className="alive group flex flex-col items-center text-center gap-3 p-5 rounded-2xl border relative overflow-hidden"
                                 style={{
                                     backgroundColor: "var(--bg-elevated)",
                                     borderColor: "var(--border)",
@@ -240,7 +240,7 @@ export default function AboutClient() {
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.52, duration: 0.4 }}
-                    className="flex items-start gap-4 p-5 rounded-2xl border"
+                    className="alive flex items-start gap-4 p-5 rounded-2xl border"
                     style={{
                         backgroundColor: "var(--bg-elevated)",
                         borderColor: "var(--border-strong)",
