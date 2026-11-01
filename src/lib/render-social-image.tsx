@@ -53,7 +53,7 @@ export async function renderSocialImage(card: SocialCard) {
                         <Mustache width={50} />
                         <span style={{ fontFamily: "DynaPuff", fontWeight: 600, fontSize: 26, letterSpacing: -1 }}>mustacho</span>
                     </div>
-                    <span style={{ color: muted, fontSize: 22 }}>{card.path === "/" ? "/home" : shorten(card.path, 56)}</span>
+                    <span style={{ color: muted, fontSize: 22 }}>{shorten(card.path, 56)}</span>
                 </div>
 
                 <div style={{ display: "flex", flex: 1, alignItems: "center", position: "relative" }}>
