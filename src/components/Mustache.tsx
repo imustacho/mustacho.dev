@@ -35,7 +35,7 @@ const SPRING = { type: "spring" as const, stiffness: 320, damping: 26, velocity:
 type Side = "left" | "right";
 type Drag = {
     pointerId: number;
-    side: Side;
+    side: Side | "body";
     startX: number;
     startY: number;
     offsetX: number;
@@ -50,20 +50,22 @@ export default function Mustache() {
     const leftY = useMotionValue(0);
     const rightX = useMotionValue(0);
     const rightY = useMotionValue(0);
-    const leftCX = useTransform(leftX, x => LEFT.x + x);
-    const leftCY = useTransform(leftY, y => LEFT.y + y);
-    const rightCX = useTransform(rightX, x => RIGHT.x + x);
-    const rightCY = useTransform(rightY, y => RIGHT.y + y);
+    const bodyX = useMotionValue(0);
+    const bodyY = useMotionValue(0);
+    const leftCX = useTransform(() => LEFT.x + leftX.get() + bodyX.get());
+    const leftCY = useTransform(() => LEFT.y + leftY.get() + bodyY.get());
+    const rightCX = useTransform(() => RIGHT.x + rightX.get() + bodyX.get());
+    const rightCY = useTransform(() => RIGHT.y + rightY.get() + bodyY.get());
 
     // The path and handles share SVG coordinates; no CSS transform origins can drift.
-    const path = useTransform([leftX, leftY, rightX, rightY], values => {
-        const [lx, ly, rx, ry] = values as number[];
+    const path = useTransform([leftX, leftY, rightX, rightY, bodyX, bodyY], values => {
+        const [lx, ly, rx, ry, bx, by] = values as number[];
         const warp = (rawX: number, rawY: number) => {
             const x = rawX / 10;
             const y = 1024 - rawY / 10;
             const leftWeight = Math.pow(Math.max(0, Math.min(1, (MID_X - x) / (MID_X - LEFT.x))), 1.5);
             const rightWeight = Math.pow(Math.max(0, Math.min(1, (x - MID_X) / (RIGHT.x - MID_X))), 1.5);
-            return `${x + lx * leftWeight + rx * rightWeight} ${y + ly * leftWeight + ry * rightWeight}`;
+            return `${x + bx + lx * leftWeight + rx * rightWeight} ${y + by + ly * leftWeight + ry * rightWeight}`;
         };
         return POINTS.map(p => p.type === "M"
             ? `M ${warp(p.x, p.y)}`
@@ -82,24 +84,25 @@ export default function Mustache() {
         drag.current = null;
         const svg = svgRef.current;
         if (svg?.hasPointerCapture(current.pointerId)) svg.releasePointerCapture(current.pointerId);
-        const offsets = current.side === "left" ? [leftX, leftY] : [rightX, rightY];
-        for (const offset of offsets) {
+        for (const offset of [leftX, leftY, rightX, rightY, bodyX, bodyY]) {
             offset.stop();
             if (reducedMotion) offset.set(0);
             else animate(offset, 0, SPRING);
         }
-    }, [leftX, leftY, rightX, rightY, reducedMotion]);
+    }, [leftX, leftY, rightX, rightY, bodyX, bodyY, reducedMotion]);
 
     const startDrag = (event: ReactPointerEvent<SVGElement>, handle?: Side) => {
         if (drag.current || !event.isPrimary || event.button !== 0) return;
         const point = localPoint(event.clientX, event.clientY);
         if (!point || !svgRef.current) return;
         event.preventDefault();
-        // A handle keeps its identity even when pulled across the center.
-        const side = handle ?? (point.x <= MID_X ? "left" : "right");
-        const [x, y] = side === "left" ? [leftX, leftY] : [rightX, rightY];
-        x.stop();
-        y.stop();
+        // Body grabs translate the whole shape, so even the root follows 1:1.
+        // Only the explicit tip handles stretch a half of the mustache.
+        const side = handle ?? "body";
+        const [x, y] = side === "body" ? [bodyX, bodyY]
+            : side === "left" ? [leftX, leftY] : [rightX, rightY];
+        // Freeze the complete pose when regrabbing during any return animation.
+        for (const offset of [leftX, leftY, rightX, rightY, bodyX, bodyY]) offset.stop();
         drag.current = {
             pointerId: event.pointerId, side,
             startX: point.x, startY: point.y,
@@ -117,7 +120,8 @@ export default function Mustache() {
         }
         const point = localPoint(event.clientX, event.clientY);
         if (!point) return;
-        const [x, y] = current.side === "left" ? [leftX, leftY] : [rightX, rightY];
+        const [x, y] = current.side === "body" ? [bodyX, bodyY]
+            : current.side === "left" ? [leftX, leftY] : [rightX, rightY];
         x.set(current.offsetX + point.x - current.startX);
         y.set(current.offsetY + point.y - current.startY);
     };
@@ -133,9 +137,9 @@ export default function Mustache() {
             window.removeEventListener("resize", reset);
             document.removeEventListener("visibilitychange", onVisibilityChange);
             drag.current = null;
-            for (const offset of [leftX, leftY, rightX, rightY]) offset.stop();
+            for (const offset of [leftX, leftY, rightX, rightY, bodyX, bodyY]) offset.stop();
         };
-    }, [finishDrag, leftX, leftY, rightX, rightY]);
+    }, [finishDrag, leftX, leftY, rightX, rightY, bodyX, bodyY]);
 
     return (
         <motion.svg
@@ -155,6 +159,9 @@ export default function Mustache() {
             <motion.path
                 d={path}
                 fill="var(--accent)"
+                stroke="transparent"
+                strokeWidth={20}
+                pointerEvents="all"
                 className="cursor-grab touch-none active:cursor-grabbing"
                 onPointerDown={event => startDrag(event)}
             />
