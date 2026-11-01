@@ -11,7 +11,7 @@ const socials = [
     { name: "Discord", href: "https://discord.gg/eJkymXBAXU", icon: FaDiscord, hover: "hover:bg-[#5865F2]" },
     { name: "Youtube", href: "https://www.youtube.com/@imustachoo", icon: FaYoutube, hover: "hover:bg-[#FF0000]" },
     { name: "Spotify", href: "https://open.spotify.com/user/31ouiktnesnmb4l555pdsjevaqcm", icon: FaSpotify, hover: "hover:bg-[#1DB954]" },
-    { name: "Mail", href: "mailto:mail@mustacho.dev", icon: MdEmail, hover: "hover:bg-[#EA4335]" },
+    { name: "Mail", href: "mailto:hi@mustacho.dev", icon: MdEmail, hover: "hover:bg-[#EA4335]" },
 ];
 
 export default function HomeClient() {

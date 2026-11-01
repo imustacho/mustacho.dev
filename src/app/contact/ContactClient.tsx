@@ -132,7 +132,7 @@ export default function ContactClient() {
                 out = [
                     { type: "output", text: "  GitHub   ->  github.com/imustacho" },
                     { type: "output", text: "  Discord  ->  discord.gg/eJkymXBAXU" },
-                    { type: "output", text: "  Email    ->  mail@mustacho.dev" },
+                    { type: "output", text: "  Email    ->  hi@mustacho.dev" },
                     { type: "output", text: "  Spotify  ->  open.spotify.com/user/..." },
                     { type: "output", text: "" },
                     { type: "info",   text: "  Tip: run 'github' or 'discord' to open them." },
@@ -155,7 +155,7 @@ export default function ContactClient() {
                 break;
 
             case "mail":
-                window.open("mailto:mail@mustacho.dev", "_self");
+                window.open("mailto:hi@mustacho.dev", "_self");
                 out = [{ type: "info", text: "  Opening mail client..." }];
                 break;
 

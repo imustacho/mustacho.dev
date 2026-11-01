@@ -399,10 +399,10 @@ export default function Navbar() {
                         {/* Bottom Footer Info inside Overlay */}
                         <div className="w-full pt-4 border-t border-[var(--border)]">
                             <a
-                                href="mailto:mail@mustacho.dev"
+                                href="mailto:hi@mustacho.dev"
                                 className="text-xs font-medium text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors"
                             >
-                                mail@mustacho.dev
+                                hi@mustacho.dev
                             </a>
                         </div>
                     </motion.div>
